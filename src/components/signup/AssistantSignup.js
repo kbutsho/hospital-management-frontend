@@ -166,7 +166,7 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                             </div>
                             <div>
                                 <span className='small'>
-                                    <span>already have an account? </span>
+                                    <span className='me-1'>already have an account? </span>
                                     <Link href="/login" className='link'>login here</Link>
                                 </span>
                             </div>
