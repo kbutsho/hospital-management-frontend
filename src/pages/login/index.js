@@ -47,7 +47,7 @@ const Login = () => {
                         <div>
                             <span className='small'>
                                 <span>new user? </span>
-                                <Link href="/signup/patient" className='link'>signup here</Link>
+                                <Link href="/signup" className='link'>signup here</Link>
                             </span>
                         </div>
                     </div>

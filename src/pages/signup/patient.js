@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import styles from '@/styles/signup/signup.module.css';
 import { AiFillStar } from "react-icons/ai";
-import { BiHide, BiShow } from "react-icons/bi";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import SignupNavigation from '@/components/signup/SignupNavigation';
 
 const PatientSignup = () => {
     const [showPassword, setShowPassword] = useState(false)
