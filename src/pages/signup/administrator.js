@@ -3,11 +3,13 @@ import styles from '@/styles/signup/signup.module.css';
 import { AiFillStar } from "react-icons/ai";
 import { BiHide, BiShow } from "react-icons/bi";
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const AdministratorSignup = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
+    const router = useRouter();
+    const currentURL = (router.asPath).split('/')[2];
     const showPasswordBtn = () => {
         setShowPassword(!showPassword);
     }
@@ -18,7 +20,25 @@ const AdministratorSignup = () => {
         <div className={styles.body}>
             <div className={styles.main}>
                 <div className={styles.box}>
-                    <h4 className={styles.heading}>administrator signup</h4>
+
+                    <ul className={`${styles.navTab} nav nav-tabs`}>
+                        <li className={`${styles.navItem} nav-item`}>
+                            <Link className={`nav-link ${currentURL === 'administrator' ? 'active' : ''}`}
+                                href="/signup/administrator">administrator
+                            </Link>
+                        </li>
+                        <li className={`${styles.navItem} nav-item`}>
+                            <Link className={`nav-link ${currentURL === 'doctor' ? 'active' : ''}`}
+                                href="/signup/doctor">doctor
+                            </Link>
+                        </li>
+                        <li className={`${styles.navItem} nav-item`}>
+                            <Link className={`nav-link ${currentURL === 'assistant' ? 'active' : ''}`}
+                                href="/signup/assistant">assistant
+                            </Link>
+                        </li>
+                    </ul>
+                    <h4 className={styles.heading}> {currentURL} signup</h4>
                     <form>
                         <div className="row">
                             <div className="col-md-6">
@@ -145,7 +165,7 @@ const AdministratorSignup = () => {
                     </form>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

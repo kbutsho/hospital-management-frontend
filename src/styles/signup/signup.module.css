@@ -8,6 +8,7 @@
 }
 
 .main {
+
     padding: 16px;
 }
 
@@ -24,8 +25,19 @@
     margin-bottom: 36px;
 }
 
+.main .box .navTab {
+    margin-bottom: 36px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navTab .navItem {
+    flex: 1;
+    font-weight: bold;
+}
+
 .main .box input {
-    min-width: 260px;
+    min-width: 280px;
 }
 
 .passwordBtn {
