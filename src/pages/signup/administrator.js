@@ -78,11 +78,35 @@ const AdministratorSignup = () => {
                                         className='form-control'
                                     />
                                 </div>
+                                <div className="form-group mb-3">
+                                    <label className='mb-2'>
+                                        <span className='fw-bold'>Address</span>
+                                        <AiFillStar className='required' />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        placeholder='enter address'
+                                        className='form-control'
+                                    />
+                                </div>
                             </div>
                             <div className="col-md-6">
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Address</span>
+                                        <span className='fw-bold'>Organization</span>
+                                        <AiFillStar className='required' />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        placeholder='enter address'
+                                        className='form-control'
+                                    />
+                                </div>
+                                <div className="form-group mb-3">
+                                    <label className='mb-2'>
+                                        <span className='fw-bold'>Designation</span>
                                         <AiFillStar className='required' />
                                     </label>
                                     <input
