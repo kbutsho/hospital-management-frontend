@@ -1,29 +1,20 @@
-import React, { useState } from 'react';
 import styles from '@/styles/signup/signup.module.css';
 import { AiFillStar } from "react-icons/ai";
-import { BiHide, BiShow } from "react-icons/bi";
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import SignupNavigation from '@/components/signup/SignupNavigation';
+import Tabs from './Tabs';
 
-const PatientSignup = () => {
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const router = useRouter();
-    const currentURL = (router.asPath).split('/')[2];
-    const showPasswordBtn = () => {
-        setShowPassword(!showPassword);
-    }
-    const showConfirmPasswordBtn = () => {
-        setShowConfirmPassword(!showConfirmPassword);
+const PatientSignup = ({ activeComponent, handleTabClick }) => {
+    const formSubmit = (e) => {
+        e.preventDefault()
+        alert("patient")
     }
     return (
         <div className={styles.body}>
             <div className={styles.main}>
                 <div className={styles.box}>
-                    {/* <SignupNavigation /> */}
-                    <h4 className={styles.heading}> {currentURL} signup</h4>
-                    <form>
+                    <Tabs activeComponent={activeComponent} handleTabClick={handleTabClick} />
+                    <h4 className={styles.heading}> patient signup</h4>
+                    <form onSubmit={formSubmit}>
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="form-group mb-3">
@@ -33,7 +24,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="name"
+                                        //  name="name"
                                         placeholder='enter name'
                                         className='form-control'
                                     />
@@ -45,7 +36,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="phone"
+                                        //  name="phone"
                                         placeholder='enter phone'
                                         className='form-control'
                                     />
@@ -57,7 +48,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="email"
+                                        // name="email"
                                         placeholder='enter email'
                                         className='form-control'
                                     />
@@ -69,7 +60,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="address"
+                                        // name="address"
                                         placeholder='enter address'
                                         className='form-control'
                                     />
@@ -83,7 +74,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="address"
+                                        // name="address"
                                         placeholder='enter address'
                                         className='form-control'
                                     />
@@ -95,7 +86,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="address"
+                                        //  name="address"
                                         placeholder='enter address'
                                         className='form-control'
                                     />
@@ -107,7 +98,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="address"
+                                        //  name="address"
                                         placeholder='enter address'
                                         className='form-control'
                                     />
@@ -119,7 +110,7 @@ const PatientSignup = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="address"
+                                        // name="address"
                                         placeholder='enter address'
                                         className='form-control'
                                     />

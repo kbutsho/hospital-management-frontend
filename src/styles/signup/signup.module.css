@@ -33,6 +33,7 @@
 .navTab .navItem {
     flex: 1;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .main .box input {
