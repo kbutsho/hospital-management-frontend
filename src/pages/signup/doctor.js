@@ -4,6 +4,7 @@ import { AiFillStar } from "react-icons/ai";
 import { BiHide, BiShow } from "react-icons/bi";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import SignupNavigation from '@/layouts/signup/SignupNavigation';
 
 const DoctorSignup = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -20,24 +21,7 @@ const DoctorSignup = () => {
         <div className={styles.body}>
             <div className={styles.main}>
                 <div className={styles.box}>
-
-                    <ul className={`${styles.navTab} nav nav-tabs`}>
-                        <li className={`${styles.navItem} nav-item`}>
-                            <Link className={`nav-link ${currentURL === 'administrator' ? 'active' : ''}`}
-                                href="/signup/administrator">administrator
-                            </Link>
-                        </li>
-                        <li className={`${styles.navItem} nav-item`}>
-                            <Link className={`nav-link ${currentURL === 'doctor' ? 'active' : ''}`}
-                                href="/signup/doctor">doctor
-                            </Link>
-                        </li>
-                        <li className={`${styles.navItem} nav-item`}>
-                            <Link className={`nav-link ${currentURL === 'assistant' ? 'active' : ''}`}
-                                href="/signup/assistant">assistant
-                            </Link>
-                        </li>
-                    </ul>
+                    <SignupNavigation />
                     <h4 className={styles.heading}> {currentURL} signup</h4>
                     <form>
                         <div className="row">
@@ -145,7 +129,7 @@ const DoctorSignup = () => {
                                 </div>
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Confirm Password</span>
+                                        <span className='fw-bold'>Confirm password</span>
                                         <AiFillStar className='required' />
                                     </label>
                                     <div className='d-flex align-items-center'>

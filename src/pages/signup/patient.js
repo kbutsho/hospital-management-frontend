@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import SignupNavigation from '@/layouts/signup/SignupNavigation';
 
-const AdministratorSignup = () => {
+const PatientSignup = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const router = useRouter();
@@ -52,13 +52,39 @@ const AdministratorSignup = () => {
                                 </div>
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Email</span>
+                                        <span className='fw-bold'>Age</span>
                                         <AiFillStar className='required' />
                                     </label>
                                     <input
                                         type="text"
                                         name="email"
                                         placeholder='enter email'
+                                        className='form-control'
+                                    />
+                                </div>
+                                <div className="form-group mb-3">
+                                    <label className='mb-2'>
+                                        <span className='fw-bold'>Gender</span>
+                                        <AiFillStar className='required' />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        placeholder='enter address'
+                                        className='form-control'
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group mb-3">
+                                    <label className='mb-2'>
+                                        <span className='fw-bold'>Blood group</span>
+                                        <AiFillStar className='required' />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        placeholder='enter address'
                                         className='form-control'
                                     />
                                 </div>
@@ -74,11 +100,9 @@ const AdministratorSignup = () => {
                                         className='form-control'
                                     />
                                 </div>
-                            </div>
-                            <div className="col-md-6">
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Organization</span>
+                                        <span className='fw-bold'>Emergency contact name</span>
                                         <AiFillStar className='required' />
                                     </label>
                                     <input
@@ -90,7 +114,7 @@ const AdministratorSignup = () => {
                                 </div>
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Designation</span>
+                                        <span className='fw-bold'>Emergency contact number</span>
                                         <AiFillStar className='required' />
                                     </label>
                                     <input
@@ -99,60 +123,6 @@ const AdministratorSignup = () => {
                                         placeholder='enter address'
                                         className='form-control'
                                     />
-                                </div>
-                                <div className="form-group mb-3">
-                                    <label className='mb-2'>
-                                        <span className='fw-bold'>Password</span>
-                                        <AiFillStar className='required' />
-                                    </label>
-                                    <div className='d-flex align-items-center'>
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            name="password"
-                                            placeholder='enter password'
-                                            className='form-control'
-                                        />
-                                        {
-                                            showPassword ?
-                                                <BiShow
-                                                    size="25"
-                                                    className={styles.passwordBtn}
-                                                    onClick={() => showPasswordBtn()}
-                                                /> :
-                                                <BiHide
-                                                    size="25"
-                                                    className={styles.passwordBtn}
-                                                    onClick={() => showPasswordBtn()}
-                                                />
-                                        }
-                                    </div>
-                                </div>
-                                <div className="form-group mb-3">
-                                    <label className='mb-2'>
-                                        <span className='fw-bold'>confirm Password</span>
-                                        <AiFillStar className='required' />
-                                    </label>
-                                    <div className='d-flex align-items-center'>
-                                        <input
-                                            type={showConfirmPassword ? "text" : "password"}
-                                            name="confirmPassword"
-                                            placeholder='confirm password'
-                                            className='form-control'
-                                        />
-                                        {
-                                            showConfirmPassword ?
-                                                <BiShow
-                                                    size="25"
-                                                    className={styles.passwordBtn}
-                                                    onClick={() => showConfirmPasswordBtn()}
-                                                /> :
-                                                <BiHide
-                                                    size="25"
-                                                    className={styles.passwordBtn}
-                                                    onClick={() => showConfirmPasswordBtn()}
-                                                />
-                                        }
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -177,4 +147,4 @@ const AdministratorSignup = () => {
     );
 };
 
-export default AdministratorSignup;
+export default PatientSignup;
