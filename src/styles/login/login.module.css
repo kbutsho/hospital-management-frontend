@@ -1,0 +1,29 @@
+.body {
+    min-height: 100vh;
+    max-width: 100%;
+    background-color: rgba(211, 211, 211, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main {
+    padding: 16px;
+}
+
+.main .box {
+    padding: 24px;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.main .box .heading {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+}
+
+.main .box input {
+    min-width: 280px;
+}

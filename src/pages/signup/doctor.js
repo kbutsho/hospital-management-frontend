@@ -4,7 +4,7 @@ import { AiFillStar } from "react-icons/ai";
 import { BiHide, BiShow } from "react-icons/bi";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import SignupNavigation from '@/layouts/signup/SignupNavigation';
+import SignupNavigation from '@/components/signup/SignupNavigation';
 
 const DoctorSignup = () => {
     const [showPassword, setShowPassword] = useState(false)
