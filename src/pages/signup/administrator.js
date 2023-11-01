@@ -21,7 +21,7 @@ const AdministratorSignup = () => {
         <div className={styles.body}>
             <div className={styles.main}>
                 <div className={styles.box}>
-                    <SignupNavigation />
+                    {/* <SignupNavigation /> */}
                     <h4 className={styles.heading}> {currentURL} signup</h4>
                     <form>
                         <div className="row">
