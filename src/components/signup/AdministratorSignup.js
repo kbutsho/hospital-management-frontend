@@ -47,7 +47,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
             }
             const response = await axios.post(`${config.api}/signup/administrator`, data
             );
-            console.log(response);
+            console.log(response)
         } catch (error) {
             setLoading(false);
             setFormData({
@@ -133,7 +133,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.name ? formData.errors?.name : "name is required"
+                                            formData.errors?.name ? formData.errors?.name : null
                                         }
                                     </small>
                                 </div>
@@ -152,7 +152,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.phone ? formData.errors?.phone : "name is required"
+                                            formData.errors?.phone ? formData.errors?.phone : null
                                         }
                                     </small>
                                 </div>
@@ -170,7 +170,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.email ? formData.errors?.email : "name is required"
+                                            formData.errors?.email ? formData.errors?.email : null
                                         }
                                     </small>
                                 </div>
@@ -188,7 +188,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.address ? formData.errors?.address : "name is required"
+                                            formData.errors?.address ? formData.errors?.address : null
                                         }
                                     </small>
                                 </div>
@@ -208,7 +208,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.organization ? formData.errors?.organization : "name is required"
+                                            formData.errors?.organization ? formData.errors?.organization : null
                                         }
                                     </small>
                                 </div>
@@ -226,7 +226,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.designation ? formData.errors?.designation : "name is required"
+                                            formData.errors?.designation ? formData.errors?.designation : null
                                         }
                                     </small>
                                 </div>
@@ -260,7 +260,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     </div>
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.password ? formData.errors?.password : "name is required"
+                                            formData.errors?.password ? formData.errors?.password : null
                                         }
                                     </small>
                                 </div>
@@ -294,7 +294,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     </div>
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.confirmPassword ? formData.errors?.confirmPassword : "name is required"
+                                            formData.errors?.confirmPassword ? formData.errors?.confirmPassword : null
                                         }
                                     </small>
                                 </div>
