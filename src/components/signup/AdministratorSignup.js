@@ -8,6 +8,8 @@ import axios from 'axios';
 import { ROLE } from '@/constant';
 import { config } from '@/config';
 import { toast } from 'react-toastify';
+import ClipLoader from "react-spinners/ClipLoader";
+
 
 const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
     const [loading, setLoading] = useState(false)
@@ -276,7 +278,16 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                             </div>
                         </div>
                         <div className="form-group my-2">
-                            <input type="submit" className='btn btn-primary  w-100 fw-bold' value="Submit" />
+                            <button
+                                type="submit"
+                                className='btn btn-primary w-100 fw-bold'
+                                disabled={loading}>
+                                {
+                                    loading ?
+                                        <ClipLoader color={'#fff'} loading={true} size={18} />
+                                        : <span>submit</span>
+                                }
+                            </button>
                         </div>
                         <div className='d-flex justify-content-between'>
                             <div>
