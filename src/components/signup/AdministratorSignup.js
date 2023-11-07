@@ -47,7 +47,21 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
             }
             const response = await axios.post(`${config.api}/signup/administrator`, data
             );
-            console.log(response)
+            if (response.data.status) {
+                setLoading(false);
+                setFormData({
+                    name: '',
+                    phone: '',
+                    email: '',
+                    address: '',
+                    organization: '',
+                    designation: '',
+                    password: '',
+                    confirmPassword: '',
+                    errors: []
+                });
+                toast.info(response.data.message)
+            }
         } catch (error) {
             setLoading(false);
             setFormData({
@@ -56,53 +70,6 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
             });
             toast.error(error.response.data.message)
         }
-        // try {
-        //     setLoading(!loading);
-        //     const data = {
-        //         firstName: formData.firstName,
-        //         lastName: formData.lastName,
-        //         email: formData.email,
-        //         phone: formData.phone,
-        //         password: formData.password,
-        //         confirmPassword: formData.confirmPassword,
-        //         role: role
-        //     }
-        //     const response = await axios.post(`${config.api}/auth/signup`, data
-        //     );
-        //     if (response.data.data) {
-        //         setLoading(false);
-        //         setFormData({
-        //             firstName: '',
-        //             lastName: '',
-        //             phone: '',
-        //             email: '',
-        //             password: '',
-        //             confirmPassword: '',
-        //             errors: []
-        //         });
-        //         toast.info("check your email spam folder!")
-        //         setVerifiedMessage(response.data.message)
-        //     }
-        //     else {
-        //         setLoading(false);
-        //         setVerifiedMessage(null)
-        //         toast.error('something went wrong!')
-        //     }
-
-        // } catch (error) {
-        //     setLoading(false);
-        //     setVerifiedMessage(null);
-        //     const errorMessages = error.response.data.errorMessages;
-        //     const formattedErrors = {};
-        //     errorMessages.forEach(err => {
-        //         formattedErrors[err.path] = err.message;
-        //     });
-        //     setFormData(prevData => ({
-        //         ...prevData,
-        //         errors: formattedErrors
-        //     }));
-        //     toast.error(error.response.data.message)
-        // }
     }
     const showPasswordBtn = () => {
         setShowPassword(!showPassword)
@@ -128,6 +95,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                         type="text"
                                         name="name"
                                         placeholder='enter name'
+                                        value={formData.name}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`}
                                     />
@@ -147,6 +115,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                         type="text"
                                         name="phone"
                                         placeholder='enter phone'
+                                        value={formData.phone}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.phone ? 'is-invalid' : null}`}
                                     />
@@ -165,6 +134,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                         type="text"
                                         name="email"
                                         placeholder='enter email'
+                                        value={formData.email}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.email ? 'is-invalid' : null}`}
                                     />
@@ -183,6 +153,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                         type="text"
                                         name="address"
                                         placeholder='enter address'
+                                        value={formData.address}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.address ? 'is-invalid' : null}`}
                                     />
@@ -201,8 +172,9 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="name"
+                                        name="organization"
                                         placeholder='your organization'
+                                        value={formData.organization}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.organization ? 'is-invalid' : null}`}
                                     />
@@ -221,6 +193,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                         type="text"
                                         name="designation"
                                         placeholder='your designation'
+                                        value={formData.designation}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.designation ? 'is-invalid' : null}`}
                                     />
@@ -240,6 +213,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                             type="text"
                                             name="password"
                                             placeholder='enter password'
+                                            value={formData.password}
                                             onChange={handelInputChange}
                                             style={formData?.errors?.password ? { border: "1px solid red" } : null}
                                             className={`form-control`}
@@ -272,8 +246,9 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     <div className='d-flex align-items-center'>
                                         <input
                                             type="text"
-                                            name="name"
+                                            name="confirmPassword"
                                             placeholder='confirm password'
+                                            value={formData.confirmPassword}
                                             onChange={handelInputChange}
                                             style={formData?.errors?.password ? { border: "1px solid red" } : null}
                                             className={`form-control`}
