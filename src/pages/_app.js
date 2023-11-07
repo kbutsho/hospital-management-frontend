@@ -1,7 +1,9 @@
 import '@/styles/globals.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import { useEffect } from 'react';
-import { Poppins } from 'next/font/google'
+// import { Poppins } from 'next/font/google'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // const poppins = Poppins({
 //   weight: ['400', '700', '900'],
@@ -17,6 +19,7 @@ export default function App({ Component, pageProps }) {
 
   return (
     <main>
+      <ToastContainer position="bottom-right" autoClose={2500} />
       <Component {...pageProps} />
     </main>)
 }

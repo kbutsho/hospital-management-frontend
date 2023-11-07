@@ -13,3 +13,9 @@
     font-size: 14px;
     font-weight: bold;
 }
+
+.validation-error {
+    font-weight: bold;
+    color: red;
+    font-size: 12px;
+}
