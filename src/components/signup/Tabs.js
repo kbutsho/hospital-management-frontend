@@ -1,5 +1,6 @@
 import styles from '@/styles/signup/signup.module.css';
 import { ROLE } from '@/constant';
+import { AiTwotoneClockCircle } from 'react-icons/ai';
 
 const Tabs = ({ activeComponent, handleTabClick }) => {
     return (
@@ -7,29 +8,53 @@ const Tabs = ({ activeComponent, handleTabClick }) => {
             <li className={`${styles.navItem} nav-item`}>
                 <span
                     onClick={() => handleTabClick(ROLE.PATIENT)}
-                    className={`nav-link ${activeComponent === ROLE.PATIENT ? 'active' : ''}`}>
-                    patient
+                    className={`text-uppercase nav-link ${activeComponent === ROLE.PATIENT ? 'active' : 'text-black-50'}`}>
+                    <div className='d-flex justify-content-between'>
+                        <div>patient</div>
+                        {activeComponent === ROLE.PATIENT ?
+                            <div><AiTwotoneClockCircle size="14" color="green" /></div>
+                            : null
+                        }
+                    </div>
                 </span>
             </li>
             <li className={`${styles.navItem} nav-item`}>
                 <span
                     onClick={() => handleTabClick(ROLE.ASSISTANT)}
-                    className={`nav-link ${activeComponent === ROLE.ASSISTANT ? 'active' : ''}`}>
-                    assistant
+                    className={`text-uppercase nav-link ${activeComponent === ROLE.ASSISTANT ? 'active' : 'text-black-50'}`}>
+                    <div className='d-flex justify-content-between'>
+                        <div>assistant</div>
+                        {activeComponent === ROLE.ASSISTANT ?
+                            <div><AiTwotoneClockCircle size="14" color="green" /></div>
+                            : null
+                        }
+                    </div>
                 </span>
             </li>
             <li className={`${styles.navItem} nav-item`}>
                 <span
                     onClick={() => handleTabClick(ROLE.DOCTOR)}
-                    className={`nav-link ${activeComponent === ROLE.DOCTOR ? 'active' : ''}`}>
-                    doctor
+                    className={`text-uppercase nav-link ${activeComponent === ROLE.DOCTOR ? 'active' : 'text-black-50'}`}>
+                    <div className='d-flex justify-content-between'>
+                        <div>doctor</div>
+                        {activeComponent === ROLE.DOCTOR ?
+                            <div><AiTwotoneClockCircle size="14" color="green" /></div>
+                            : null
+                        }
+                    </div>
                 </span>
             </li>
             <li className={`${styles.navItem} nav-item`}>
                 <span
                     onClick={() => handleTabClick(ROLE.ADMINISTRATOR)}
-                    className={`nav-link ${activeComponent === ROLE.ADMINISTRATOR ? 'active' : ''}`}>
-                    administrator
+                    className={`text-uppercase nav-link ${activeComponent === ROLE.ADMINISTRATOR ? 'active' : 'text-black-50'}`}>
+                    <div className='d-flex justify-content-between'>
+                        <div>admin</div>
+                        {activeComponent === ROLE.ADMINISTRATOR ?
+                            <div><AiTwotoneClockCircle size="14" color="green" /></div>
+                            : null
+                        }
+                    </div>
                 </span>
             </li>
         </ul>
