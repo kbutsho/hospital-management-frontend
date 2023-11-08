@@ -8,7 +8,7 @@ import axios from 'axios';
 import { ROLE } from '@/constant';
 import { config } from '@/config';
 import { toast } from 'react-toastify';
-import ClipLoader from "react-spinners/ClipLoader";
+import BeatLoader from "react-spinners/BeatLoader";
 
 
 const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
@@ -47,8 +47,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                 password: formData.password,
                 confirmPassword: formData.confirmPassword,
             }
-            const response = await axios.post(`${config.api}/signup/administrator`, data
-            );
+            const response = await axios.post(`${config.api}/signup/administrator`, data);
             if (response.data.status) {
                 setLoading(false);
                 setFormData({
@@ -66,11 +65,19 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
             }
         } catch (error) {
             setLoading(false);
-            setFormData({
-                ...formData,
-                errors: error.response.data.error
-            });
-            toast.error(error.response.data.message)
+            if (error.response) {
+                setFormData({
+                    ...formData,
+                    errors: error.response.data.error
+                });
+                toast.error(error.response.data.message)
+            }
+            else if (error.isAxiosError) {
+                toast.error("network error. try again later!");
+            }
+            else {
+                toast.error("unexpected error occurred. try again later!");
+            }
         }
     }
     const showPasswordBtn = () => {
@@ -84,7 +91,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
             <div className={styles.main}>
                 <div className={styles.box}>
                     <Tabs activeComponent={activeComponent} handleTabClick={handleTabClick} />
-                    <h4 className={styles.heading}> administrator signup</h4>
+                    <h4 className={styles.heading}>administrator signup</h4>
                     <form onSubmit={formSubmit}>
                         <div className="row">
                             <div className="col-md-6">
@@ -96,7 +103,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     <input
                                         type="text"
                                         name="name"
-                                        placeholder='enter name'
+                                        placeholder='your name'
                                         value={formData.name}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`}
@@ -116,7 +123,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     <input
                                         type="text"
                                         name="phone"
-                                        placeholder='enter phone'
+                                        placeholder='your phone'
                                         value={formData.phone}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.phone ? 'is-invalid' : null}`}
@@ -135,7 +142,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     <input
                                         type="text"
                                         name="email"
-                                        placeholder='enter email'
+                                        placeholder='your email'
                                         value={formData.email}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.email ? 'is-invalid' : null}`}
@@ -154,7 +161,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                     <input
                                         type="text"
                                         name="address"
-                                        placeholder='enter address'
+                                        placeholder='your address'
                                         value={formData.address}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.address ? 'is-invalid' : null}`}
@@ -284,7 +291,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                                 disabled={loading}>
                                 {
                                     loading ?
-                                        <ClipLoader color={'#fff'} loading={true} size={18} />
+                                        <BeatLoader color={'#fff'} loading={true} size={10} />
                                         : <span>submit</span>
                                 }
                             </button>
@@ -305,7 +312,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                     </form>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 
