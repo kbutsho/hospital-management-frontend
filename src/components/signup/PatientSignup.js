@@ -26,8 +26,12 @@ const PatientSignup = ({ activeComponent, handleTabClick }) => {
     const handelInputChange = (event) => {
         setFormData({
             ...formData,
-            [event.target.name]: event.target.value
-        })
+            [event.target.name]: event.target.value,
+            errors: {
+                ...formData.errors,
+                [event.target.name]: null
+            }
+        });
     };
     const formSubmit = async (event) => {
         event.preventDefault();
@@ -58,7 +62,7 @@ const PatientSignup = ({ activeComponent, handleTabClick }) => {
                     emergency_contact_name: '',
                     errors: []
                 });
-                toast.info(response.data.message)
+                toast.success(response.data.message)
             }
         } catch (error) {
             setLoading(false);
