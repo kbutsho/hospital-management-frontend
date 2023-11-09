@@ -71,17 +71,12 @@ const Login = () => {
         } catch (error) {
             console.log(error)
             setLoading(false);
-            if (error.response) {
-                if (error.isAxiosError) {
-                    toast.error("network error. try again later!");
-                }
-                else {
-                    setFormData({
-                        ...formData,
-                        errors: error.response.data.error
-                    });
-                    toast.error(error.response.data.message)
-                }
+            if (error.response.data.error) {
+                setFormData({
+                    ...formData,
+                    errors: error.response.data.error
+                });
+                toast.error(error.response.data.message)
             }
             else if (error.isAxiosError) {
                 toast.error("network error. try again later!");
