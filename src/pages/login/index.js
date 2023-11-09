@@ -42,6 +42,7 @@ const Login = () => {
                 password: formData.password,
             }
             const response = await axios.post(`${config.api}/login`, data)
+            console.log(response)
             setLoading(false);
             if (response.data.status) {
                 setFormData({
@@ -70,6 +71,7 @@ const Login = () => {
         } catch (error) {
             setLoading(false);
             if (error.response) {
+                console.log(error)
                 setFormData({
                     ...formData,
                     errors: error.response.data.error
