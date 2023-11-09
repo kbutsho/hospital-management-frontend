@@ -16,10 +16,10 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap.js");
   }, [])
-
+  const getLayout = Component.getLayout || ((page) => page);
   return (
     <main>
       <ToastContainer position="bottom-right" autoClose={4000} />
-      <Component {...pageProps} />
+      {getLayout(<Component {...pageProps} />)}
     </main>)
 }

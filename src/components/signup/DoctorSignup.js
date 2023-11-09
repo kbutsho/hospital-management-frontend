@@ -80,7 +80,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                 toast.error("network error. try again later!");
             }
             else {
-                toast.error("unexpected error occurred. try again later!");
+                toast.error("unexpected error. try again later!");
             }
         }
     }
