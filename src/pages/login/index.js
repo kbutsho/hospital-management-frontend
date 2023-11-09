@@ -69,17 +69,22 @@ const Login = () => {
                 }
             }
         } catch (error) {
+
             setLoading(false);
             if (error.response) {
-                console.log(error)
-                setFormData({
-                    ...formData,
-                    errors: error.response.data.error
-                });
-                toast.error(error.response.data.message)
+                if (error.isAxiosError) {
+                    toast.error("network error 1. try again later!");
+                }
+                else {
+                    setFormData({
+                        ...formData,
+                        errors: error.response.data.error
+                    });
+                    toast.error(error.response.data.message)
+                }
             }
             else if (error.isAxiosError) {
-                toast.error("network error. try again later!");
+                toast.error("network error 2. try again later!");
             }
             else {
                 toast.error("unexpected error. try again later!");
