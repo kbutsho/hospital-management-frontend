@@ -69,11 +69,11 @@ const Login = () => {
                 }
             }
         } catch (error) {
-
+            console.log(error)
             setLoading(false);
             if (error.response) {
                 if (error.isAxiosError) {
-                    toast.error("network error 1. try again later!");
+                    toast.error("network error. try again later!");
                 }
                 else {
                     setFormData({
@@ -84,7 +84,7 @@ const Login = () => {
                 }
             }
             else if (error.isAxiosError) {
-                toast.error("network error 2. try again later!");
+                toast.error("network error. try again later!");
             }
             else {
                 toast.error("unexpected error. try again later!");
