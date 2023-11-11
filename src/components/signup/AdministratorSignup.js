@@ -9,9 +9,10 @@ import { ROLE } from '@/constant';
 import { config } from '@/config';
 import { toast } from 'react-toastify';
 import BeatLoader from "react-spinners/BeatLoader";
-
+import { ImCross } from "react-icons/im"
 
 const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
+    const [message, setMessage] = useState(null);
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -35,6 +36,7 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                 [event.target.name]: null
             }
         });
+        setMessage(null)
     };
     const formSubmit = async (event) => {
         event.preventDefault();
@@ -65,10 +67,11 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                     confirmPassword: '',
                     errors: []
                 });
-                toast.success(response.data.message)
+                setMessage(response.data.message)
             }
         } catch (error) {
             setLoading(false);
+            setMessage(null);
             if (error.response) {
                 setFormData({
                     ...formData,
@@ -90,12 +93,22 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
     const showConfirmPasswordBtn = () => {
         setShowConfirmPassword(!showConfirmPassword)
     }
+    const handelCrossBtn = () => {
+        setMessage(null)
+    }
     return (
         <div className={styles.body}>
             <div className={styles.main}>
                 <div className={styles.box}>
                     <Tabs activeComponent={activeComponent} handleTabClick={handleTabClick} />
                     <h4 className={styles.heading}>administrator signup</h4>
+                    {
+                        message ?
+                            <div className='alert alert-success fw-bold d-flex justify-content-between'>
+                                <div>{message}</div>
+                                <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
+                            </div> : null
+                    }
                     <form onSubmit={formSubmit}>
                         <div className="row">
                             <div className="col-md-6">

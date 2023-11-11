@@ -10,9 +10,11 @@ import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
 import Cookies from 'js-cookie';
 import { ROLE } from '@/constant';
+import { ImCross } from "react-icons/im"
 
 const Login = () => {
     const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState(null);
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -42,6 +44,7 @@ const Login = () => {
                 password: formData.password,
             }
             const response = await axios.post(`${config.api}/login`, data)
+            setErrorMessage(null)
             setLoading(false);
             if (response.data.status) {
                 setFormData({
@@ -74,21 +77,34 @@ const Login = () => {
                     ...formData,
                     errors: error.response.data.error
                 });
+                setErrorMessage(error.response.data.error);
                 toast.error(error.response.data.message)
             }
             else if (error.isAxiosError) {
+                setErrorMessage(null)
                 toast.error("network error. try again later!");
             }
             else {
+                setErrorMessage(null)
                 toast.error("unexpected error. try again later!");
             }
         }
+    }
+    const handelCrossBtn = () => {
+        setErrorMessage(null)
     }
     return (
         <div className={styles.body}>
             <div className={styles.main}>
                 <div className={styles.box}>
                     <h4 className={styles.heading}>Login</h4>
+                    {
+                        errorMessage ?
+                            <div className='alert alert-danger fw-bold d-flex justify-content-between'>
+                                <div>{errorMessage}</div>
+                                <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
+                            </div> : null
+                    }
                     <form onSubmit={formSubmit}>
                         <div className="form-group mb-3">
                             <label htmlFor="credential" className='mb-2'>

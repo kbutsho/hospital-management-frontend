@@ -28,6 +28,11 @@
     min-width: 300px;
 }
 
+.crossBtn {
+    cursor: pointer;
+    padding-top: 6px;
+}
+
 .passwordBtn {
     margin-left: -40px;
     margin-bottom: -2px;

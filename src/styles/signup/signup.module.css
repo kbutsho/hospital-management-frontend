@@ -21,7 +21,7 @@
 .main .box .heading {
     font-weight: bold;
     text-transform: uppercase;
-    margin-bottom: 36px;
+    margin-bottom: 24px;
 }
 
 .main .box .navTab {
@@ -46,6 +46,11 @@
     margin-left: -40px;
     margin-bottom: -2px;
     cursor: pointer
+}
+
+.crossBtn {
+    cursor: pointer;
+    padding-top: 6px;
 }
 
 @media (max-width: 768px) {
