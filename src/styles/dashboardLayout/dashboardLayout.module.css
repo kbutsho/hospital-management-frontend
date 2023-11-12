@@ -4,32 +4,96 @@
     padding: 24px 0;
 }
 
+.body {
+    width: 100%;
+    margin: auto;
+    padding: 0 24px;
+    overflow-x: hidden;
+}
+
 .sidebarMenu {
     text-decoration: none;
-    padding: 5px 10px 10px;
+    padding: 4px 10px 10px;
     display: flex;
-    background-color: #0000008f;
+    align-items: center;
+    background-color: white;
     margin-bottom: 10px;
     border-radius: 4px;
     cursor: pointer;
     transition: 0.3s ease-in-out;
-    color: white;
+    color: black;
+    text-transform: uppercase;
+    font-weight: bold;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+}
+
+.sidebarLogoutMenu {
+    text-decoration: none;
+    padding: 4px 10px 10px;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    color: red;
+    font-weight: bold;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    text-transform: uppercase;
 }
 
 .sidebarMenuIcon {
     font-size: 20px;
 }
 
+.sidebarLogoutMenuIcon {
+    font-size: 20px;
+}
+
 .sidebarMenuLink {
-    font-size: 16px;
-    padding-top: 5px;
+    font-size: 14px;
+    padding-top: 7px;
     margin-left: 5px;
 }
 
+.sidebarLogoutMenuLink {
+    font-size: 14px;
+    padding-top: 7px;
+    margin-left: 5px;
+}
+
+
 .sidebarMenu.activeMenu {
     text-decoration: none;
-    background-color: #F39422;
-    transition: background-color 0.3s ease-in-out;
-    color: black;
+    background-color: #0000007f;
+    transition: rgba(0, 0, 0, 0.57)lor 0.3s ease-in-out;
+    color: white;
     font-weight: bold;
+}
+
+.logoutIcon {
+    padding-left: 6px;
+    padding-bottom: 2px;
+    font-size: 24px;
+}
+
+.userImage {
+    margin-bottom: 2px;
+    margin-left: 10px;
+}
+
+.dashboardFooter {
+    text-align: center;
+    padding: 20px 0;
+    font-weight: bold;
+}
+
+.dashboardFooter small {
+    font-size: 14px;
+}
+
+.dashboardFooter small a {
+    text-decoration: none;
+    color: black;
 }

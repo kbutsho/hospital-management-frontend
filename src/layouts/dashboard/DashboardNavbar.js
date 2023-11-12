@@ -1,10 +1,13 @@
 import Cookies from "js-cookie";
 import Link from "next/link";
+import styles from "@/styles/dashboardLayout/dashboardLayout.module.css"
+import userImage from "@/assets/user.png"
+import Image from "next/image";
 
 const DashboardNavbar = () => {
     const name = Cookies.get('name')
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light py-3">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light py-2">
             <div className="container">
                 <Link className="navbar-brand fw-bold px-3"
                     href="/">Hospital Management
@@ -23,17 +26,12 @@ const DashboardNavbar = () => {
                     className="collapse navbar-collapse"
                     id="navbarNavAltMarkup">
                     <div className="navbar-nav ms-auto">
-                        <div className="dropdown">
-                            <span className="btn btn-outline-secondary fw-bold dropdown-toggle"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                {name ?? null}
-                            </span>
-                            <ul className="dropdown-menu">
-                                <li><Link className="dropdown-item" href="/login">logout</Link></li>
-                            </ul>
-                        </div>
-                        <span className="nav-link"></span>
+                        <span className="nav-link fw-bold text-dark">
+                            {name ?? null}
+                            <Image src={userImage}
+                                className={styles.userImage}
+                                height={30} width={30} />
+                        </span>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
 import React from 'react';
 
-const AdministratorDashboard = () => {
+const AdministratorChambers = () => {
     return (
         <div >
             <Head>
@@ -17,7 +17,7 @@ const AdministratorDashboard = () => {
     );
 };
 
-export default AdministratorDashboard;
-AdministratorDashboard.getLayout = function getLayout(page) {
+export default AdministratorChambers;
+AdministratorChambers.getLayout = function getLayout(page) {
     return <AdministratorLayout>{page}</AdministratorLayout>;
 };

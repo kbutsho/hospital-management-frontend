@@ -1,0 +1,88 @@
+/* show list dropdown */
+.filterHeader {
+    padding: 0px 0px;
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.filterHeader span {
+    font-weight: bold;
+    padding: 10px 10px 8px;
+    background-color: #ffffff;
+    font-size: 12px;
+}
+
+.filterHeader .customSelect {
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.375rem 1rem;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: none;
+    font-weight: bold;
+    width: 4.5rem;
+}
+
+.filterHeader .customSelect option[defaultValue] {
+    background-color: #007bff;
+    color: #fff;
+}
+
+
+/* filter area */
+
+.filterArea {
+    margin: 10px 0;
+    padding: 0px 4px 0 0;
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    border-radius: 4px;
+}
+
+.filterArea button {
+    border: none;
+    width: 100%;
+    padding: 10px 10px 8px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    background-color: #ffffff;
+    font-size: 12px;
+}
+
+.filterArea .radioArea {
+    display: flex;
+    transition: 0.3s;
+    padding: 7px;
+    margin: 2px 0;
+    cursor: pointer;
+    align-items: center;
+    border-radius: 4px;
+
+}
+
+.radioInput {
+    margin-top: 2px;
+    margin-right: 5px;
+}
+
+.filterArea label {
+    font-size: 14px;
+}
+
+.filterArea .radioArea:hover {
+    background-color: #F0F0F0;
+}
+
+.filterArea .show {
+    display: none;
+    transition: 0.3s;
+}
+
+.filterArea .hide {
+    transition: 0.3s;
+}

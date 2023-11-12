@@ -1,3 +1,5 @@
+import AdministratorDoctorList from '@/components/administrator/doctors/AdministratorDoctorList';
+import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
 import React from 'react';
@@ -8,9 +10,9 @@ const AdministratorDoctors = () => {
             <Head>
                 <title>doctor list</title>
             </Head>
-            {/* <Breadcrumb /> */}
-            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
-                <h5 className="fw-bold text-danger">doctor list</h5>
+            <Breadcrumb />
+            <div className=' px-2 py-2'>
+                <AdministratorDoctorList />
             </div>
         </div>
     );
