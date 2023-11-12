@@ -30,7 +30,8 @@
 
 .crossBtn {
     cursor: pointer;
-    padding-top: 6px;
+    padding-top: 8px;
+    font-size: 20px;
 }
 
 .passwordBtn {

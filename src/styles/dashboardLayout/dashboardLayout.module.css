@@ -1,0 +1,35 @@
+.main {
+    background-color: rgba(200, 200, 200, 0.4);
+    min-height: 90vh;
+    padding: 24px 0;
+}
+
+.sidebarMenu {
+    text-decoration: none;
+    padding: 5px 10px 10px;
+    display: flex;
+    background-color: #0000008f;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    color: white;
+}
+
+.sidebarMenuIcon {
+    font-size: 20px;
+}
+
+.sidebarMenuLink {
+    font-size: 16px;
+    padding-top: 5px;
+    margin-left: 5px;
+}
+
+.sidebarMenu.activeMenu {
+    text-decoration: none;
+    background-color: #F39422;
+    transition: background-color 0.3s ease-in-out;
+    color: black;
+    font-weight: bold;
+}

@@ -4,12 +4,12 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 
 
-const AssistantLayout = ({ children }) => {
+const DoctorLayout = ({ children }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const toastShownRef = useRef(false);
     useEffect(() => {
-        authentication(setIsLoading, router, toastShownRef, ROLE.ASSISTANT);
+        authentication(setIsLoading, router, toastShownRef, ROLE.DOCTOR);
     }, [setIsLoading, router, toastShownRef, ROLE]);
     if (isLoading) {
         return null;
@@ -28,4 +28,4 @@ const AssistantLayout = ({ children }) => {
     );
 };
 
-export default AssistantLayout;
+export default DoctorLayout;

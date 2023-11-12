@@ -34,14 +34,15 @@ const Login = () => {
                 [event.target.name]: null
             }
         })
+        setErrorMessage(null)
     };
     const formSubmit = async (event) => {
         event.preventDefault();
         try {
             setLoading(!loading);
             const data = {
-                credential: formData.credential,
-                password: formData.password,
+                credential: formData?.credential,
+                password: formData?.password,
             }
             const response = await axios.post(`${config.api}/login`, data)
             setErrorMessage(null)
@@ -53,16 +54,17 @@ const Login = () => {
                     errors: []
                 });
                 Cookies.set('token', response.data.token, { expires: 7 });
-                Cookies.set('userRole', response.data.userRole, { expires: 7 });
-                if (response.data.userRole === ROLE.ADMINISTRATOR) {
+                Cookies.set('role', response.data.role, { expires: 7 });
+                Cookies.set('name', response.data.name, { expires: 7 });
+                if (response.data.role === ROLE.ADMINISTRATOR) {
                     toast.success(response.data.message);
                     router.push('/administrator/dashboard')
                 }
-                else if (response.data.userRole === ROLE.DOCTOR) {
+                else if (response.data.role === ROLE.DOCTOR) {
                     toast.success(response.data.message);
                     router.push('/doctor/dashboard')
                 }
-                else if (response.data.userRole === ROLE.ASSISTANT) {
+                else if (response.data.role === ROLE.ASSISTANT) {
                     toast.success(response.data.message);
                     router.push('/assistant/dashboard')
                 }
@@ -72,21 +74,35 @@ const Login = () => {
             }
         } catch (error) {
             setLoading(false);
-            if (error.response.data.error) {
-                setFormData({
-                    ...formData,
-                    errors: error.response.data.error
-                });
-                setErrorMessage(error.response.data.error);
-                toast.error(error.response.data.message)
+            if (error.response) {
+                // 500 = internal server error
+                // 422 = validation error
+                // 401 = unauthorized, invalid
+                // 403 = pending status
+                const errorStatus = error.response.status;
+                if (errorStatus === 422) {
+                    setFormData({
+                        ...formData,
+                        errors: error.response.data.error
+                    });
+                    setErrorMessage(error.response.data.message);
+                    toast.error("login failed!")
+                } else if (errorStatus === 401 || errorStatus === 403 || errorStatus === 500) {
+                    setErrorMessage(error.response.data.error);
+                    toast.error(error.response.data.message)
+                }
+                else {
+                    setErrorMessage("unexpected error. try again later!")
+                    toast.error("login failed!");
+                }
             }
             else if (error.isAxiosError) {
-                setErrorMessage(null)
-                toast.error("network error. try again later!");
+                setErrorMessage("network error. try again later!")
+                toast.error("login failed!");
             }
             else {
-                setErrorMessage(null)
-                toast.error("unexpected error. try again later!");
+                setErrorMessage("unexpected error. try again later!")
+                toast.error("login failed!");
             }
         }
     }
@@ -116,13 +132,13 @@ const Login = () => {
                                 id="credential"
                                 name="credential"
                                 placeholder='email or phone'
-                                value={formData.credential}
+                                value={formData?.credential}
                                 onChange={handelInputChange}
-                                className={`form-control ${formData.errors?.credential ? 'is-invalid' : null}`}
+                                className={`form-control ${formData?.errors?.credential ? 'is-invalid' : null}`}
                             />
                             <small className='validation-error'>
                                 {
-                                    formData.errors?.credential ? formData.errors?.credential : null
+                                    formData?.errors?.credential ? formData?.errors?.credential : null
                                 }
                             </small>
                         </div>
@@ -137,7 +153,7 @@ const Login = () => {
                                     name="password"
                                     placeholder='enter password'
                                     className='form-control'
-                                    value={formData.password}
+                                    value={formData?.password}
                                     onChange={handelInputChange}
                                     type={showPassword ? "text" : "password"}
                                     style={formData?.errors?.password ? { border: "1px solid red" } : null}
@@ -158,7 +174,7 @@ const Login = () => {
                             </div>
                             <small className='validation-error'>
                                 {
-                                    formData.errors?.password ? formData.errors?.password : null
+                                    formData?.errors?.password ? formData?.errors?.password : null
                                 }
                             </small>
                         </div>
