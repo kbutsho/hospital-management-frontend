@@ -1,3 +1,4 @@
+import SpecializationList from '@/components/administrator/specialization/SpecializationList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
@@ -10,7 +11,9 @@ const AdministratorSpecialization = () => {
                 <title>profile</title>
             </Head>
             <Breadcrumb />
-            AdministratorSpecialization
+            <div className='px-2'>
+                <SpecializationList />
+            </div>
         </div>
     );
 };

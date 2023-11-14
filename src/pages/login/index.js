@@ -111,6 +111,26 @@ const Login = () => {
     const handelCrossBtn = () => {
         setErrorMessage(null)
     }
+    const demoUser = {
+        administrator: {
+            email: process.env.NEXT_PUBLIC_ADMINISTRATOR_EMAIL,
+            password: process.env.NEXT_PUBLIC_ADMINISTRATOR_PASSWORD
+        },
+        doctor: {
+            email: process.env.NEXT_PUBLIC_DOCTOR_EMAIL,
+            password: process.env.NEXT_PUBLIC_DOCTOR_PASSWORD
+        },
+        assistant: {
+            email: process.env.NEXT_PUBLIC_ASSISTANT_EMAIL,
+            password: process.env.NEXT_PUBLIC_ASSISTANT_PASSWORD
+        }
+    }
+    const handleUserClick = (user) => {
+        setFormData({
+            credential: user.email,
+            password: user.password
+        });
+    };
     return (
         <div className={styles.body}>
             <div className={styles.main}>
@@ -190,10 +210,25 @@ const Login = () => {
                             </button>
                         </div>
                     </form>
+                    {
+                        process.env.NEXT_PUBLIC_IS_LOGIN === "true" ?
+                            <div>
+                                <table className={`${styles.demoUser} table table-bordered`}>
+                                    <tbody>
+                                        <tr>
+                                            <td onClick={() => handleUserClick(demoUser.administrator)}>administrator</td>
+                                            <td onClick={() => handleUserClick(demoUser.manager)}>doctor</td>
+                                            <td onClick={() => handleUserClick(demoUser.seller)}>assistant</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div> : null
+                    }
                     <div className='d-flex justify-content-between'>
                         <div>
                             <span className='small'><Link href="/home" className='link'>Home</Link></span>
                         </div>
+
                         <div>
                             <span className='small'>
                                 <span>new user? </span>

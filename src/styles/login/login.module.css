@@ -39,3 +39,20 @@
     margin-bottom: -2px;
     cursor: pointer
 }
+
+.demoUser {
+    font-size: 14px;
+    background-color: none;
+    cursor: pointer;
+}
+
+.demoUser td {
+    padding: 4px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.demoUser td:hover {
+    background-color: #0D6EFD;
+    color: white;
+}

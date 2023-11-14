@@ -94,3 +94,11 @@
 }
 
 /* end pagination */
+/* Define classes for different colors */
+.active-option {
+    color: green;
+}
+
+.other-option {
+    color: red;
+}
