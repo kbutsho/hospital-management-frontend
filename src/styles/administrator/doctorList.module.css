@@ -1,11 +1,23 @@
 /* show list dropdown */
+.listArea {
+    min-height: 70vh;
+}
+
+.listArea .loadingArea {
+    height: 60vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .filterHeader {
-    padding: 0px 0px;
+    padding: 2px;
     background-color: #ffffff;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
     border-radius: 4px;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
 }
 
 .filterHeader span {
@@ -31,15 +43,15 @@
     color: #fff;
 }
 
-
 /* filter area */
 
 .filterArea {
-    margin: 10px 0;
-    padding: 0px 4px 0 0;
+    position: relative;
+    padding: 2px;
     background-color: #ffffff;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
     border-radius: 4px;
+    margin-bottom: 10px;
 }
 
 .filterArea button {
@@ -52,6 +64,22 @@
     font-weight: bold;
     background-color: #ffffff;
     font-size: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.filterArea>div {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    border-radius: 4px;
+    z-index: 2;
+    display: none;
+    transition: 0.3s;
+    overflow-y: auto;
 }
 
 .filterArea .radioArea {
@@ -62,7 +90,10 @@
     cursor: pointer;
     align-items: center;
     border-radius: 4px;
+}
 
+.filterArea .dropdownIcon {
+    padding-bottom: 2px;
 }
 
 .radioInput {
@@ -75,14 +106,40 @@
 }
 
 .filterArea .radioArea:hover {
-    background-color: #F0F0F0;
+    background-color: #E9E9E9;
 }
 
 .filterArea .show {
-    display: none;
-    transition: 0.3s;
+    display: block;
 }
 
-.filterArea .hide {
-    transition: 0.3s;
+/* end filter area */
+
+/* search area */
+.searchArea {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    border-radius: 4px;
+}
+
+.searchBox {
+    border-radius: 4px;
+    padding: 8px 10px;
+    box-shadow: none;
+    border: none;
+}
+
+.searchBox:focus {
+    box-shadow: none;
+}
+
+.notFound {
+    height: 55vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    margin-top: 12px;
+    border-radius: 4px;
+    color: red;
+    font-weight: bold;
 }

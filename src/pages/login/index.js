@@ -45,6 +45,7 @@ const Login = () => {
                 password: formData?.password,
             }
             const response = await axios.post(`${config.api}/login`, data)
+            console.log(response)
             setErrorMessage(null)
             setLoading(false);
             if (response.data.status) {
@@ -73,6 +74,7 @@ const Login = () => {
                 }
             }
         } catch (error) {
+            console.log(error)
             setLoading(false);
             if (error.response) {
                 // 500 = internal server error

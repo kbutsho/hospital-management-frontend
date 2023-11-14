@@ -30,7 +30,7 @@ const DashboardNavbar = () => {
                             {name ?? null}
                             <Image src={userImage}
                                 className={styles.userImage}
-                                height={30} width={30} />
+                                height={30} width={30} alt="image" />
                         </span>
                     </div>
                 </div>

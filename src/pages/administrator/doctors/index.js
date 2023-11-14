@@ -11,7 +11,7 @@ const AdministratorDoctors = () => {
                 <title>doctor list</title>
             </Head>
             <Breadcrumb />
-            <div className=' px-2 py-2'>
+            <div className=' px-2'>
                 <AdministratorDoctorList />
             </div>
         </div>

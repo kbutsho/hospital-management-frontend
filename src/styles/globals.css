@@ -23,3 +23,74 @@
 .breadcrumbIcon {
     margin-bottom: 12px;
 }
+
+
+/* table area */
+.table-area {
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+}
+
+.table-area .name-column {
+    width: 16%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 4px;
+}
+
+.table-area .status-select {
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: none;
+    background-color: aliceblue;
+}
+
+.table-area .status-select:focus {
+    box-shadow: none;
+}
+
+.table-area tr td {
+    min-height: 40px;
+}
+
+/* pagination */
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.paginationBtn {
+    background-color: #f4f4f4;
+    border: none;
+    color: #333;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 4px;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+.paginationBtn:hover {
+    background-color: #ddd;
+}
+
+.paginationBtn.activePagination {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* end pagination */
