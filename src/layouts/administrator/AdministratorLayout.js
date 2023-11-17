@@ -93,14 +93,14 @@ const AdministratorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
-                                <Link href="/administrator/specializations"
+                                <Link href="/administrator/departments"
                                     className={`${styles.sidebarMenu} 
-                                    ${isActive('/administrator/specializations') ? styles.activeMenu : ''}`}>
+                                    ${isActive('/administrator/departments') ? styles.activeMenu : ''}`}>
                                     <div className={styles.sidebarMenuIcon}>
                                         <BiSolidDashboard />
                                     </div>
                                     <div className={styles.sidebarMenuLink}>
-                                        <span>Specializations</span>
+                                        <span>Departments</span>
                                     </div>
                                 </Link>
 

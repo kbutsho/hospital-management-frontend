@@ -1,4 +1,4 @@
-import AdministratorDoctorList from '@/components/administrator/doctors/AdministratorDoctorList';
+import DoctorList from '@/components/administrator/doctors/DoctorList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
@@ -12,7 +12,7 @@ const AdministratorDoctors = () => {
             </Head>
             <Breadcrumb />
             <div className='px-2'>
-                <AdministratorDoctorList />
+                <DoctorList />
             </div>
         </div>
     );

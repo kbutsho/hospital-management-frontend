@@ -1,10 +1,10 @@
-import SpecializationList from '@/components/administrator/specialization/SpecializationList';
+import DepartmentList from '@/components/administrator/departments/DepartmentList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
 import React from 'react';
 
-const AdministratorSpecialization = () => {
+const AdministratorDepartments = () => {
     return (
         <div>
             <Head>
@@ -12,13 +12,13 @@ const AdministratorSpecialization = () => {
             </Head>
             <Breadcrumb />
             <div className='px-2'>
-                <SpecializationList />
+                <DepartmentList />
             </div>
         </div>
     );
 };
 
-export default AdministratorSpecialization;
-AdministratorSpecialization.getLayout = function getLayout(page) {
+export default AdministratorDepartments;
+AdministratorDepartments.getLayout = function getLayout(page) {
     return <AdministratorLayout>{page}</AdministratorLayout>;
 };

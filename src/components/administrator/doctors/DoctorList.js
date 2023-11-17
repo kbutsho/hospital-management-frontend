@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import styles from "@/styles/administrator/doctorList.module.css"
+import styles from "@/styles/administrator/List.module.css"
 import { USER_STATUS } from '@/constant';
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { config } from "@/config/index";
@@ -10,12 +10,18 @@ import { FadeLoader } from 'react-spinners';
 import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
-
-const AdministratorDoctorList = () => {
-    const [loading, setLoading] = useState(true);
+const DoctorList = () => {
     const token = Cookies.get('token');
+    const [loading, setLoading] = useState(true);
+    const [deleteModal, setDeleteModal] = useState(false)
     const [data, setData] = useState();
+    const [department, setDepartment] = useState([]);
+    const [deleteItem, setDeleteItem] = useState({
+        id: '',
+        name: ''
+    })
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
@@ -45,6 +51,33 @@ const AdministratorDoctorList = () => {
         fetchData();
     }, [fetchData]);
 
+    const fetchDepartment = useCallback(async () => {
+        try {
+            setLoading(true)
+            const response = await axios.get(`${config.api}/department/all`);
+            const departmentNames = response.data.data.map((dept) => dept.name);
+            departmentNames.push("show all");
+            setDepartment(departmentNames);
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            toast.error("internal server error!")
+        }
+    }, [setDepartment])
+    useEffect(() => {
+        fetchDepartment();
+    }, [fetchDepartment]);
+
+
+    // filter by department
+    const [filterByDepartment, setFilterByDepartment] = useState('');
+    const handelFilterByDepartment = (event) => {
+        setFilterByDepartment(event.target.value);
+    }
+    const [departmentToggle, setDepartmentToggle] = useState(false)
+    const handelDepartmentToggle = () => {
+        setDepartmentToggle(!departmentToggle)
+    }
     // filter by status
     const userStatus = [
         USER_STATUS.ACTIVE,
@@ -60,20 +93,16 @@ const AdministratorDoctorList = () => {
     const handelStatusToggle = () => {
         setStatusToggle(!statusToggle)
     }
-
     // search input field
     const [searchTerm, setSearchTerm] = useState('');
     const handelSearch = (event) => {
         setSearchTerm(event.target.value);
     };
-
     // combine filter search and sort
     const filterAndSearchData = data?.filter((item) => {
         // filter
         const statusMatch = filterByStatus ? item.status.includes(filterByStatus) : true;
-        // const brandMatch = filterByBrand ? item.brand.includes(filterByBrand) : true;
-        // const priceRangeMatch = item.price >= priceRange[0] && item.price <= priceRange[1];
-        // const ratingRangeMatch = item.rating >= ratingRange[0] && item.rating <= ratingRange[1];
+        const DepartmentMatch = filterByDepartment ? item.departmentName.includes(filterByDepartment) : true;
         // search 
         const searchMatch = searchTerm === '' ||
             item.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,18 +112,8 @@ const AdministratorDoctorList = () => {
             item.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
             String(item.specialization).toLowerCase().includes(searchTerm.toLowerCase()) ||
             String(item.address).toLowerCase().includes(searchTerm.toLowerCase());
-        return statusMatch && searchMatch;
+        return statusMatch && DepartmentMatch && searchMatch;
     })
-    // sort
-    // .sort((itemA, itemB) => {
-    //     if (sortOrder === PRICE_SORT_ORDER.MIN_TO_MAX) {
-    //         return itemA.discountPrice - itemB.discountPrice;
-    //     } else if (sortOrder === PRICE_SORT_ORDER.MAX_TO_MIN) {
-    //         return itemB.discountPrice - itemA.discountPrice;
-    //     }
-    //     return 0;
-    // });
-
     //pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [dataPerPage, setDataPerPage] = useState(5);
@@ -114,9 +133,6 @@ const AdministratorDoctorList = () => {
         setModal(!modal)
         Cookies.remove('delete_item')
     }
-    const handleDelete = async () => {
-    }
-
     // update status
     const [statusMap, setStatusMap] = useState({});
     const handleStatusChange = async (event, userId) => {
@@ -140,12 +156,36 @@ const AdministratorDoctorList = () => {
             setLoading(false)
             if (response.data.status) {
                 await fetchData()
+                toast.success("status update successfully!")
             }
         } catch (error) {
-            setLoading(false)
             console.log(error)
+            setLoading(false)
+            toast.error("internal server error!")
         }
     };
+
+    // delete
+    const toggleDeleteModal = (id, name) => {
+        setDeleteModal(!deleteModal)
+        setDeleteItem({ name: name ?? '', id: id ?? '' });
+    }
+    const handelDelete = async () => {
+        try {
+            setLoading(true)
+            await axios.delete(`${config.api}/administrator/doctor/${deleteItem?.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setLoading(false);
+            toast.success("doctor deleted successfully!")
+            await fetchData()
+        } catch (error) {
+            setLoading(false)
+            toast.error("internal server error!")
+        }
+    }
     return (
         <div className={`row py-4 ${styles.listArea}`}>
             {loading ? (
@@ -179,11 +219,11 @@ const AdministratorDoctorList = () => {
                                     <button className='text-uppercase' onClick={handelStatusToggle}>
                                         <span>Status</span>
                                         <div>
-                                            <span className='me-2'>
+                                            {/* <span className='me-2'>
                                                 {
                                                     filterByStatus === '' ? 'show all' : filterByStatus.split('-').join(' ')
                                                 }
-                                            </span>
+                                            </span> */}
                                             <span>
                                                 {
                                                     statusToggle ?
@@ -206,6 +246,39 @@ const AdministratorDoctorList = () => {
                                                         onChange={handelFilterByStatus}
                                                     />
                                                     {status}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-3">
+                                <div className={styles.filterArea}>
+                                    <button className='text-uppercase' onClick={handelDepartmentToggle}>
+                                        <span>Department</span>
+                                        <div>
+                                            <span>
+                                                {
+                                                    departmentToggle ?
+                                                        <IoIosArrowUp size="16px" className={styles.dropdownIcon} />
+                                                        : <IoIosArrowDown size="16px" className={styles.dropdownIcon} />
+                                                }
+                                            </span>
+                                        </div>
+                                    </button>
+                                    <div className={`${departmentToggle ? styles.show : styles.hide}`}>
+                                        {department?.map((name, index) => (
+                                            <div key={index}>
+                                                <label htmlFor={`name_${index}`} className={styles.radioArea}>
+                                                    <input
+                                                        className={`${styles.radioInput}`}
+                                                        type="radio"
+                                                        name="name"
+                                                        id={`name_${index}`}
+                                                        value={name === USER_STATUS.SHOW_ALL ? '' : name}
+                                                        onChange={handelFilterByDepartment}
+                                                    />
+                                                    {name}
                                                 </label>
                                             </div>
                                         ))}
@@ -239,7 +312,7 @@ const AdministratorDoctorList = () => {
                                                     <th>NAME</th>
                                                     <th>EMAIL</th>
                                                     <th>PHONE</th>
-                                                    <th>SPECIALIZATION</th>
+                                                    <th>Department</th>
                                                     <th className='text-center'>STATUS</th>
                                                     <th className='text-center'>ACTION</th>
                                                 </tr>
@@ -255,7 +328,7 @@ const AdministratorDoctorList = () => {
                                                                 <td>{data.name}</td>
                                                                 <td>{data.email}</td>
                                                                 <td>{data.phone}</td>
-                                                                <td>{data.specializationId}</td>
+                                                                <td>{data.departmentName}</td>
                                                                 <td className='text-center'>
                                                                     <select
                                                                         className="status-select form-select fw-bold"
@@ -275,7 +348,7 @@ const AdministratorDoctorList = () => {
                                                                     <div className='d-flex justify-content-center'>
                                                                         <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                         <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
-                                                                        <button onClick={() => toggleModal(data.userId)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
+                                                                        <button onClick={() => toggleDeleteModal(data.doctorId, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -299,10 +372,27 @@ const AdministratorDoctorList = () => {
                             }
                         </div>
                     </div>
+                    {deleteModal ? (
+                        <div>
+                            <Modal isOpen={deleteModal} className="modal-md" onClick={toggleDeleteModal}>
+                                <ModalBody>
+                                    <div className='p-3'>
+                                        <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.name ?? null}</span> doctor?</h6>
+                                    </div>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <div className='d-flex'>
+                                        <button onClick={toggleDeleteModal} className='btn btn-primary btn-sm fw-bold me-2'>close</button>
+                                        <button onClick={handelDelete} className='btn btn-danger btn-sm fw-bold'>delete</button>
+                                    </div>
+                                </ModalFooter>
+                            </Modal>
+                        </div>
+                    ) : null}
                 </>
             )}
         </div>
     );
 };
 
-export default AdministratorDoctorList;
+export default DoctorList;

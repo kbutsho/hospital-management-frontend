@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from '@/styles/signup/signup.module.css';
 import { AiFillStar } from "react-icons/ai";
 import { BiHide, BiShow } from "react-icons/bi";
@@ -16,12 +16,13 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [department, setDepartment] = useState();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         phone: '',
         bmdc_id: '',
-        specialization_id: '',
+        department_id: '',
         designation: '',
         password: '',
         confirmPassword: '',
@@ -38,6 +39,18 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
         });
         setMessage(null)
     };
+    const fetchDepartment = useCallback(async () => {
+        try {
+            const response = await axios.get(`${config.api}/department/all`);
+            setDepartment(response.data.data)
+        } catch (error) {
+            toast.error("internal server error!")
+        }
+    }, [setDepartment])
+    useEffect(() => {
+        fetchDepartment();
+    }, [fetchDepartment]);
+
     const formSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -47,7 +60,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                 phone: formData.phone,
                 email: formData.email,
                 bmdc_id: formData.bmdc_id,
-                specialization_id: formData.specialization_id,
+                department_id: formData.department_id,
                 designation: formData.designation,
                 role: ROLE.DOCTOR,
                 password: formData.password,
@@ -61,7 +74,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                     phone: '',
                     email: '',
                     bmdc_id: '',
-                    specialization_id: '',
+                    department_id: '',
                     designation: '',
                     password: '',
                     confirmPassword: '',
@@ -194,20 +207,26 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                             <div className="col-md-6">
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Specialization</span>
+                                        <span className='fw-bold'>Department</span>
                                         <AiFillStar className='required' />
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="specialization_id"
-                                        placeholder='select specialization'
-                                        value={formData.specialization_id}
+                                    <select
+                                        name="department_id"
+                                        value={formData.department_id}
                                         onChange={handelInputChange}
-                                        className={`form-control ${formData.errors?.specialization_id ? 'is-invalid' : null}`}
-                                    />
+                                        className={`form-select ${formData.errors?.department_id ? 'is-invalid' : ''
+                                            }`}
+                                    >
+                                        <option value="">select department</option>
+                                        {department?.map((department) => (
+                                            <option key={department.id} value={department.id}>
+                                                {department.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.specialization_id ? formData.errors?.specialization_id : null
+                                            formData.errors?.department_id ? formData.errors?.department_id : null
                                         }
                                     </small>
                                 </div>

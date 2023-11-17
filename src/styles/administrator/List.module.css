@@ -119,6 +119,7 @@
 .searchArea {
     box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
     border-radius: 4px;
+    margin-bottom: 10px;
 }
 
 .searchBox {
@@ -130,6 +131,15 @@
 
 .searchBox:focus {
     box-shadow: none;
+}
+
+.addBtn {
+    color: black;
+    border: none;
+    width: 100%;
+    font-weight: bold;
+    padding: 8px 0;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
 }
 
 .notFound {
