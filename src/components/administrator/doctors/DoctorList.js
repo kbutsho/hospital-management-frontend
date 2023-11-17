@@ -56,7 +56,7 @@ const DoctorList = () => {
             setLoading(true)
             const response = await axios.get(`${config.api}/department/all`);
             const departmentNames = response.data.data.map((dept) => dept.name);
-            departmentNames.push("show all");
+            departmentNames.unshift("show all");
             setDepartment(departmentNames);
             setLoading(false)
         } catch (error) {
@@ -80,10 +80,10 @@ const DoctorList = () => {
     }
     // filter by status
     const userStatus = [
+        USER_STATUS.SHOW_ALL,
         USER_STATUS.ACTIVE,
         USER_STATUS.DISABLE,
-        USER_STATUS.PENDING,
-        USER_STATUS.SHOW_ALL
+        USER_STATUS.PENDING
     ]
     const [filterByStatus, setFilterByStatus] = useState('');
     const handelFilterByStatus = (event) => {
@@ -110,6 +110,7 @@ const DoctorList = () => {
             item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.departmentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             String(item.specialization).toLowerCase().includes(searchTerm.toLowerCase()) ||
             String(item.address).toLowerCase().includes(searchTerm.toLowerCase());
         return statusMatch && DepartmentMatch && searchMatch;
@@ -134,19 +135,13 @@ const DoctorList = () => {
         Cookies.remove('delete_item')
     }
     // update status
-    const [statusMap, setStatusMap] = useState({});
     const handleStatusChange = async (event, userId) => {
         try {
-            const { value } = event.target;
-            setStatusMap(prevStatusMap => ({
-                ...prevStatusMap,
-                [userId]: value
-            }));
-            const updatedStatus = statusMap[userId];
             const data = {
                 'userId': userId,
-                'status': updatedStatus
+                'status': event.target.value
             }
+            // console.log(data)
             setLoading(true)
             const response = await axios.post(`${config.api}/administrator/doctor/update/status`, data, {
                 headers: {
@@ -159,7 +154,6 @@ const DoctorList = () => {
                 toast.success("status update successfully!")
             }
         } catch (error) {
-            console.log(error)
             setLoading(false)
             toast.error("internal server error!")
         }
@@ -266,7 +260,7 @@ const DoctorList = () => {
                                             </span>
                                         </div>
                                     </button>
-                                    <div className={`${departmentToggle ? styles.show : styles.hide}`}>
+                                    <div className={`${departmentToggle ? `${styles.show} ${styles.scrollable}` : styles.hide}`}>
                                         {department?.map((name, index) => (
                                             <div key={index}>
                                                 <label htmlFor={`name_${index}`} className={styles.radioArea}>
@@ -332,14 +326,18 @@ const DoctorList = () => {
                                                                 <td className='text-center'>
                                                                     <select
                                                                         className="status-select form-select fw-bold"
-                                                                        value={statusMap[data.userId] || data.status}
+                                                                        value={data.status}
                                                                         onChange={(event) => handleStatusChange(event, data.userId)}
-                                                                        style={{ cursor: "pointer" }}>
+                                                                        style={{ color: data.status === 'active' ? 'green' : 'red' }}
+                                                                    >
                                                                         {Object.entries(USER_STATUS)
                                                                             .filter(([key, value]) => value !== USER_STATUS.SHOW_ALL)
                                                                             .map(([key, value]) => (
-                                                                                <option key={key} value={value}>
-                                                                                    {value}
+                                                                                <option key={key}
+                                                                                    value={value}
+                                                                                    className='fw-bold'
+                                                                                    style={{ color: value === 'active' ? 'green' : 'red' }}>
+                                                                                    <span >{value}</span>
                                                                                 </option>
                                                                             ))}
                                                                     </select>
@@ -390,8 +388,9 @@ const DoctorList = () => {
                         </div>
                     ) : null}
                 </>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 

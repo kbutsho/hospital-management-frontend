@@ -102,3 +102,52 @@
 .other-option {
     color: red;
 }
+
+.custom-dropdown {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-height: 40px;
+    /* Adjust this height based on your preference */
+}
+
+.custom-dropdown select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    height: 100%;
+    z-index: 1;
+}
+
+.custom-dropdown::after {
+    content: '\25BC';
+    /* Unicode for down arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.custom-dropdown select:focus+.validation-error {
+    display: block;
+}
+
+.active-status {
+    color: green;
+    /* Change color for active status */
+}
+
+.inactive-status {
+    color: red;
+    /* Change color for inactive status */
+}

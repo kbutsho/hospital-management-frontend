@@ -10,6 +10,7 @@ import axios from 'axios';
 import { config } from '@/config';
 import { BeatLoader } from 'react-spinners';
 import { ImCross } from "react-icons/im"
+import Select from 'react-select';
 
 const DoctorSignup = ({ activeComponent, handleTabClick }) => {
     const [message, setMessage] = useState(null);
@@ -22,12 +23,12 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
         email: '',
         phone: '',
         bmdc_id: '',
-        department_id: '',
         designation: '',
         password: '',
         confirmPassword: '',
         errors: []
     })
+    const [selectDepartment, setSelectDepartment] = useState(null);
     const handelInputChange = (event) => {
         setFormData({
             ...formData,
@@ -38,6 +39,28 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
             }
         });
         setMessage(null)
+    };
+    const options = department?.map((dept) => ({ value: dept.id, label: dept.name }));
+    const handleDepartmentChange = (newValue) => {
+        setSelectDepartment(newValue);
+        setFormData({
+            ...formData,
+            errors: {
+                ...formData.errors,
+                department_id: null
+            }
+        });
+
+    };
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            cursor: 'none'
+        }),
+        option: (provided) => ({
+            ...provided,
+            cursor: 'pointer'
+        }),
     };
     const fetchDepartment = useCallback(async () => {
         try {
@@ -60,7 +83,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                 phone: formData.phone,
                 email: formData.email,
                 bmdc_id: formData.bmdc_id,
-                department_id: formData.department_id,
+                department_id: selectDepartment.value,
                 designation: formData.designation,
                 role: ROLE.DOCTOR,
                 password: formData.password,
@@ -74,12 +97,12 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                     phone: '',
                     email: '',
                     bmdc_id: '',
-                    department_id: '',
                     designation: '',
                     password: '',
                     confirmPassword: '',
                     errors: []
                 });
+                setSelectDepartment(null);
                 setMessage(response.data.message)
                 // toast.success(response.data.message)
             }
@@ -210,20 +233,17 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                                         <span className='fw-bold'>Department</span>
                                         <AiFillStar className='required' />
                                     </label>
-                                    <select
-                                        name="department_id"
-                                        value={formData.department_id}
-                                        onChange={handelInputChange}
-                                        className={`form-select ${formData.errors?.department_id ? 'is-invalid' : ''
-                                            }`}
-                                    >
-                                        <option value="">select department</option>
-                                        {department?.map((department) => (
-                                            <option key={department.id} value={department.id}>
-                                                {department.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div>
+                                        <Select
+                                            value={selectDepartment}
+                                            onChange={handleDepartmentChange}
+                                            options={options}
+                                            isSearchable
+                                            placeholder="type or select department"
+                                            styles={customStyles}
+                                        />
+
+                                    </div>
                                     <small className='validation-error'>
                                         {
                                             formData.errors?.department_id ? formData.errors?.department_id : null

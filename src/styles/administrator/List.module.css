@@ -96,6 +96,11 @@
     padding-bottom: 2px;
 }
 
+.scrollable {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
 .radioInput {
     margin-top: 2px;
     margin-right: 5px;

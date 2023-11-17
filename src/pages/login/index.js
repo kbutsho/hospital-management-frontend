@@ -113,21 +113,21 @@ const Login = () => {
     }
     const demoUser = {
         administrator: {
-            email: process.env.NEXT_PUBLIC_ADMINISTRATOR_EMAIL,
+            credential: process.env.NEXT_PUBLIC_ADMINISTRATOR_EMAIL,
             password: process.env.NEXT_PUBLIC_ADMINISTRATOR_PASSWORD
         },
         doctor: {
-            email: process.env.NEXT_PUBLIC_DOCTOR_EMAIL,
+            credential: process.env.NEXT_PUBLIC_DOCTOR_EMAIL,
             password: process.env.NEXT_PUBLIC_DOCTOR_PASSWORD
         },
         assistant: {
-            email: process.env.NEXT_PUBLIC_ASSISTANT_EMAIL,
+            credential: process.env.NEXT_PUBLIC_ASSISTANT_EMAIL,
             password: process.env.NEXT_PUBLIC_ASSISTANT_PASSWORD
         }
     }
     const handleUserClick = (user) => {
         setFormData({
-            credential: user.email,
+            credential: user.credential,
             password: user.password
         });
     };
@@ -217,8 +217,8 @@ const Login = () => {
                                     <tbody>
                                         <tr>
                                             <td onClick={() => handleUserClick(demoUser.administrator)}>administrator</td>
-                                            <td onClick={() => handleUserClick(demoUser.manager)}>doctor</td>
-                                            <td onClick={() => handleUserClick(demoUser.seller)}>assistant</td>
+                                            <td onClick={() => handleUserClick(demoUser.doctor)}>doctor</td>
+                                            <td onClick={() => handleUserClick(demoUser.assistant)}>assistant</td>
                                         </tr>
                                     </tbody>
                                 </table>
