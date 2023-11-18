@@ -13,31 +13,34 @@ import { Table } from 'react-bootstrap';
 import { errorHandler } from '@/helpers/errorHandler';
 
 
-const DepartmentList = () => {
+const ChamberList = () => {
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(true);
     const [addModal, setAddModal] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const [updateModal, setUpdateModal] = useState(false)
-    const [data, setData] = useState();
-    const [deleteItem, setDeleteItem] = useState({
-        id: '',
-        name: ''
-    })
-    const [updateItem, setUpdateItem] = useState({
-        id: '',
-        name: '',
-        errors: []
-    })
+
+    // const [data, setData] = useState();
+    // const [deleteItem, setDeleteItem] = useState({
+    //     id: '',
+    //     address: ''
+    // })
+    // const [updateItem, setUpdateItem] = useState({
+    //     id: '',
+    //     address: '',
+    //     errors: []
+    // })
+
     const [formData, setFormData] = useState({
-        name: '',
+        'id': '',
+        address: '',
         errors: []
     })
 
     const fetchData = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${config.api}/administrator/department/all`, {
+            const response = await axios.get(`${config.api}/doctor/chambers/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -65,13 +68,13 @@ const DepartmentList = () => {
             }
         })
     };
-    // add department
+    // add chamber
     const formSubmit = async (event) => {
         event.preventDefault();
         try {
             setLoading(!loading);
             const data = {
-                name: formData?.name
+                address: formData?.name
             }
             const response = await axios.post(`${config.api}/administrator/department/create`, data, {
                 headers: {
@@ -374,4 +377,4 @@ const DepartmentList = () => {
     );
 };
 
-export default DepartmentList;
+export default ChamberList;

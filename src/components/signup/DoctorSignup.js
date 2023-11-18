@@ -11,9 +11,11 @@ import { config } from '@/config';
 import { BeatLoader } from 'react-spinners';
 import { ImCross } from "react-icons/im"
 import Select from 'react-select';
+import { errorHandler } from '@/helpers/errorHandler';
 
 const DoctorSignup = ({ activeComponent, handleTabClick }) => {
     const [message, setMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -39,6 +41,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
             }
         });
         setMessage(null)
+        setErrorMessage(null)
     };
     const options = department?.map((dept) => ({ value: dept.id, label: dept.name }));
     const handleDepartmentChange = (newValue) => {
@@ -50,7 +53,8 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                 department_id: null
             }
         });
-
+        setMessage(null)
+        setErrorMessage(null)
     };
     const customStyles = {
         control: (provided) => ({
@@ -67,7 +71,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
             const response = await axios.get(`${config.api}/department/all`);
             setDepartment(response.data.data)
         } catch (error) {
-            toast.error("internal server error!")
+            return errorHandler({ error, toast })
         }
     }, [setDepartment])
     useEffect(() => {
@@ -83,7 +87,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                 phone: formData.phone,
                 email: formData.email,
                 bmdc_id: formData.bmdc_id,
-                department_id: selectDepartment.value,
+                department_id: selectDepartment?.value,
                 designation: formData.designation,
                 role: ROLE.DOCTOR,
                 password: formData.password,
@@ -104,24 +108,13 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                 });
                 setSelectDepartment(null);
                 setMessage(response.data.message)
-                // toast.success(response.data.message)
+                setErrorMessage(null)
             }
         } catch (error) {
             setLoading(false);
             setMessage(null)
-            if (error.response) {
-                setFormData({
-                    ...formData,
-                    errors: error.response.data.error
-                });
-                toast.error(error.response.data.message)
-            }
-            else if (error.isAxiosError) {
-                toast.error("network error. try again later!");
-            }
-            else {
-                toast.error("unexpected error. try again later!");
-            }
+            setErrorMessage(null)
+            return errorHandler({ error, toast, setFormData, formData, setErrorMessage })
         }
     }
     const showPasswordBtn = () => {
@@ -132,6 +125,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
     }
     const handelCrossBtn = () => {
         setMessage(null)
+        setErrorMessage(null)
     }
     return (
         <div className={styles.body}>
@@ -143,6 +137,13 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                         message ?
                             <div className='alert alert-success fw-bold d-flex justify-content-between'>
                                 <div>{message}</div>
+                                <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
+                            </div> : null
+                    }
+                    {
+                        errorMessage ?
+                            <div className='alert alert-danger fw-bold d-flex justify-content-between'>
+                                <div>{errorMessage}</div>
                                 <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
                             </div> : null
                     }

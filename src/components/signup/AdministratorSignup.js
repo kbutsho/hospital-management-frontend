@@ -10,9 +10,11 @@ import { config } from '@/config';
 import { toast } from 'react-toastify';
 import BeatLoader from "react-spinners/BeatLoader";
 import { ImCross } from "react-icons/im"
+import { errorHandler } from '@/helpers/errorHandler';
 
 const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
     const [message, setMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -36,7 +38,8 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                 [event.target.name]: null
             }
         });
-        setMessage(null)
+        setMessage(null);
+        setErrorMessage(null)
     };
     const formSubmit = async (event) => {
         event.preventDefault();
@@ -67,24 +70,14 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                     confirmPassword: '',
                     errors: []
                 });
-                setMessage(response.data.message)
+                setMessage(response.data.message);
+                setErrorMessage(null)
             }
         } catch (error) {
             setLoading(false);
             setMessage(null);
-            if (error.response) {
-                setFormData({
-                    ...formData,
-                    errors: error.response.data.error
-                });
-                toast.error(error.response.data.message)
-            }
-            else if (error.isAxiosError) {
-                toast.error("network error. try again later!");
-            }
-            else {
-                toast.error("unexpected error. try again later!");
-            }
+            setErrorMessage(null);
+            return errorHandler({ error, toast, setFormData, formData, setErrorMessage })
         }
     }
     const showPasswordBtn = () => {
@@ -94,7 +87,8 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
         setShowConfirmPassword(!showConfirmPassword)
     }
     const handelCrossBtn = () => {
-        setMessage(null)
+        setMessage(null);
+        setErrorMessage(null)
     }
     return (
         <div className={styles.body}>
@@ -106,6 +100,13 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                         message ?
                             <div className='alert alert-success fw-bold d-flex justify-content-between'>
                                 <div>{message}</div>
+                                <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
+                            </div> : null
+                    }
+                    {
+                        errorMessage ?
+                            <div className='alert alert-danger fw-bold d-flex justify-content-between'>
+                                <div>{errorMessage}</div>
                                 <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
                             </div> : null
                     }

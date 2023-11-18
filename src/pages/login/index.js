@@ -11,6 +11,7 @@ import { BeatLoader } from 'react-spinners';
 import Cookies from 'js-cookie';
 import { ROLE } from '@/constant';
 import { ImCross } from "react-icons/im"
+import { errorHandler } from '@/helpers/errorHandler';
 
 const Login = () => {
     const router = useRouter();
@@ -45,7 +46,6 @@ const Login = () => {
                 password: formData?.password,
             }
             const response = await axios.post(`${config.api}/login`, data)
-            console.log(response)
             setErrorMessage(null)
             setLoading(false);
             if (response.data.status) {
@@ -73,39 +73,10 @@ const Login = () => {
                     toast.error("invalid credential!");
                 }
             }
-        } catch (error) {
-            console.log(error)
+        }
+        catch (error) {
             setLoading(false);
-            if (error.response) {
-                // 500 = internal server error
-                // 422 = validation error
-                // 401 = unauthorized, invalid
-                // 403 = pending status
-                const errorStatus = error.response.status;
-                if (errorStatus === 422) {
-                    setFormData({
-                        ...formData,
-                        errors: error.response.data.error
-                    });
-                    setErrorMessage(error.response.data.message);
-                    toast.error("login failed!")
-                } else if (errorStatus === 401 || errorStatus === 403 || errorStatus === 500) {
-                    setErrorMessage(error.response.data.error);
-                    toast.error(error.response.data.message)
-                }
-                else {
-                    setErrorMessage("unexpected error. try again later!")
-                    toast.error("login failed!");
-                }
-            }
-            else if (error.isAxiosError) {
-                setErrorMessage("network error. try again later!")
-                toast.error("login failed!");
-            }
-            else {
-                setErrorMessage("unexpected error. try again later!")
-                toast.error("login failed!");
-            }
+            return errorHandler({ error, toast, setFormData, formData, setErrorMessage })
         }
     }
     const handelCrossBtn = () => {

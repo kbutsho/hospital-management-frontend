@@ -13,6 +13,7 @@ import { ImCross } from "react-icons/im"
 
 const AssistantSignup = ({ activeComponent, handleTabClick }) => {
     const [message, setMessage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -36,7 +37,8 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                 [event.target.name]: null
             }
         });
-        setMessage(null)
+        setMessage(null);
+        setErrorMessage(null)
     };
     const formSubmit = async (event) => {
         event.preventDefault();
@@ -68,24 +70,13 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                     errors: []
                 });
                 setMessage(response.data.message);
-                // toast.success(response.data.message)
+                setErrorMessage(null);
             }
         } catch (error) {
             setLoading(false);
             setMessage(null)
-            if (error.response) {
-                setFormData({
-                    ...formData,
-                    errors: error.response.data.error
-                });
-                toast.error(error.response.data.message)
-            }
-            else if (error.isAxiosError) {
-                toast.error("network error. try again later!");
-            }
-            else {
-                toast.error("unexpected error. try again later!");
-            }
+            setErrorMessage(null)
+            return errorHandler({ error, toast, setFormData, formData, setErrorMessage })
         }
     }
     const showPasswordBtn = () => {
@@ -95,7 +86,8 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
         setShowConfirmPassword(!showConfirmPassword)
     }
     const handelCrossBtn = () => {
-        setMessage(null)
+        setMessage(null);
+        setErrorMessage(null);
     }
     return (
         <div className={styles.body}>
@@ -107,6 +99,13 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                         message ?
                             <div className='alert alert-success fw-bold d-flex justify-content-between'>
                                 <div>{message}</div>
+                                <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
+                            </div> : null
+                    }
+                    {
+                        errorMessage ?
+                            <div className='alert alert-danger fw-bold d-flex justify-content-between'>
+                                <div>{errorMessage}</div>
                                 <ImCross onClick={handelCrossBtn} className={styles.crossBtn} />
                             </div> : null
                     }

@@ -11,6 +11,7 @@ import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { errorHandler } from '@/helpers/errorHandler';
 
 const DoctorList = () => {
     const token = Cookies.get('token');
@@ -22,7 +23,7 @@ const DoctorList = () => {
         id: '',
         name: ''
     })
-    const fetchData = useCallback(async () => {
+    const fetchData = async () => {
         try {
             setLoading(true);
             const response = await axios.get(`${config.api}/administrator/doctor/all`, {
@@ -36,37 +37,31 @@ const DoctorList = () => {
             }
         } catch (error) {
             setLoading(false);
-            if (error.response) {
-                toast.error(error.response.data.error) // here toast message show 2 time. why?
-            }
-            else if (error.isAxiosError) {
-                toast.error("network error. try again later!");
-            }
-            else {
-                toast.error("unexpected error. try again later!");
-            }
+            return errorHandler({ error, toast })
+            // toast.error("internal server error!");
         }
-    }, [setData, token, setLoading]);
+    };
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        fetchData()
+    }, []);
 
-    const fetchDepartment = useCallback(async () => {
-        try {
-            setLoading(true)
-            const response = await axios.get(`${config.api}/department/all`);
-            const departmentNames = response.data.data.map((dept) => dept.name);
-            departmentNames.unshift("show all");
-            setDepartment(departmentNames);
-            setLoading(false)
-        } catch (error) {
-            setLoading(false)
-            toast.error("internal server error!")
-        }
-    }, [setDepartment])
     useEffect(() => {
+        const fetchDepartment = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`${config.api}/department/all`);
+                const departmentNames = response.data.data.map((dept) => dept.name);
+                departmentNames.unshift("show all");
+                setDepartment(departmentNames);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false)
+                return errorHandler({ error, toast })
+                // toast.error("internal server error!")
+            }
+        };
         fetchDepartment();
-    }, [fetchDepartment]);
+    }, []);
 
 
     // filter by department
@@ -124,16 +119,6 @@ const DoctorList = () => {
     const handelPaginate = (pageNumber) => {
         setCurrentPage(pageNumber)
     }
-    // delete
-    const [modal, setModal] = useState(false)
-    const toggleModal = (id) => {
-        setModal(!modal)
-        Cookies.set('delete_item', id);
-    }
-    const closeModal = () => {
-        setModal(!modal)
-        Cookies.remove('delete_item')
-    }
     // update status
     const handleStatusChange = async (event, userId) => {
         try {
@@ -141,7 +126,6 @@ const DoctorList = () => {
                 'userId': userId,
                 'status': event.target.value
             }
-            // console.log(data)
             setLoading(true)
             const response = await axios.post(`${config.api}/administrator/doctor/update/status`, data, {
                 headers: {
@@ -155,10 +139,9 @@ const DoctorList = () => {
             }
         } catch (error) {
             setLoading(false)
-            toast.error("internal server error!")
+            return errorHandler({ error, toast })
         }
     };
-
     // delete
     const toggleDeleteModal = (id, name) => {
         setDeleteModal(!deleteModal)
@@ -177,7 +160,7 @@ const DoctorList = () => {
             await fetchData()
         } catch (error) {
             setLoading(false)
-            toast.error("internal server error!")
+            return errorHandler({ error, toast })
         }
     }
     return (
