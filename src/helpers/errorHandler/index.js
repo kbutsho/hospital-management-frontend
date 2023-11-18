@@ -5,6 +5,7 @@ export const errorHandler = ({ error, toast = null, setFormData = null, formData
             setFormData({
                 ...formData,
                 errors: error.response.data.error
+
             });
             if (setErrorMessage) {
                 setErrorMessage(error.response.data.message);
@@ -13,10 +14,10 @@ export const errorHandler = ({ error, toast = null, setFormData = null, formData
                 toast.error(error.response.data.message);
             }
         }
-        if (setErrorMessage) {
+        else if (setErrorMessage) {
             setErrorMessage(error.response.data.message);
         }
-        if (toast) {
+        else if (toast) {
             toast.error(error.response.data.message);
         }
     } else if (error.isAxiosError && setErrorMessage && toast) {

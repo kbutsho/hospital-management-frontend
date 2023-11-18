@@ -19,36 +19,32 @@ const ChamberList = () => {
     const [addModal, setAddModal] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const [updateModal, setUpdateModal] = useState(false)
-
-    // const [data, setData] = useState();
-    // const [deleteItem, setDeleteItem] = useState({
-    //     id: '',
-    //     address: ''
-    // })
+    const [data, setData] = useState(null);
+    const [deleteItem, setDeleteItem] = useState({
+        id: '',
+        address: ''
+    })
     // const [updateItem, setUpdateItem] = useState({
     //     id: '',
     //     address: '',
     //     errors: []
     // })
-
     const [formData, setFormData] = useState({
-        'id': '',
+        id: '',
         address: '',
         errors: []
     })
-
+    // start fetch 
     const fetchData = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${config.api}/doctor/chambers/all`, {
+            const response = await axios.get(`${config.api}/doctor/chamber/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             setLoading(false);
-            if (response.data.status) {
-                setData(response.data.data);
-            }
+            setData(response.data.data);
         } catch (error) {
             setLoading(false);
             return errorHandler({ error, toast })
@@ -57,45 +53,7 @@ const ChamberList = () => {
     useEffect(() => {
         fetchData()
     }, [])
-
-    const handelInputChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-            errors: {
-                ...formData.errors,
-                [event.target.name]: null
-            }
-        })
-    };
-    // add chamber
-    const formSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            setLoading(!loading);
-            const data = {
-                address: formData?.name
-            }
-            const response = await axios.post(`${config.api}/administrator/department/create`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            setLoading(false);
-            if (response.data.status) {
-                setFormData({
-                    name: '',
-                    errors: []
-                });
-                setAddModal(false);
-                await fetchData();
-                toast.success(response.data.message);
-            }
-        } catch (error) {
-            setLoading(false);
-            return errorHandler({ error, toast, setFormData, formData })
-        }
-    }
+    // end fetch
     // search input field
     const [searchTerm, setSearchTerm] = useState('');
     const handelSearch = (event) => {
@@ -103,7 +61,7 @@ const ChamberList = () => {
     };
     const filterAndSearchData = data?.filter((item) => {
         const searchMatch = searchTerm === '' ||
-            item.name.toLowerCase().includes(searchTerm.toLowerCase());
+            item.address.toLowerCase().includes(searchTerm.toLowerCase());
         return searchMatch;
     })
     //pagination
@@ -115,18 +73,59 @@ const ChamberList = () => {
     const handelPaginate = (pageNumber) => {
         setCurrentPage(pageNumber)
     }
+    // end pagination
+    // start add 
     const toggleAddModal = () => {
         setAddModal(!addModal)
     }
-    // delete
-    const toggleDeleteModal = (id, name) => {
+    const handelInputChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name]: event.target.value,
+            errors: {
+                ...formData.errors,
+                [event.target.name]: null
+            }
+        })
+    };
+    const formSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            setLoading(!loading);
+            const data = {
+                address: formData?.address
+            }
+            const response = await axios.post(`${config.api}/doctor/chamber/create`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setLoading(false);
+            if (response.data.status) {
+                setFormData({
+                    id: '',
+                    address: '',
+                    errors: []
+                });
+                setAddModal(false);
+                await fetchData();
+                toast.success(response.data.message);
+            }
+        } catch (error) {
+            setLoading(false);
+            return errorHandler({ error, toast, setFormData, formData })
+        }
+    }
+    // end add
+    // start delete
+    const toggleDeleteModal = (id, address) => {
         setDeleteModal(!deleteModal)
-        setDeleteItem({ name: name ?? '', id: id ?? '' });
+        setDeleteItem({ address: address, id: id });
     }
     const handelDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`${config.api}/administrator/department/${deleteItem?.id}`, {
+            await axios.delete(`${config.api}/doctor/chamber/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -137,63 +136,40 @@ const ChamberList = () => {
         } catch (error) {
             setLoading(false)
             return errorHandler({ error, toast })
-            // toast.error("internal server error!")
         }
     }
-    // update
-    const toggleUpdateModal = (id, name) => {
+    // end delete
+    // start update
+    const toggleUpdateModal = (id, address) => {
         setUpdateModal(!updateModal)
-        setUpdateItem({ name: name ?? '', id: id ?? '' });
-    }
-    const handelUpdateChange = (event) => {
-        setUpdateItem({
-            ...updateItem,
-            [event.target.name]: event.target.value,
-            errors: {
-                ...updateItem.errors,
-                [event.target.name]: null
-            }
+        setFormData({
+            'id': id,
+            'address': address
         })
-    };
+    }
     const handelUpdate = async () => {
         try {
             setLoading(true)
             const data = {
-                name: updateItem.name
+                address: formData?.address
             }
-            await axios.patch(`${config.api}/administrator/department/${updateItem?.id}`, data, {
+            const response = await axios.patch(`${config.api}/doctor/chamber/${formData?.id}`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             setLoading(false);
             setUpdateModal(false);
-            toast.success("department updated successfully!")
+            setFormData({
+                'id': '',
+                'address': '',
+                'errors': []
+            })
+            toast.success(response.data.message)
             await fetchData()
         } catch (error) {
             setLoading(false)
-            if (error.response) {
-                const errorStatus = error.response.status;
-                if (errorStatus === 422 || errorStatus === 409) {
-                    setUpdateItem({
-                        ...updateItem,
-                        errors: error.response.data.error
-                    });
-                    toast.error(error.response.data.message)
-                }
-                else if (errorStatus === 401 || errorStatus === 500) {
-                    toast.error(error.response.data.error)
-                }
-                else {
-                    toast.error("unexpected error. try again later!");
-                }
-            }
-            else if (error.isAxiosError) {
-                toast.error("network error. try again later!");
-            }
-            else {
-                toast.error("network error. try again later!");
-            }
+            return errorHandler({ error, toast, setFormData, formData })
         }
     }
     return (
@@ -242,15 +218,18 @@ const ChamberList = () => {
                             {
                                 currentData?.length === 0 ?
                                     <div className={styles.notFound}>
-                                        <h6 className='fw-bold'>no data found.</h6>
+                                        <h6 className='fw-bold'>no chamber found.</h6>
                                     </div>
                                     : <div className='p-3 mt-3 table-area'>
                                         <Table striped hover responsive>
                                             <thead className='p-3'>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>DEPARTMENT ID</th>
-                                                    <th>DEPARTMENT NAME</th>
+                                                    <th>USER ID</th>
+                                                    <th>DOCTOR ID</th>
+                                                    <th>ADDRESS</th>
+                                                    <th>Assistant</th>
+                                                    <th className='text-center'>STATUS</th>
                                                     <th className='text-center'>ACTION</th>
                                                 </tr>
                                             </thead>
@@ -260,13 +239,16 @@ const ChamberList = () => {
                                                         return (
                                                             <tr key={index}>
                                                                 <td>{index + 1}</td>
-                                                                <td>{data.id}</td>
-                                                                <td>{data.name}</td>
+                                                                <td>{data.user_id}</td>
+                                                                <td>{data.doctor_id}</td>
+                                                                <td>{data.address}</td>
+                                                                <td className='text-danger fw-bold'>coming soon</td>
+                                                                <td className='text-center'>{data.status}</td>
                                                                 <td >
                                                                     <div className='d-flex justify-content-center'>
                                                                         <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                        <button onClick={() => toggleUpdateModal(data.id, data.name)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
-                                                                        <button onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
+                                                                        <button onClick={() => toggleUpdateModal(data.id, data.address)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                        <button onClick={() => toggleDeleteModal(data.id, data.address)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -296,23 +278,23 @@ const ChamberList = () => {
                                 <ModalBody>
                                     <div className='p-3'>
                                         <div className='d-flex justify-content-between align-items-center mb-3'>
-                                            <h4 onClick={() => toggleAddModal()} className='fw-bold text-uppercase'>Add Department</h4>
+                                            <h4 onClick={() => toggleAddModal()} className='fw-bold text-uppercase'>Add Chamber</h4>
                                             <RxCross2 size="24px" color='red' onClick={() => toggleAddModal()} style={{ cursor: "pointer" }} />
                                         </div>
                                         <form onSubmit={formSubmit}>
                                             <label className='mb-2'>
-                                                <span className='fw-bold'>Department Name</span>
+                                                <span className='fw-bold'>Chamber Address</span>
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
                                                 type="text"
-                                                name="name"
+                                                name="address"
                                                 onChange={handelInputChange}
-                                                value={formData?.name}
+                                                value={formData?.address}
                                                 className='form-control' />
                                             <small className='validation-error'>
                                                 {
-                                                    formData?.errors?.name ? formData?.errors?.name : null
+                                                    formData?.errors?.address ? formData?.errors?.address : null
                                                 }
                                             </small>
                                             <input type="submit" value="submit" className='btn btn-primary w-100 mt-3 fw-bold' />
@@ -327,7 +309,7 @@ const ChamberList = () => {
                             <Modal isOpen={deleteModal} className="modal-md" onClick={toggleDeleteModal}>
                                 <ModalBody>
                                     <div className='p-3'>
-                                        <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.name ?? null}</span> department?</h6>
+                                        <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.address ?? null}'s</span> chamber?</h6>
                                     </div>
                                 </ModalBody>
                                 <ModalFooter>
@@ -345,25 +327,26 @@ const ChamberList = () => {
                                 <ModalBody>
                                     <div className='p-3'>
                                         <div className='d-flex justify-content-between align-items-center mb-3'>
-                                            <h4 onClick={() => toggleAddModal()} className='fw-bold text-uppercase'>Update Department</h4>
+                                            <h4 onClick={() => toggleAddModal()} className='fw-bold text-uppercase'>Update Chamber Information</h4>
                                             <RxCross2 size="24px" color='red' onClick={toggleUpdateModal} style={{ cursor: "pointer" }} />
                                         </div>
                                         <form onSubmit={handelUpdate}>
                                             <label className='mb-2'>
-                                                <span className='fw-bold'>Department Name</span>
+                                                <span className='fw-bold'>Chamber Location</span>
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
                                                 type="text"
-                                                name="name"
-                                                onChange={handelUpdateChange}
-                                                value={updateItem?.name}
+                                                name="address"
+                                                onChange={handelInputChange}
+                                                value={formData?.address}
                                                 className='form-control' />
                                             <small className='validation-error'>
                                                 {
-                                                    updateItem?.errors?.name ? updateItem?.errors?.name : null
+                                                    formData?.errors?.address ? formData?.errors?.address : null
                                                 }
                                             </small>
+                                            <p className='py-3'>remove / add assistant <span className='fw-bold'>(coming soon)</span></p>
                                             <input type="submit" value="submit" className='btn btn-primary w-100 mt-3 fw-bold' />
                                         </form>
                                     </div>
