@@ -66,6 +66,9 @@ const DepartmentList = () => {
         })
     };
     // add department
+    const toggleAddModal = () => {
+        setAddModal(!addModal)
+    }
     const formSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -112,9 +115,7 @@ const DepartmentList = () => {
     const handelPaginate = (pageNumber) => {
         setCurrentPage(pageNumber)
     }
-    const toggleAddModal = () => {
-        setAddModal(!addModal)
-    }
+
     // delete
     const toggleDeleteModal = (id, name) => {
         setDeleteModal(!deleteModal)

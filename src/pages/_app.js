@@ -1,10 +1,12 @@
+import store from '@/redux/store';
 import '@/styles/globals.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import { useEffect } from 'react';
-// import { Poppins } from 'next/font/google'
+import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// import { Poppins } from 'next/font/google'
 // const poppins = Poppins({
 //   weight: ['400', '700', '900'],
 //   style: ['normal', 'italic'],
@@ -18,8 +20,11 @@ export default function App({ Component, pageProps }) {
   }, [])
   const getLayout = Component.getLayout || ((page) => page);
   return (
-    <main>
-      <ToastContainer position="bottom-right" autoClose={4000} />
-      {getLayout(<Component {...pageProps} />)}
-    </main>)
+    <Provider store={store}>
+      <main>
+        <ToastContainer position="bottom-right" autoClose={4000} />
+        {getLayout(<Component {...pageProps} />)}
+      </main>
+    </Provider>
+  )
 }

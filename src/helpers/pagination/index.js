@@ -1,7 +1,6 @@
-const Pagination = ({ data, currentPage, dataPerPage, handelPaginate }) => {
-    const totalPages = Math.ceil(data.length / dataPerPage);
+const Pagination = ({ totalItem, currentPage, dataPerPage, handelPaginate }) => {
+    const totalPages = Math.ceil(totalItem / dataPerPage);
     const maxVisiblePages = 5;
-
     if (totalPages <= 1) {
         return null;
     }

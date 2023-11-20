@@ -283,7 +283,7 @@ const ChamberList = () => {
                                         </div>
                                         <form onSubmit={formSubmit}>
                                             <label className='mb-2'>
-                                                <span className='fw-bold'>Chamber Address</span>
+                                                <span className='fw-bold'>chamber address/room</span>
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
@@ -332,7 +332,7 @@ const ChamberList = () => {
                                         </div>
                                         <form onSubmit={handelUpdate}>
                                             <label className='mb-2'>
-                                                <span className='fw-bold'>Chamber Location</span>
+                                                <span className='fw-bold'>chamber address/room</span>
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
