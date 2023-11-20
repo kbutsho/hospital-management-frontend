@@ -13,12 +13,13 @@ import { RxCross2 } from "react-icons/rx";
 import Link from "next/link";
 import styles from "@/styles/administrator/List.module.css"
 import Pagination from '@/helpers/pagination';
+import { FadeLoader } from "react-spinners";
 
 
 const ServerSide = () => {
 
     const dispatch = useDispatch();
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [addModal, setAddModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [deleteItem, setDeleteItem] = useState('');
@@ -171,13 +172,16 @@ const ServerSide = () => {
                 </div>
             </div>
             {loading ?
-                <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
-                    <h2>loading.......</h2>
+                <div className="d-flex justify-content-center align-items-center"
+                    style={{ height: "80vh", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
+                    <div className={styles.loadingArea}>
+                        <FadeLoader color='#d3d3d3' size="16" />
+                    </div>
                 </div> :
                 <div>
                     {
                         reduxStoreProduct?.length > 0 ?
-                            <div className="table-area my-3 px-4 py-3">
+                            <div className="table-area my-3 px-4 py-3" >
                                 <Table>
                                     <thead className="p-3">
                                         <tr>
@@ -263,7 +267,7 @@ const ServerSide = () => {
                                 </div>
                                 <form onSubmit={formSubmit}>
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>.txt formate</span>
+                                        <span className='fw-bold'>(.txt formate)</span>
                                         <AiFillStar className='required' />
                                     </label>
                                     <input
