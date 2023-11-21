@@ -14,6 +14,7 @@ import Link from "next/link";
 import styles from "@/styles/administrator/List.module.css"
 import Pagination from '@/helpers/pagination';
 import { FadeLoader } from "react-spinners";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 
 const ServerSide = () => {
@@ -21,8 +22,11 @@ const ServerSide = () => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true)
     const [addModal, setAddModal] = useState(false);
+    const [searchData, setSearchData] = useState('');
+    const [filterByStatus, setFilterByStatus] = useState('');
     const [deleteModal, setDeleteModal] = useState(false);
     const [deleteItem, setDeleteItem] = useState('');
+    const [sortOrder, setSortOrder] = useState('asc')
     const [formData, setFormData] = useState({
         file: null,
         errors: []
@@ -39,11 +43,15 @@ const ServerSide = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
+            const data = {
+                perPage: dataPerPage,
+                page: currentPage,
+                searchTerm: searchData,
+                status: filterByStatus,
+                sortOrder: sortOrder,
+            }
             const response = await axios.get(`${config.api}/test`, {
-                params: {
-                    perPage: dataPerPage,
-                    page: currentPage,
-                },
+                params: data
             });
             dispatch(storeProduct(response.data.data));
             dispatch(totalItemsCount(response.data.total_items));
@@ -55,10 +63,53 @@ const ServerSide = () => {
     };
     useEffect(() => {
         fetchData()
-    }, [currentPage, dataPerPage])
+    }, [currentPage, dataPerPage, filterByStatus, sortOrder])
     const reduxStoreProduct = useSelector(state => state.products.data);
     const totalItems = useSelector(state => state.products.totalItems);
     // load data end
+
+    // search area
+    const handelSearchInput = (e) => {
+        setSearchData(e.target.value);
+    }
+    const handelSearchSubmit = async () => {
+        setLoading(true);
+        try {
+            await fetchData();
+        } catch (error) {
+            return errorHandler({ error, toast })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // sort order
+    const handleSortOrderChange = (event) => {
+        setSortOrder(event.target.value);
+    };
+
+    // filter by status start
+    const userStatus = [
+        USER_STATUS.SHOW_ALL,
+        USER_STATUS.ACTIVE,
+        USER_STATUS.DISABLE,
+        USER_STATUS.PENDING
+    ]
+    const handelFilterByStatus = async (event) => {
+        setFilterByStatus(event.target.value);
+        try {
+            setLoading(true);
+        } catch (error) {
+            errorHandler({ error, toast });
+        } finally {
+            setLoading(false);
+        }
+    };
+    const [statusToggle, setStatusToggle] = useState(false)
+    const handelStatusToggle = () => {
+        setStatusToggle(!statusToggle)
+    }
+    // filter by status end
 
 
     // status update start
@@ -142,11 +193,11 @@ const ServerSide = () => {
         }
     }
     // delete data end
-
     return (
         <div className='container py-5'>
-            <div className='d-flex justify-content-between'>
-                <div>
+            <div className='row'>
+
+                <div className="col-md-2">
                     <div className={`${styles.filterHeader}`}>
                         <span className='text-uppercase'>Show</span>
                         <select
@@ -163,14 +214,62 @@ const ServerSide = () => {
                             <option value="100" defaultValue={dataPerPage === 100}>100</option>
                         </select>
                     </div>
-
                 </div>
-                <div className="d-flex justify-content-center align-items-center">
-                    <button className="btn btn-success text-uppercase fw-bold">{totalItems} Logs</button>
-                    <button className='text-uppercase btn btn-primary fw-bold mx-2 ' onClick={() => toggleAddModal()}>add logs</button>
-                    <Link className='text-uppercase btn btn-danger fw-bold' href="/login">login</Link>
+                <div className="col-md-2">
+                    <select value={sortOrder} onChange={handleSortOrderChange} className="form-select">
+                        <option value="asc">asc</option>
+                        <option value="desc">desc</option>
+                    </select>
+                </div>
+                <div className="col-md-3">
+                    <div className={styles.filterArea}>
+                        <button className='text-uppercase' onClick={handelStatusToggle}>
+                            <span>Status</span>
+                            <div>
+                                <span>
+                                    {
+                                        statusToggle ?
+                                            <IoIosArrowUp size="16px" className={styles.dropdownIcon} />
+                                            : <IoIosArrowDown size="16px" className={styles.dropdownIcon} />
+                                    }
+                                </span>
+                            </div>
+                        </button>
+                        <div className={`${statusToggle ? styles.show : styles.hide}`}>
+                            {userStatus.map((status, index) => (
+                                <div key={index}>
+                                    <label htmlFor={`status_${index}`} className={styles.radioArea}>
+                                        <input
+                                            className={`${styles.radioInput}`}
+                                            type="radio"
+                                            name="status"
+                                            id={`status_${index}`}
+                                            value={status === USER_STATUS.SHOW_ALL ? '' : status}
+                                            onChange={handelFilterByStatus}
+                                        />
+                                        {status}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-3">
+                    <div className="d-flex">
+                        <input value={searchData} onChange={handelSearchInput} type="text" placeholder="search" className="form-control w-100" />
+                        <button onClick={handelSearchSubmit} className="btn btn-primary">search</button>
+                    </div>
+                </div>
+                <div className="col-md-2">
+                    <div>
+                        <button className="btn btn-danger btn-sm text-uppercase fw-bold me-2 py-2">{totalItems} Logs</button>
+                        <button className='text-uppercase btn-sm btn btn-success fw-bold py-2' onClick={() => toggleAddModal()}>add logs</button>
+                    </div>
                 </div>
             </div>
+
+
+
             {loading ?
                 <div className="d-flex justify-content-center align-items-center"
                     style={{ height: "80vh", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
