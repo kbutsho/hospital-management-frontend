@@ -55,6 +55,7 @@
     cursor: pointer;
     box-shadow: none;
     background-color: aliceblue;
+    min-width: 100px;
 }
 
 .table-area .status-select:focus {
@@ -150,4 +151,21 @@
 .inactive-status {
     color: red;
     /* Change color for inactive status */
+}
+
+.sortOrder {
+    cursor: pointer;
+}
+
+.ascActive {
+    color: red;
+}
+
+.descActive {
+    color: red;
+}
+
+.custom-scrollbar {
+    white-space: nowrap;
+    overflow-x: auto;
 }

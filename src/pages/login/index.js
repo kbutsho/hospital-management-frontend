@@ -203,7 +203,7 @@ const Login = () => {
                         <div>
                             <span className='small'>
                                 <span>new user? </span>
-                                <Link href="/pagination/server-side" className='link'>signup here</Link>
+                                <Link href="/signup" className='link'>signup here</Link>
                             </span>
                         </div>
                     </div>

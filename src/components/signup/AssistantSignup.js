@@ -10,8 +10,12 @@ import { config } from '@/config';
 import Tabs from './Tabs';
 import { BeatLoader } from 'react-spinners';
 import { ImCross } from "react-icons/im"
+import Select from 'react-select';
+import { errorHandler } from '@/helpers/errorHandler';
 
-const AssistantSignup = ({ activeComponent, handleTabClick }) => {
+
+const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberList }) => {
+    console.log(doctorWithChamberList)
     const [message, setMessage] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -22,12 +26,54 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
         email: '',
         phone: '',
         address: '',
-        doctor_id: '',
-        chamber_id: '',
         password: '',
         confirmPassword: '',
         errors: []
     })
+    const [selectDoctor, setSelectDoctor] = useState(null);
+    const [selectChamber, setSelectChamber] = useState(null);
+    const [chamberOptions, setChamberOptions] = useState([]);
+    const doctorOptions = doctorWithChamberList?.map((doctor) => ({ value: doctor.id, label: doctor.name }));
+    const handleDoctorChange = (newValue) => {
+        setSelectDoctor(newValue);
+        const selectedDoctorData = doctorWithChamberList.find((doctor) => doctor.id === newValue.value);
+        if (selectedDoctorData) {
+            const chambersForSelectedDoctor = selectedDoctorData.chambers.map((chamber) => ({
+                value: chamber.id,
+                label: chamber.address
+            }));
+            setChamberOptions(chambersForSelectedDoctor);
+        } else {
+            setChamberOptions([]);
+        }
+        setFormData({
+            ...formData,
+            errors: {
+                ...formData.errors,
+                doctor_id: null
+            }
+        });
+        setMessage(null)
+        setErrorMessage(null)
+    };
+    const handleChamberChange = (newValue) => {
+        setSelectChamber(newValue);
+        setFormData({
+            ...formData,
+            errors: {
+                ...formData.errors,
+                chamber_id: null
+            }
+        });
+        setMessage(null)
+        setErrorMessage(null)
+    };
+    const customStyles = {
+        option: (provided) => ({
+            ...provided,
+            cursor: 'pointer',
+        }),
+    };
     const handelInputChange = (event) => {
         setFormData({
             ...formData,
@@ -49,8 +95,8 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                 phone: formData.phone,
                 email: formData.email,
                 address: formData.address,
-                doctor_id: formData.doctor_id,
-                chamber_id: formData.chamber_id,
+                doctor_id: selectDoctor?.value,
+                chamber_id: selectChamber?.value,
                 role: ROLE.ASSISTANT,
                 password: formData.password,
                 confirmPassword: formData.confirmPassword,
@@ -63,8 +109,6 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                     phone: '',
                     email: '',
                     address: '',
-                    doctor_id: '',
-                    chamber_id: '',
                     password: '',
                     confirmPassword: '',
                     errors: []
@@ -73,6 +117,7 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                 setErrorMessage(null);
             }
         } catch (error) {
+            console.log(error)
             setLoading(false);
             setMessage(null)
             setErrorMessage(null)
@@ -196,14 +241,16 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                                         <span className='fw-bold'>Select Doctor</span>
                                         <AiFillStar className='required' />
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="doctor_id"
-                                        placeholder='select doctor'
-                                        value={formData.doctor_id}
-                                        onChange={handelInputChange}
-                                        className={`form-control ${formData.errors?.doctor_id ? 'is-invalid' : null}`}
-                                    />
+                                    <div style={{ minWidth: "280px" }}>
+                                        <Select
+                                            value={selectDoctor}
+                                            onChange={handleDoctorChange}
+                                            options={doctorOptions}
+                                            isSearchable
+                                            placeholder="search or select doctor"
+                                            styles={customStyles}
+                                        />
+                                    </div>
                                     <small className='validation-error'>
                                         {
                                             formData.errors?.doctor_id ? formData.errors?.doctor_id : null
@@ -215,14 +262,16 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                                         <span className='fw-bold'>Select chamber</span>
                                         <AiFillStar className='required' />
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="chamber_id"
-                                        placeholder='select chamber'
-                                        value={formData.chamber_id}
-                                        onChange={handelInputChange}
-                                        className={`form-control ${formData.errors?.chamber_id ? 'is-invalid' : null}`}
-                                    />
+                                    <div>
+                                        <Select
+                                            value={selectChamber}
+                                            onChange={handleChamberChange}
+                                            options={chamberOptions}
+                                            isSearchable
+                                            placeholder="search or select chamber"
+                                            styles={customStyles}
+                                        />
+                                    </div>
                                     <small className='validation-error'>
                                         {
                                             formData.errors?.chamber_id ? formData.errors?.chamber_id : null

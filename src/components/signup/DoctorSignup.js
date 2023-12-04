@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from '@/styles/signup/signup.module.css';
 import { AiFillStar } from "react-icons/ai";
 import { BiHide, BiShow } from "react-icons/bi";
@@ -13,13 +13,14 @@ import { ImCross } from "react-icons/im"
 import Select from 'react-select';
 import { errorHandler } from '@/helpers/errorHandler';
 
-const DoctorSignup = ({ activeComponent, handleTabClick }) => {
+const DoctorSignup = ({ activeComponent, handleTabClick, departmentList }) => {
     const [message, setMessage] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [department, setDepartment] = useState();
+    const [department] = useState(departmentList);
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -57,27 +58,14 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
         setErrorMessage(null)
     };
     const customStyles = {
-        control: (provided) => ({
-            ...provided,
-            cursor: 'none'
-        }),
+        // control: (provided) => ({
+        //     ...provided
+        // }),
         option: (provided) => ({
             ...provided,
             cursor: 'pointer'
         }),
     };
-    const fetchDepartment = useCallback(async () => {
-        try {
-            const response = await axios.get(`${config.api}/department/all`);
-            setDepartment(response.data.data)
-        } catch (error) {
-            return errorHandler({ error, toast })
-        }
-    }, [setDepartment])
-    useEffect(() => {
-        fetchDepartment();
-    }, [fetchDepartment]);
-
     const formSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -240,10 +228,9 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                                             onChange={handleDepartmentChange}
                                             options={options}
                                             isSearchable
-                                            placeholder="type or select department"
+                                            placeholder="search or select department"
                                             styles={customStyles}
                                         />
-
                                     </div>
                                     <small className='validation-error'>
                                         {
@@ -375,3 +362,5 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
 };
 
 export default DoctorSignup;
+
+

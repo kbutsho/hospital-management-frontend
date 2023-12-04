@@ -1,16 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { toast } from "react-toastify";
-;
-// const initialState = {
-//     products: [],
-//     totalProduct: 0,
-// };
 
 const productSlice = createSlice({
     name: 'products',
     initialState: {
         data: [],
         totalItems: 0,
+        fetchedItems: 0,
     },
     reducers: {
         storeProduct: (state, action) => {
@@ -26,6 +21,9 @@ const productSlice = createSlice({
                 state.data[productIndex].status = status;
             }
         },
+        fetchedItemsCount: (state, action) => {
+            state.fetchedItems = action.payload
+        },
         totalItemsCount: (state, action) => {
             state.totalItems = action.payload
         },
@@ -37,5 +35,5 @@ const productSlice = createSlice({
     }
 })
 
-export const { updateProductStatus, storeProduct, addProduct, removeProduct, totalItemsCount } = productSlice.actions;
+export const { updateProductStatus, storeProduct, addProduct, removeProduct, totalItemsCount, fetchedItemsCount } = productSlice.actions;
 export default productSlice.reducer; 

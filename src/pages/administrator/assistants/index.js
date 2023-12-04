@@ -1,23 +1,24 @@
+import AssistantList from '@/components/administrator/assistants/AssistantList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
 import React from 'react';
 
-const AdministratorAssistants = () => {
+const AdministratorAssistant = () => {
     return (
         <div >
             <Head>
-                <title>assistants list</title>
+                <title>assistant list</title>
             </Head>
             <Breadcrumb />
-            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
-                <h5 className="fw-bold text-danger">assistant list</h5>
+            <div className='px-2'>
+                <AssistantList />
             </div>
         </div>
     );
 };
 
-export default AdministratorAssistants;
-AdministratorAssistants.getLayout = function getLayout(page) {
+export default AdministratorAssistant;
+AdministratorAssistant.getLayout = function getLayout(page) {
     return <AdministratorLayout>{page}</AdministratorLayout>;
 };

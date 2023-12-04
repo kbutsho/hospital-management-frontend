@@ -2,11 +2,11 @@ import DoctorList from '@/components/administrator/doctors/DoctorList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
-import React from 'react';
+import { config } from '@/config';
 
 const AdministratorDoctors = () => {
     return (
-        <div >
+        <div>
             <Head>
                 <title>doctor list</title>
             </Head>
@@ -22,3 +22,5 @@ export default AdministratorDoctors;
 AdministratorDoctors.getLayout = function getLayout(page) {
     return <AdministratorLayout>{page}</AdministratorLayout>;
 };
+
+

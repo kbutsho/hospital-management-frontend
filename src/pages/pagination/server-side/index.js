@@ -7,10 +7,9 @@ import { AiFillDelete, AiFillEdit, AiFillEye, AiFillStar } from "react-icons/ai"
 import { toast } from 'react-toastify';
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { removeProduct, storeProduct, totalItemsCount, updateProductStatus } from "@/redux/slice/productSlice";
+import { fetchedItemsCount, removeProduct, storeProduct, totalItemsCount, updateProductStatus } from "@/redux/slice/productSlice";
 import { Modal, ModalBody, ModalFooter } from "reactstrap";
 import { RxCross2 } from "react-icons/rx";
-import Link from "next/link";
 import styles from "@/styles/administrator/List.module.css"
 import Pagination from '@/helpers/pagination';
 import { FadeLoader } from "react-spinners";
@@ -22,7 +21,7 @@ const ServerSide = () => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true)
     const [addModal, setAddModal] = useState(false);
-    const [searchData, setSearchData] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [filterByStatus, setFilterByStatus] = useState('');
     const [deleteModal, setDeleteModal] = useState(false);
     const [deleteItem, setDeleteItem] = useState('');
@@ -46,7 +45,7 @@ const ServerSide = () => {
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
-                searchTerm: searchData,
+                searchTerm: searchTerm,
                 status: filterByStatus,
                 sortOrder: sortOrder,
             }
@@ -55,6 +54,7 @@ const ServerSide = () => {
             });
             dispatch(storeProduct(response.data.data));
             dispatch(totalItemsCount(response.data.total_items));
+            dispatch(fetchedItemsCount(response.data.fetched_items));
         } catch (error) {
             return errorHandler({ error, toast })
         } finally {
@@ -66,11 +66,12 @@ const ServerSide = () => {
     }, [currentPage, dataPerPage, filterByStatus, sortOrder])
     const reduxStoreProduct = useSelector(state => state.products.data);
     const totalItems = useSelector(state => state.products.totalItems);
+    const fetchedItems = useSelector(state => state.products.fetchedItems);
     // load data end
 
     // search area
     const handelSearchInput = (e) => {
-        setSearchData(e.target.value);
+        setSearchTerm(e.target.value);
     }
     const handelSearchSubmit = async () => {
         setLoading(true);
@@ -110,7 +111,6 @@ const ServerSide = () => {
         setStatusToggle(!statusToggle)
     }
     // filter by status end
-
 
     // status update start
     const handleStatusChange = async (event, id) => {
@@ -196,7 +196,6 @@ const ServerSide = () => {
     return (
         <div className='container py-5'>
             <div className='row'>
-
                 <div className="col-md-2">
                     <div className={`${styles.filterHeader}`}>
                         <span className='text-uppercase'>Show</span>
@@ -216,10 +215,13 @@ const ServerSide = () => {
                     </div>
                 </div>
                 <div className="col-md-2">
-                    <select value={sortOrder} onChange={handleSortOrderChange} className="form-select">
-                        <option value="asc">asc</option>
-                        <option value="desc">desc</option>
-                    </select>
+                    <div className={`${styles.filterHeader}`}>
+                        <select value={sortOrder} onChange={handleSortOrderChange}
+                            className={`${styles.customSelect}`}>
+                            <option value="asc">asc</option>
+                            <option value="desc">desc</option>
+                        </select>
+                    </div>
                 </div>
                 <div className="col-md-3">
                     <div className={styles.filterArea}>
@@ -256,13 +258,19 @@ const ServerSide = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="d-flex">
-                        <input value={searchData} onChange={handelSearchInput} type="text" placeholder="search" className="form-control w-100" />
-                        <button onClick={handelSearchSubmit} className="btn btn-primary">search</button>
+                        <input
+                            value={searchTerm}
+                            onChange={handelSearchInput}
+                            type="text"
+                            placeholder="search"
+                            className="form-control w-100" />
+                        <button onClick={handelSearchSubmit}
+                            className="btn btn-primary">search</button>
                     </div>
                 </div>
                 <div className="col-md-2">
                     <div>
-                        <button className="btn btn-danger btn-sm text-uppercase fw-bold me-2 py-2">{totalItems} Logs</button>
+                        <button className="btn btn-danger btn-sm text-uppercase fw-bold me-2 py-2">Total: {totalItems} Fetched: {fetchedItems}</button>
                         <button className='text-uppercase btn-sm btn btn-success fw-bold py-2' onClick={() => toggleAddModal()}>add logs</button>
                     </div>
                 </div>
@@ -276,7 +284,9 @@ const ServerSide = () => {
                     <div className={styles.loadingArea}>
                         <FadeLoader color='#d3d3d3' size="16" />
                     </div>
-                </div> :
+                </div>
+
+                :
                 <div>
                     {
                         reduxStoreProduct?.length > 0 ?
@@ -341,7 +351,7 @@ const ServerSide = () => {
                                 <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                     {
                                         reduxStoreProduct?.length > 0 ?
-                                            <Pagination totalItem={totalItems}
+                                            <Pagination totalItem={fetchedItems}
                                                 dataPerPage={dataPerPage}
                                                 currentPage={currentPage}
                                                 handelPaginate={handelPaginate} />

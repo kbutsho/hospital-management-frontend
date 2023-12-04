@@ -240,7 +240,7 @@ const DepartmentList = () => {
                             {
                                 currentData?.length === 0 ?
                                     <div className={styles.notFound}>
-                                        <h6 className='fw-bold'>no data found.</h6>
+                                        <h6 className='fw-bold'>no department found.</h6>
                                     </div>
                                     : <div className='p-3 mt-3 table-area'>
                                         <Table striped hover responsive>
