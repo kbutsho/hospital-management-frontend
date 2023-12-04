@@ -1,23 +1,23 @@
+import ChamberList from '@/components/administrator/chambers/ChamberList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
-import React from 'react';
 
-const AdministratorChambers = () => {
+const AdministratorChamber = () => {
     return (
         <div >
             <Head>
-                <title>dashboard</title>
+                <title>assistant list</title>
             </Head>
             <Breadcrumb />
-            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
-                <h5 className="fw-bold text-danger">admin dashboard</h5>
+            <div className='px-2'>
+                <ChamberList />
             </div>
         </div>
     );
 };
 
-export default AdministratorChambers;
-AdministratorChambers.getLayout = function getLayout(page) {
+export default AdministratorChamber;
+AdministratorChamber.getLayout = function getLayout(page) {
     return <AdministratorLayout>{page}</AdministratorLayout>;
 };

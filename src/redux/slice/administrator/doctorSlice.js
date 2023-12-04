@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const doctorSlice = createSlice({
-    name: 'doctors',
+    name: 'administrator_doctors',
     initialState: {
         data: [],
         totalItems: 0,
@@ -12,8 +12,8 @@ const doctorSlice = createSlice({
             state.data = action.payload;
         },
         updateDoctorStatus: (state, action) => {
-            const { id, status } = action.payload;
-            const DoctorIndex = state.data.findIndex(doctor => doctor.id === id);
+            const { userId, status } = action.payload;
+            const DoctorIndex = state.data.findIndex(doctor => doctor.userId === userId);
             if (DoctorIndex !== -1) {
                 state.data[DoctorIndex].status = status;
             }
@@ -26,7 +26,7 @@ const doctorSlice = createSlice({
         },
         removeDoctor: (state, action) => {
             const idToRemove = action.payload;
-            state.data = state.data.filter(doctor => doctor.id !== idToRemove);
+            state.data = state.data.filter(doctor => doctor.doctorId !== idToRemove);
             state.totalItems -= 1;
         },
     }

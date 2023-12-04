@@ -2,7 +2,6 @@ import AssistantList from '@/components/administrator/assistants/AssistantList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
-import React from 'react';
 
 const AdministratorAssistant = () => {
     return (

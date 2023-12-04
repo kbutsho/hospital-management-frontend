@@ -16,28 +16,27 @@ import { CiSearch } from "react-icons/ci";
 import { MdOutlineRefresh } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchedItemsCount, removeDoctor, storeDoctor, totalItemsCount, updateDoctorStatus } from '@/redux/slice/administrator/doctorSlice';
+import { fetchedItemsCount, removeChamber, storeChamber, totalItemsCount, updateChamberStatus } from '@/redux/slice/administrator/chamberSlice';
 import Select from 'react-select';
 
 
-const DoctorList = () => {
+const ChamberList = () => {
     const dispatch = useDispatch();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [filterByStatus, setFilterByStatus] = useState(null);
-    const [filterByDepartment, setFilterByDepartment] = useState(null);
+    const [filterByDoctor, setFilterByDoctor] = useState(null);
     const [activeSortBy, setActiveSortBy] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
     const [sortOrder, setSortOrder] = useState('asc')
-    const [departmentNames, setDepartmentNames] = useState([]);
+    const [doctorNames, setDoctorNames] = useState([]);
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({
         id: '',
         name: ''
     })
-
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [dataPerPage, setDataPerPage] = useState(10);
@@ -55,19 +54,21 @@ const DoctorList = () => {
                 status: filterByStatus?.value === USER_STATUS.SHOW_ALL ? '' : filterByStatus?.value,
                 sortOrder: sortOrder,
                 sortBy: sortBy,
-                department: filterByDepartment?.value === USER_STATUS.SHOW_ALL ? '' : filterByDepartment?.value
+                doctor: filterByDoctor?.value === USER_STATUS.SHOW_ALL ? '' : filterByDoctor?.value
             }
-            const response = await axios.get(`${config.api}/administrator/doctor/all`, {
+            const response = await axios.get(`${config.api}/administrator/chamber/all`, {
                 params: data,
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log(response)
             setErrorMessage(null)
-            dispatch(storeDoctor(response.data.data))
+            dispatch(storeChamber(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -76,26 +77,26 @@ const DoctorList = () => {
 
     useEffect(() => {
         fetchData()
-    }, [currentPage, dataPerPage, filterByStatus, filterByDepartment, sortOrder, sortBy])
+    }, [currentPage, dataPerPage, filterByStatus, filterByDoctor, sortOrder, sortBy])
 
-    const reduxStoreDoctor = useSelector(state => state.administrator_doctors.data);
-    const totalItems = useSelector(state => state.administrator_doctors.totalItems);
-    const fetchedItems = useSelector(state => state.administrator_doctors.fetchedItems);
+    const reduxStoreChamber = useSelector(state => state.administrator_chambers.data);
+    const totalItems = useSelector(state => state.administrator_chambers.totalItems);
+    const fetchedItems = useSelector(state => state.administrator_chambers.fetchedItems);
 
-    // load department
+    // load doctor
     useEffect(() => {
-        const fetchDepartment = async () => {
+        const fetchDoctor = async () => {
             try {
-                const response = await axios.get(`${config.api}/department/all`);
-                const deptNames = response.data.data.map((dept) => dept.name);
-                deptNames.unshift("show all");
-                setDepartmentNames(deptNames);
+                const response = await axios.get(`${config.api}/doctor/all`);
+                const doctorNames = response.data.data.map((doctor) => doctor.name);
+                doctorNames.unshift("show all");
+                setDoctorNames(doctorNames);
                 setErrorMessage(null)
             } catch (error) {
                 return errorHandler({ error, setErrorMessage })
             }
         }
-        fetchDepartment();
+        fetchDoctor();
     }, [])
 
     // sort order
@@ -105,15 +106,14 @@ const DoctorList = () => {
         setSortOrder(order);
     };
 
-    // filter by department
-    const departmentOptions = departmentNames.map((name, index) => ({
+    // filter by doctor
+    const doctorOptions = doctorNames.map((name, index) => ({
         value: name,
-        label: index === 0 ? `${name.split(" ")[1]} department` : `${name}`
+        label: index === 0 ? `${name.split(" ")[1]} doctor` : `${name}`
     }));
-    const handelFilterByDepartment = (newValue) => {
-        setFilterByDepartment(newValue);
+    const handelFilterByDoctor = (newValue) => {
+        setFilterByDoctor(newValue);
     }
-
 
     // filter by status
     const userStatus = [
@@ -147,23 +147,26 @@ const DoctorList = () => {
     }
 
     // update status
-    const handleStatusChange = async (event, userId) => {
+    const handleStatusChange = async (event, id) => {
         try {
             const status = event.target.value;
             const data = {
-                'userId': userId,
+                'id': id,
                 'status': status
             }
+            console.log(data)
             setLoading(true)
-            await axios.post(`${config.api}/administrator/doctor/update/status`, data, {
+            const res = await axios.post(`${config.api}/administrator/chamber/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
+            console.log(res)
             // await fetchData()
             setErrorMessage(null)
-            dispatch(updateDoctorStatus({ userId, status }))
+            dispatch(updateChamberStatus({ id, status }))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -178,16 +181,17 @@ const DoctorList = () => {
     const handelDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`${config.api}/administrator/doctor/${deleteItem?.id}`, {
+            const res = await axios.delete(`${config.api}/administrator/chamber/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            dispatch(removeDoctor(deleteItem?.id));
-            toast.success("doctor deleted successfully!")
+            dispatch(removeChamber(deleteItem?.id));
+            toast.success("chamber deleted successfully!")
             setErrorMessage(null)
             await fetchData()
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -198,7 +202,7 @@ const DoctorList = () => {
     const handelReset = async () => {
         try {
             setLoading(true)
-            setFilterByDepartment(null)
+            setFilterByDoctor(null)
             setFilterByStatus(null)
             setActiveSortBy('')
             setSearchTerm('')
@@ -206,13 +210,13 @@ const DoctorList = () => {
             setSortOrder('asc')
             setDataPerPage(10)
             setCurrentPage(1)
-            const response = await axios.get(`${config.api}/administrator/doctor/all`, {
+            const response = await axios.get(`${config.api}/administrator/chamber/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             setErrorMessage(null)
-            dispatch(storeDoctor(response.data.data))
+            dispatch(storeChamber(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
@@ -238,6 +242,7 @@ const DoctorList = () => {
             fontSize: '12px'
         }),
     };
+
     return (
         <div className={`py-3 ${styles.listArea}`}>
             {
@@ -289,11 +294,11 @@ const DoctorList = () => {
                 <div className="col-md-3">
                     <div className={`${styles.customSelectFilter}`}>
                         <Select
-                            value={filterByDepartment}
-                            onChange={handelFilterByDepartment}
-                            options={departmentOptions}
+                            value={filterByDoctor}
+                            onChange={handelFilterByDoctor}
+                            options={doctorOptions}
                             isSearchable
-                            placeholder="search or select department"
+                            placeholder="search or select doctor"
                             styles={customStyles}
                         />
                     </div>
@@ -304,7 +309,7 @@ const DoctorList = () => {
                             type="text"
                             value={searchTerm}
                             onChange={handelSearch}
-                            placeholder={`search for doctors`}
+                            placeholder={`search for chambers`}
                             className={`form-control ${styles.searchBox}`} />
                         <button
                             onClick={handelSearchSubmit}
@@ -328,72 +333,42 @@ const DoctorList = () => {
                     </div> :
                     <div className="list-area">
                         {
-                            reduxStoreDoctor.length > 0 ?
+                            reduxStoreChamber.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table striped hover responsive bordered>
+                                    <Table striped hover responsive bordered >
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
                                                 <th>#</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
-                                                        level={`USER ID`}
-                                                        sortBy={`users.id`}
+                                                        level={`CHAMBER ID`}
+                                                        sortBy={`chambers.id`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
-                                                <th className='text-center'>
-                                                    <SortingArrow
-                                                        level={`DOCTOR ID`}
-                                                        sortBy={`doctors.id`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                <th className='text-center' style={{ paddingBottom: "12px" }}>
+                                                    DOCTOR ID
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`NAME`}
-                                                        sortBy={`name`}
+                                                        level={`ADDRESS`}
+                                                        sortBy={`chambers.address`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
-                                                <th>
-                                                    <SortingArrow
-                                                        level={`EMAIL`}
-                                                        sortBy={`email`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
+
+                                                <th style={{ paddingBottom: "12px" }}>
+                                                    DOCTOR NAME
                                                 </th>
-                                                <th>
-                                                    <SortingArrow
-                                                        level={`PHONE`}
-                                                        sortBy={`phone`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
-                                                </th>
-                                                <th>
-                                                    <SortingArrow
-                                                        level={`DEPT`}
-                                                        sortBy={`departments.name`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
-                                                </th>
-                                                <th className='text-center'>
-                                                    <SortingArrow
-                                                        level={`BMDC ID`}
-                                                        sortBy={`doctors.bmdc_id`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                <th style={{ paddingBottom: "12px" }}>
+                                                    ASSISTANTS
                                                 </th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`STATUS`}
-                                                        sortBy={`users.status`}
+                                                        sortBy={`chambers.status`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
@@ -403,22 +378,20 @@ const DoctorList = () => {
                                         </thead>
                                         <tbody className='p-3'>
                                             {
-                                                reduxStoreDoctor.map((data, index) => {
+                                                reduxStoreChamber.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td className='text-center'>{data.userId}</td>
-                                                            <td className='text-center'>{data.doctorId}</td>
-                                                            <td>{data.name}</td>
-                                                            <td>{data.email}</td>
-                                                            <td>{data.phone}</td>
-                                                            <td>{data.departmentName}</td>
-                                                            <td>{data.bmdc_id}</td>
+                                                            <td className='text-center'>{data.id}</td>
+                                                            <td className='text-center'>{data.doctor?.id}</td>
+                                                            <td>{data.address}</td>
+                                                            <td>{data.doctor?.name}</td>
+                                                            <td>{data.assistants?.map((assistant) => assistant.name).join(', ')}</td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
                                                                     value={data.status}
-                                                                    onChange={(event) => handleStatusChange(event, data.userId)}
+                                                                    onChange={(event) => handleStatusChange(event, data.id)}
                                                                     style={{ color: data.status === 'active' ? 'green' : 'red' }}
                                                                 >
                                                                     {Object.entries(USER_STATUS)
@@ -437,7 +410,7 @@ const DoctorList = () => {
                                                                 <div className='d-flex justify-content-center'>
                                                                     <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
-                                                                    <button onClick={() => toggleDeleteModal(data.doctorId, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
+                                                                    <button onClick={() => toggleDeleteModal(data.id, data.address)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -448,7 +421,7 @@ const DoctorList = () => {
                                     </Table>
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
-                                            reduxStoreDoctor.length > 0 ?
+                                            reduxStoreChamber.length > 0 ?
                                                 <Pagination totalItem={fetchedItems}
                                                     dataPerPage={dataPerPage}
                                                     currentPage={currentPage}
@@ -458,7 +431,7 @@ const DoctorList = () => {
                                     </div>
                                 </div> :
                                 <div className={styles.notFound}>
-                                    <h6 className='fw-bold'>no doctor found.</h6>
+                                    <h6 className='fw-bold'>no chamber found.</h6>
                                 </div>
                         }
                     </div>
@@ -469,7 +442,7 @@ const DoctorList = () => {
                         <Modal isOpen={deleteModal} className="modal-md" onClick={toggleDeleteModal}>
                             <ModalBody>
                                 <div className='p-3'>
-                                    <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.name ?? null}</span> doctor?</h6>
+                                    <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.address ?? null}</span> chamber?</h6>
                                 </div>
                             </ModalBody>
                             <ModalFooter>
@@ -486,7 +459,7 @@ const DoctorList = () => {
     );
 };
 
-export default DoctorList;
+export default ChamberList;
 
 
 

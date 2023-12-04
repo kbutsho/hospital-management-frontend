@@ -2,7 +2,6 @@ import DoctorList from '@/components/administrator/doctors/DoctorList';
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
-import { config } from '@/config';
 
 const AdministratorDoctors = () => {
     return (

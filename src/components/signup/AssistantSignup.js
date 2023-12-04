@@ -15,7 +15,6 @@ import { errorHandler } from '@/helpers/errorHandler';
 
 
 const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberList }) => {
-    console.log(doctorWithChamberList)
     const [message, setMessage] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -113,11 +112,12 @@ const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberLis
                     confirmPassword: '',
                     errors: []
                 });
+                setSelectChamber(null)
+                setSelectDoctor(null)
                 setMessage(response.data.message);
                 setErrorMessage(null);
             }
         } catch (error) {
-            console.log(error)
             setLoading(false);
             setMessage(null)
             setErrorMessage(null)

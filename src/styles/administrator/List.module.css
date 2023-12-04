@@ -26,6 +26,15 @@
     margin-bottom: 10px;
 }
 
+.customSelectFilter {
+    font-weight: bold;
+    padding: 1px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    font-size: 14px;
+}
+
 .filterHeader span {
     font-weight: bold;
     padding: 10px 10px 8px;
@@ -134,10 +143,16 @@
 }
 
 .searchBox {
+    font-weight: bold;
     border-radius: 4px;
     padding: 8px 10px;
     box-shadow: none;
     border: none;
+}
+
+.searchBox::placeholder {
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .searchBox:focus {

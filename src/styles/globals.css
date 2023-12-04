@@ -55,7 +55,7 @@
     cursor: pointer;
     box-shadow: none;
     background-color: aliceblue;
-    min-width: 100px;
+    min-width: 110px;
 }
 
 .table-area .status-select:focus {
