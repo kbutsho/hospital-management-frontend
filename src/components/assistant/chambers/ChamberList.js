@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FadeLoader } from 'react-spinners';
-import { AiFillDelete, AiFillEdit, AiFillEye, AiFillStar } from 'react-icons/ai';
+import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -35,7 +35,7 @@ const ChamberList = () => {
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({
         id: '',
-        room: ''
+        name: ''
     })
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -62,11 +62,13 @@ const ChamberList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log(response)
             setErrorMessage(null)
             dispatch(storeChamber(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -158,9 +160,11 @@ const ChamberList = () => {
                     Authorization: `Bearer ${token}`
                 }
             })
+            // await fetchData()
             setErrorMessage(null)
             dispatch(updateChamberStatus({ id, status }))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -168,9 +172,9 @@ const ChamberList = () => {
     };
 
     // delete
-    const toggleDeleteModal = (id, room) => {
+    const toggleDeleteModal = (id, name) => {
         setDeleteModal(!deleteModal)
-        setDeleteItem({ room: room ?? '', id: id ?? '' });
+        setDeleteItem({ name: name ?? '', id: id ?? '' });
     }
     const handelDelete = async () => {
         try {
@@ -213,6 +217,7 @@ const ChamberList = () => {
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -221,59 +226,6 @@ const ChamberList = () => {
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
-
-    // add chamber 
-    const [addModal, setAddModal] = useState(false);
-    const [addLoading, setAddLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        room: '',
-        errors: []
-    })
-    const toggleAddModal = () => {
-        setAddModal(!addModal);
-        setFormData({
-            room: '',
-            errors: []
-        })
-    }
-    const handelInputChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-            errors: {
-                ...formData.errors,
-                [event.target.name]: null
-            }
-        })
-    };
-    const chamberFormSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            setAddLoading(true)
-            const data = {
-                room: formData.room
-            }
-            const response = await axios.post(`${config.api}/administrator/chamber/create`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            if (response.data.status) {
-                setFormData({
-                    room: '',
-                    errors: []
-                });
-                await fetchData()
-                setAddModal(!addModal);
-                toast.success(response.data.message)
-            }
-        } catch (error) {
-            return errorHandler({ error, toast, setFormData, formData })
-        } finally {
-            setAddLoading(false);
-        }
-    }
-
     const customStyles = {
         control: (provided) => ({
             ...provided,
@@ -288,12 +240,6 @@ const ChamberList = () => {
             fontSize: '12px'
         }),
     };
-    const statusColors = {
-        [STATUS.ACTIVE]: 'green',
-        [STATUS.PENDING]: 'red',
-        [STATUS.DISABLE]: 'grey'
-    };
-
 
     return (
         <div className={`py-3 ${styles.listArea}`}>
@@ -312,6 +258,11 @@ const ChamberList = () => {
                     ) : null
                 )
             }
+            {/* <div className=" d-flex justify-content-end">
+                <div>
+                    <button className='btn btn-outline-secondary mb-3 fw-bold'>add chamber address</button>
+                </div>
+            </div> */}
             <div className="row">
                 <div className="col-md-2">
                     <div className={`${styles.filterHeader}`}>
@@ -376,7 +327,7 @@ const ChamberList = () => {
                             <MdOutlineRefresh size="24px" />
                         </button>
                         <button
-                            onClick={toggleAddModal}
+                            onClick={handelReset}
                             className='btn btn-outline-secondary ms-2'
                             style={{ border: "none", "borderRadius": "0px 4px 4px 0" }}>
                             <VscDiffAdded size="24px" />
@@ -396,7 +347,7 @@ const ChamberList = () => {
                                     <Table striped hover responsive bordered size="sm">
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
-                                                <th className='text-center'>#</th>
+                                                <th>#</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`CHAMBER ID`}
@@ -407,19 +358,30 @@ const ChamberList = () => {
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`ROOM NUMBER`}
-                                                        sortBy={`chambers.room`}
+                                                        level={`ADDRESS`}
+                                                        sortBy={`chambers.address`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`ASSIGN DOCTORS`}
-                                                        sortBy={`chambers.room`}
+                                                        level={`DOCTOR ID`}
+                                                        sortBy={`doctorId`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th>
+                                                    <SortingArrow
+                                                        level={`DOCTOR NAME`}
+                                                        sortBy={`doctorName`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th style={{ paddingBottom: "12px" }}>
+                                                    ASSISTANTS
                                                 </th>
                                                 <th className='text-center'>
                                                     <SortingArrow
@@ -437,18 +399,18 @@ const ChamberList = () => {
                                                 reduxStoreChamber.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td className='text-center table-element'>{index + 1}</td>
-                                                            <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
-                                                            <td className='text-center table-element'>{data.room}</td>
-                                                            <td className='text-center table-element'>coming soon...</td>
+                                                            <td>{index + 1}</td>
+                                                            <td className='text-center'>{data.id}</td>
+                                                            <td>{data.address}</td>
+                                                            <td className='text-center'>{data.doctorId}</td>
+                                                            <td>{data.doctorName}</td>
+                                                            <td></td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
                                                                     value={data.status}
                                                                     onChange={(event) => handleStatusChange(event, data.id)}
-                                                                    style={{
-                                                                        color: statusColors[data.status] || 'inherit'
-                                                                    }}
+                                                                    style={{ color: data.status === 'active' ? 'green' : 'red' }}
                                                                 >
                                                                     {Object.entries(STATUS)
                                                                         .filter(([key, value]) => value !== STATUS.SHOW_ALL)
@@ -456,9 +418,7 @@ const ChamberList = () => {
                                                                             <option key={key}
                                                                                 value={value}
                                                                                 className='fw-bold'
-                                                                                style={{
-                                                                                    color: statusColors[value] || 'inherit'
-                                                                                }}>
+                                                                                style={{ color: value === 'active' ? 'green' : 'red' }}>
                                                                                 {value}
                                                                             </option>
                                                                         ))}
@@ -468,7 +428,7 @@ const ChamberList = () => {
                                                                 <div className='d-flex justify-content-center'>
                                                                     <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
-                                                                    <button onClick={() => toggleDeleteModal(data.id, data.room)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
+                                                                    <button onClick={() => toggleDeleteModal(data.id, data.address)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -500,7 +460,7 @@ const ChamberList = () => {
                         <Modal isOpen={deleteModal} className="modal-md" onClick={toggleDeleteModal}>
                             <ModalBody>
                                 <div className='p-3'>
-                                    <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.room ?? null}</span> room?</h6>
+                                    <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.address ?? null}</span> chamber?</h6>
                                 </div>
                             </ModalBody>
                             <ModalFooter>
@@ -513,49 +473,7 @@ const ChamberList = () => {
                     </div>
                 ) : null
             }
-            {
-                addModal ? (
-                    <div>
-                        <Modal isOpen={addModal} className="modal-md">
-                            <ModalBody>
-                                <div className='p-3'>
-                                    <div className='d-flex justify-content-between'>
-                                        <h4 className='text-uppercase fw-bold mb-4'>create chamber</h4>
-                                        <ImCross size="24px"
-                                            className='pt-2'
-                                            style={{ cursor: "pointer", color: "red" }}
-                                            onClick={toggleAddModal} />
-                                    </div>
-                                    <form onSubmit={chamberFormSubmit}>
-                                        <label className='mb-3'>
-                                            <span className='fw-bold'>ROOM</span>
-                                            <AiFillStar className='required' />
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="room"
-                                            value={formData.room}
-                                            onChange={handelInputChange}
-                                            placeholder='write room number'
-                                            className={`form-control ${formData.errors?.room ? 'is-invalid' : null}`} />
-                                        <small className='validation-error'>
-                                            {
-                                                formData.errors?.room ? formData.errors?.room : null
-                                            }
-                                        </small>
-                                        {
-                                            addLoading ?
-                                                <button disabled className='mt-3 fw-bold w-100 btn btn-primary'>submitting...</button> :
-                                                <input type="submit" value="submit" className='mt-3 fw-bold w-100 btn btn-primary' />
-                                        }
-                                    </form>
-                                </div>
-                            </ModalBody>
-                        </Modal>
-                    </div>
-                ) : null
-            }
-        </div>
+        </div >
     );
 };
 

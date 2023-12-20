@@ -48,6 +48,10 @@
     border-radius: 4px;
 }
 
+.table-area .table-element {
+    padding: 10px 6px 5px;
+}
+
 .table-area .status-select {
     border: none;
     border-radius: 0.25rem;

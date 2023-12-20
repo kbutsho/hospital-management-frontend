@@ -5,7 +5,7 @@ export const ROLE = {
     DOCTOR: 'doctor',
     ADMINISTRATOR: 'administrator'
 };
-export const USER_STATUS = {
+export const STATUS = {
     ACTIVE: 'active',
     DISABLE: 'disable',
     PENDING: 'pending',

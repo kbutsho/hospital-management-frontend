@@ -71,6 +71,17 @@ const AdministratorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
+                                <Link href="/administrator/chambers"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/administrator/chambers') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>Chambers</span>
+                                    </div>
+                                </Link>
+
                                 <Link href="/administrator/assistants"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/administrator/assistants') ? styles.activeMenu : ''}`}>
@@ -82,16 +93,7 @@ const AdministratorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
-                                <Link href="/administrator/chambers"
-                                    className={`${styles.sidebarMenu} 
-                                    ${isActive('/administrator/chambers') ? styles.activeMenu : ''}`}>
-                                    <div className={styles.sidebarMenuIcon}>
-                                        <BiSolidDashboard />
-                                    </div>
-                                    <div className={styles.sidebarMenuLink}>
-                                        <span>Chambers</span>
-                                    </div>
-                                </Link>
+
 
                                 <Link href="/administrator/departments"
                                     className={`${styles.sidebarMenu} 

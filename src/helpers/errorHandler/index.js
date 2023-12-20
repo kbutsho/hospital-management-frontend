@@ -13,12 +13,12 @@ export const errorHandler = ({ error, toast = null, setFormData = null, formData
             }
         }
         else if (setErrorMessage) {
-            // setErrorMessage(error.response.data.message);
-            setErrorMessage("internal server error!");
+            setErrorMessage(error.response.data.message);
+            // setErrorMessage("internal server error!");
         }
         else if (toast) {
-            toast.error("internal server error!");
-            // toast.error(error.response.data.message);
+            // toast.error("internal server error!");
+            toast.error(error.response.data.message);
         }
     } else if (error.isAxiosError && setErrorMessage && toast) {
         setErrorMessage("network error. try again later!");

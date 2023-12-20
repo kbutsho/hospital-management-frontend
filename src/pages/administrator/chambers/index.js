@@ -7,7 +7,7 @@ const AdministratorChamber = () => {
     return (
         <div >
             <Head>
-                <title>assistant list</title>
+                <title>chambers list</title>
             </Head>
             <Breadcrumb />
             <div className='px-2'>

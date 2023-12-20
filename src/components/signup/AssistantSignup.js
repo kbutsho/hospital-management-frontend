@@ -10,11 +10,11 @@ import { config } from '@/config';
 import Tabs from './Tabs';
 import { BeatLoader } from 'react-spinners';
 import { ImCross } from "react-icons/im"
-import Select from 'react-select';
 import { errorHandler } from '@/helpers/errorHandler';
+import Select from 'react-select';
 
 
-const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberList }) => {
+const AssistantSignup = ({ activeComponent, handleTabClick }) => {
     const [message, setMessage] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -24,55 +24,28 @@ const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberLis
         name: '',
         email: '',
         phone: '',
+        age: '',
         address: '',
         password: '',
         confirmPassword: '',
         errors: []
     })
-    const [selectDoctor, setSelectDoctor] = useState(null);
-    const [selectChamber, setSelectChamber] = useState(null);
-    const [chamberOptions, setChamberOptions] = useState([]);
-    const doctorOptions = doctorWithChamberList?.map((doctor) => ({ value: doctor.id, label: doctor.name }));
-    const handleDoctorChange = (newValue) => {
-        setSelectDoctor(newValue);
-        const selectedDoctorData = doctorWithChamberList.find((doctor) => doctor.id === newValue.value);
-        if (selectedDoctorData) {
-            const chambersForSelectedDoctor = selectedDoctorData.chambers.map((chamber) => ({
-                value: chamber.id,
-                label: chamber.address
-            }));
-            setChamberOptions(chambersForSelectedDoctor);
-        } else {
-            setChamberOptions([]);
-        }
+    const [selectGender, setSelectGender] = useState(null);
+    const genderList = ['male', 'female', 'other']
+    const genderOptions = genderList.map((gender) => ({ value: gender, label: gender }));
+    const handleGenderChange = (newValue) => {
+        setSelectGender(newValue);
         setFormData({
             ...formData,
             errors: {
                 ...formData.errors,
-                doctor_id: null
+                gender: null
             }
         });
         setMessage(null)
         setErrorMessage(null)
     };
-    const handleChamberChange = (newValue) => {
-        setSelectChamber(newValue);
-        setFormData({
-            ...formData,
-            errors: {
-                ...formData.errors,
-                chamber_id: null
-            }
-        });
-        setMessage(null)
-        setErrorMessage(null)
-    };
-    const customStyles = {
-        option: (provided) => ({
-            ...provided,
-            cursor: 'pointer',
-        }),
-    };
+
     const handelInputChange = (event) => {
         setFormData({
             ...formData,
@@ -94,8 +67,8 @@ const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberLis
                 phone: formData.phone,
                 email: formData.email,
                 address: formData.address,
-                doctor_id: selectDoctor?.value,
-                chamber_id: selectChamber?.value,
+                age: formData.age,
+                gender: selectGender?.value,
                 role: ROLE.ASSISTANT,
                 password: formData.password,
                 confirmPassword: formData.confirmPassword,
@@ -107,13 +80,13 @@ const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberLis
                     name: '',
                     phone: '',
                     email: '',
+                    age: '',
                     address: '',
                     password: '',
                     confirmPassword: '',
                     errors: []
                 });
-                setSelectChamber(null)
-                setSelectDoctor(null)
+                setSelectGender(null)
                 setMessage(response.data.message);
                 setErrorMessage(null);
             }
@@ -134,6 +107,15 @@ const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberLis
         setMessage(null);
         setErrorMessage(null);
     }
+    const customStyles = {
+        option: (provided) => ({
+            ...provided,
+            cursor: 'pointer',
+            fontWeight: "bold",
+            "fontSize": "12px",
+            "textTransform": "uppercase"
+        }),
+    };
     return (
         <div className={styles.body}>
             <div className={styles.main}>
@@ -238,43 +220,40 @@ const AssistantSignup = ({ activeComponent, handleTabClick, doctorWithChamberLis
                             <div className="col-md-6">
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Select Doctor</span>
+                                        <span className='fw-bold'>Age (Years)</span>
                                         <AiFillStar className='required' />
                                     </label>
-                                    <div style={{ minWidth: "280px" }}>
-                                        <Select
-                                            value={selectDoctor}
-                                            onChange={handleDoctorChange}
-                                            options={doctorOptions}
-                                            isSearchable
-                                            placeholder="search or select doctor"
-                                            styles={customStyles}
-                                        />
-                                    </div>
+                                    <input
+                                        type="number"
+                                        name="age"
+                                        placeholder='your age'
+                                        value={formData.age}
+                                        onChange={handelInputChange}
+                                        className={`form-control ${formData.errors?.age ? 'is-invalid' : null}`}
+                                    />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.doctor_id ? formData.errors?.doctor_id : null
+                                            formData.errors?.age ? formData.errors?.age : null
                                         }
                                     </small>
                                 </div>
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Select chamber</span>
+                                        <span className='fw-bold'>Select gender</span>
                                         <AiFillStar className='required' />
                                     </label>
-                                    <div>
+                                    <div className={`${styles.customSelectFilter}`}>
                                         <Select
-                                            value={selectChamber}
-                                            onChange={handleChamberChange}
-                                            options={chamberOptions}
-                                            isSearchable
-                                            placeholder="search or select chamber"
+                                            value={selectGender}
+                                            onChange={handleGenderChange}
+                                            options={genderOptions}
+                                            placeholder="select gender"
                                             styles={customStyles}
                                         />
                                     </div>
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.chamber_id ? formData.errors?.chamber_id : null
+                                            formData.errors?.gender ? formData.errors?.gender : null
                                         }
                                     </small>
                                 </div>

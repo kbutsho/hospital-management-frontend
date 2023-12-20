@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
-import { USER_STATUS } from '@/constant';
+import { STATUS } from '@/constant';
 import { config } from "@/config/index";
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -51,10 +51,10 @@ const AssistantList = () => {
                 perPage: dataPerPage,
                 page: currentPage,
                 searchTerm: searchTerm,
-                status: filterByStatus?.value === USER_STATUS.SHOW_ALL ? '' : filterByStatus?.value,
+                status: filterByStatus?.value === STATUS.SHOW_ALL ? '' : filterByStatus?.value,
                 sortOrder: sortOrder,
                 sortBy: sortBy,
-                doctor: filterByDoctor?.value === USER_STATUS.SHOW_ALL ? '' : filterByDoctor?.value
+                doctor: filterByDoctor?.value === STATUS.SHOW_ALL ? '' : filterByDoctor?.value
             }
             const response = await axios.get(`${config.api}/administrator/assistant/all`, {
                 params: data,
@@ -67,6 +67,7 @@ const AssistantList = () => {
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -115,10 +116,10 @@ const AssistantList = () => {
 
     // filter by status
     const userStatus = [
-        USER_STATUS.SHOW_ALL,
-        USER_STATUS.ACTIVE,
-        USER_STATUS.DISABLE,
-        USER_STATUS.PENDING
+        STATUS.SHOW_ALL,
+        STATUS.ACTIVE,
+        STATUS.DISABLE,
+        STATUS.PENDING
     ]
     const userStatusOptions = userStatus.map((status, index) => ({
         value: status,
@@ -420,8 +421,8 @@ const AssistantList = () => {
                                                                     onChange={(event) => handleStatusChange(event, data.userId)}
                                                                     style={{ color: data.status === 'active' ? 'green' : 'red' }}
                                                                 >
-                                                                    {Object.entries(USER_STATUS)
-                                                                        .filter(([key, value]) => value !== USER_STATUS.SHOW_ALL)
+                                                                    {Object.entries(STATUS)
+                                                                        .filter(([key, value]) => value !== STATUS.SHOW_ALL)
                                                                         .map(([key, value]) => (
                                                                             <option key={key}
                                                                                 value={value}

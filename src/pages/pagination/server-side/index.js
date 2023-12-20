@@ -2,7 +2,7 @@ import { Table } from "react-bootstrap";
 import { config } from "@/config";
 import { useEffect, useState } from "react";
 import { errorHandler } from "@/helpers/errorHandler";
-import { USER_STATUS } from "@/constant";
+import { STATUS } from "@/constant";
 import { AiFillDelete, AiFillEdit, AiFillEye, AiFillStar } from "react-icons/ai";
 import { toast } from 'react-toastify';
 import axios from "axios";
@@ -91,10 +91,10 @@ const ServerSide = () => {
 
     // filter by status start
     const userStatus = [
-        USER_STATUS.SHOW_ALL,
-        USER_STATUS.ACTIVE,
-        USER_STATUS.DISABLE,
-        USER_STATUS.PENDING
+        STATUS.SHOW_ALL,
+        STATUS.ACTIVE,
+        STATUS.DISABLE,
+        STATUS.PENDING
     ]
     const handelFilterByStatus = async (event) => {
         setFilterByStatus(event.target.value);
@@ -246,7 +246,7 @@ const ServerSide = () => {
                                             type="radio"
                                             name="status"
                                             id={`status_${index}`}
-                                            value={status === USER_STATUS.SHOW_ALL ? '' : status}
+                                            value={status === STATUS.SHOW_ALL ? '' : status}
                                             onChange={handelFilterByStatus}
                                         />
                                         {status}
@@ -323,8 +323,8 @@ const ServerSide = () => {
                                                                 value={data?.status}
                                                                 onChange={(event) => handleStatusChange(event, data?.id)}
                                                                 style={{ color: data?.status === 'active' ? 'green' : 'red' }}>
-                                                                {Object.entries(USER_STATUS)
-                                                                    .filter(([key, value]) => value !== USER_STATUS.SHOW_ALL)
+                                                                {Object.entries(STATUS)
+                                                                    .filter(([key, value]) => value !== STATUS.SHOW_ALL)
                                                                     .map(([key, value]) => (
                                                                         <option key={key}
                                                                             value={value}

@@ -11,6 +11,8 @@ import { toast } from 'react-toastify';
 import BeatLoader from "react-spinners/BeatLoader";
 import { ImCross } from "react-icons/im"
 import { errorHandler } from '@/helpers/errorHandler';
+import Select from 'react-select';
+
 
 const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
     const [message, setMessage] = useState(null);
@@ -23,12 +25,28 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
         email: '',
         phone: '',
         address: '',
-        organization: '',
-        designation: '',
+        age: '',
         password: '',
         confirmPassword: '',
         errors: []
     })
+
+    const [selectGender, setSelectGender] = useState(null);
+    const genderList = ['male', 'female', 'other']
+    const genderOptions = genderList.map((gender) => ({ value: gender, label: gender }));
+    const handleGenderChange = (newValue) => {
+        setSelectGender(newValue);
+        setFormData({
+            ...formData,
+            errors: {
+                ...formData.errors,
+                gender: null
+            }
+        });
+        setMessage(null)
+        setErrorMessage(null)
+    };
+
     const handelInputChange = (event) => {
         setFormData({
             ...formData,
@@ -50,8 +68,8 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                 phone: formData.phone,
                 email: formData.email,
                 address: formData.address,
-                organization: formData.organization,
-                designation: formData.designation,
+                age: formData.age,
+                gender: selectGender?.value,
                 role: ROLE.ADMINISTRATOR,
                 password: formData.password,
                 confirmPassword: formData.confirmPassword,
@@ -64,13 +82,13 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                     phone: '',
                     email: '',
                     address: '',
-                    organization: '',
-                    designation: '',
+                    age: '',
                     password: '',
                     confirmPassword: '',
                     errors: []
                 });
                 setMessage(response.data.message);
+                setSelectGender(null)
                 setErrorMessage(null)
             }
         } catch (error) {
@@ -90,6 +108,15 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
         setMessage(null);
         setErrorMessage(null)
     }
+    const customStyles = {
+        option: (provided) => ({
+            ...provided,
+            cursor: 'pointer',
+            fontWeight: "bold",
+            "fontSize": "12px",
+            "textTransform": "uppercase"
+        }),
+    };
     return (
         <div className={styles.body}>
             <div className={styles.main}>
@@ -194,39 +221,40 @@ const AdministratorSignup = ({ activeComponent, handleTabClick }) => {
                             <div className="col-md-6">
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Organization</span>
+                                        <span className='fw-bold'>Age (Years)</span>
                                         <AiFillStar className='required' />
                                     </label>
                                     <input
-                                        type="text"
-                                        name="organization"
-                                        placeholder='your organization'
-                                        value={formData.organization}
+                                        type="number"
+                                        name="age"
+                                        placeholder='your age'
+                                        value={formData.age}
                                         onChange={handelInputChange}
-                                        className={`form-control ${formData.errors?.organization ? 'is-invalid' : null}`}
+                                        className={`form-control ${formData.errors?.age ? 'is-invalid' : null}`}
                                     />
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.organization ? formData.errors?.organization : null
+                                            formData.errors?.age ? formData.errors?.age : null
                                         }
                                     </small>
                                 </div>
                                 <div className="form-group mb-3">
                                     <label className='mb-2'>
-                                        <span className='fw-bold'>Designation</span>
+                                        <span className='fw-bold'>Select gender</span>
                                         <AiFillStar className='required' />
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="designation"
-                                        placeholder='your designation'
-                                        value={formData.designation}
-                                        onChange={handelInputChange}
-                                        className={`form-control ${formData.errors?.designation ? 'is-invalid' : null}`}
-                                    />
+                                    <div className={`${styles.customSelectFilter}`}>
+                                        <Select
+                                            value={selectGender}
+                                            onChange={handleGenderChange}
+                                            options={genderOptions}
+                                            placeholder="select gender"
+                                            styles={customStyles}
+                                        />
+                                    </div>
                                     <small className='validation-error'>
                                         {
-                                            formData.errors?.designation ? formData.errors?.designation : null
+                                            formData.errors?.gender ? formData.errors?.gender : null
                                         }
                                     </small>
                                 </div>

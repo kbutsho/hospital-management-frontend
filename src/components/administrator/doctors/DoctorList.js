@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
-import { USER_STATUS } from '@/constant';
+import { STATUS } from '@/constant';
 import { config } from "@/config/index";
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -52,10 +52,10 @@ const DoctorList = () => {
                 perPage: dataPerPage,
                 page: currentPage,
                 searchTerm: searchTerm,
-                status: filterByStatus?.value === USER_STATUS.SHOW_ALL ? '' : filterByStatus?.value,
+                status: filterByStatus?.value === STATUS.SHOW_ALL ? '' : filterByStatus?.value,
                 sortOrder: sortOrder,
                 sortBy: sortBy,
-                department: filterByDepartment?.value === USER_STATUS.SHOW_ALL ? '' : filterByDepartment?.value
+                department: filterByDepartment?.value === STATUS.SHOW_ALL ? '' : filterByDepartment?.value
             }
             const response = await axios.get(`${config.api}/administrator/doctor/all`, {
                 params: data,
@@ -117,10 +117,10 @@ const DoctorList = () => {
 
     // filter by status
     const userStatus = [
-        USER_STATUS.SHOW_ALL,
-        USER_STATUS.ACTIVE,
-        USER_STATUS.DISABLE,
-        USER_STATUS.PENDING
+        STATUS.SHOW_ALL,
+        STATUS.ACTIVE,
+        STATUS.DISABLE,
+        STATUS.PENDING
     ]
     const userStatusOptions = userStatus.map((status, index) => ({
         value: status,
@@ -238,6 +238,11 @@ const DoctorList = () => {
             fontSize: '12px'
         }),
     };
+    const statusColors = {
+        [STATUS.ACTIVE]: 'green',
+        [STATUS.PENDING]: 'red',
+        [STATUS.DISABLE]: 'grey'
+    };
     return (
         <div className={`py-3 ${styles.listArea}`}>
             {
@@ -330,7 +335,7 @@ const DoctorList = () => {
                         {
                             reduxStoreDoctor.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table striped hover responsive bordered>
+                                    <Table striped hover responsive bordered size="sm">
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
                                                 <th>#</th>
@@ -406,28 +411,31 @@ const DoctorList = () => {
                                                 reduxStoreDoctor.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td className='text-center'>{data.userId}</td>
-                                                            <td className='text-center'>{data.doctorId}</td>
-                                                            <td>{data.name}</td>
-                                                            <td>{data.email}</td>
-                                                            <td>{data.phone}</td>
-                                                            <td>{data.departmentName}</td>
-                                                            <td>{data.bmdc_id}</td>
+                                                            <td className='table-element'>{index + 1}</td>
+                                                            <td className='text-center table-element'>{data.userId}</td>
+                                                            <td className='text-center table-element'>{data.doctorId}</td>
+                                                            <td className='table-element'>{data.name}</td>
+                                                            <td className='table-element'>{data.email}</td>
+                                                            <td className='table-element'>{data.phone}</td>
+                                                            <td className='table-element'>{data.departmentName}</td>
+                                                            <td className='table-element'>{data.bmdc_id}</td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
                                                                     value={data.status}
                                                                     onChange={(event) => handleStatusChange(event, data.userId)}
-                                                                    style={{ color: data.status === 'active' ? 'green' : 'red' }}
-                                                                >
-                                                                    {Object.entries(USER_STATUS)
-                                                                        .filter(([key, value]) => value !== USER_STATUS.SHOW_ALL)
+                                                                    style={{
+                                                                        color: statusColors[data.status] || 'inherit'
+                                                                    }}>
+                                                                    {Object.entries(STATUS)
+                                                                        .filter(([key, value]) => value !== STATUS.SHOW_ALL)
                                                                         .map(([key, value]) => (
                                                                             <option key={key}
                                                                                 value={value}
                                                                                 className='fw-bold'
-                                                                                style={{ color: value === 'active' ? 'green' : 'red' }}>
+                                                                                style={{
+                                                                                    color: statusColors[value] || 'inherit'
+                                                                                }}>
                                                                                 {value}
                                                                             </option>
                                                                         ))}
@@ -436,7 +444,8 @@ const DoctorList = () => {
                                                             <td >
                                                                 <div className='d-flex justify-content-center'>
                                                                     <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                    <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' />
+                                                                    </button>
                                                                     <button onClick={() => toggleDeleteModal(data.doctorId, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>

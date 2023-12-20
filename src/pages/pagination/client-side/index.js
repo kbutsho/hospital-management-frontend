@@ -2,7 +2,7 @@ import { Table } from "react-bootstrap";
 import { config } from "@/config";
 import { useEffect, useState } from "react";
 import { errorHandler } from "@/helpers/errorHandler";
-import { USER_STATUS } from "@/constant";
+import { STATUS } from "@/constant";
 import { AiFillDelete, AiFillEdit, AiFillEye, AiFillStar } from "react-icons/ai";
 import { toast } from 'react-toastify';
 import axios from "axios";
@@ -180,8 +180,8 @@ const ClientSide = ({ data }) => {
                                                                 value={data?.status}
                                                                 onChange={(event) => handleStatusChange(event, data?.id)}
                                                                 style={{ color: data?.status === 'active' ? 'green' : 'red' }}>
-                                                                {Object.entries(USER_STATUS)
-                                                                    .filter(([key, value]) => value !== USER_STATUS.SHOW_ALL)
+                                                                {Object.entries(STATUS)
+                                                                    .filter(([key, value]) => value !== STATUS.SHOW_ALL)
                                                                     .map(([key, value]) => (
                                                                         <option key={key}
                                                                             value={value}

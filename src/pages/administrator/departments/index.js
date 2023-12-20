@@ -8,7 +8,7 @@ const AdministratorDepartments = () => {
     return (
         <div>
             <Head>
-                <title>profile</title>
+                <title>department list</title>
             </Head>
             <Breadcrumb />
             <div className='px-2'>

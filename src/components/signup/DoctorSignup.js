@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '@/styles/signup/signup.module.css';
 import { AiFillStar } from "react-icons/ai";
 import { BiHide, BiShow } from "react-icons/bi";
 import Link from 'next/link';
 import Tabs from './Tabs';
-import { ROLE } from '@/constant';
+import { ROLE, STATUS } from '@/constant';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { config } from '@/config';
@@ -13,14 +13,27 @@ import { ImCross } from "react-icons/im"
 import Select from 'react-select';
 import { errorHandler } from '@/helpers/errorHandler';
 
-const DoctorSignup = ({ activeComponent, handleTabClick, departmentList }) => {
+const DoctorSignup = ({ activeComponent, handleTabClick }) => {
     const [message, setMessage] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [department] = useState(departmentList);
+    const [department, setDepartment] = useState(null);
 
+    useEffect(() => {
+        const fetchDepartment = async () => {
+            try {
+                const response = await axios.get(`${config.api}/signup/doctor/departmentList`);
+                setDepartment(response.data.data)
+                setErrorMessage(null)
+            } catch (error) {
+                setMessage(null)
+                return errorHandler({ error, toast })
+            }
+        }
+        fetchDepartment()
+    }, [])
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -101,7 +114,6 @@ const DoctorSignup = ({ activeComponent, handleTabClick, departmentList }) => {
         } catch (error) {
             setLoading(false);
             setMessage(null)
-            setErrorMessage(null)
             return errorHandler({ error, toast, setFormData, formData, setErrorMessage })
         }
     }

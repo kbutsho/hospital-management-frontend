@@ -75,6 +75,7 @@ const Login = () => {
             }
         }
         catch (error) {
+            console.log(error)
             setLoading(false);
             return errorHandler({ error, toast, setFormData, formData, setErrorMessage })
         }

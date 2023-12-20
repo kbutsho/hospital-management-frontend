@@ -1,120 +1,146 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
+import { STATUS } from '@/constant';
 import { config } from "@/config/index";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FadeLoader } from 'react-spinners';
 import { AiFillDelete, AiFillEdit, AiFillEye, AiFillStar } from 'react-icons/ai';
+import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { RxCross2 } from "react-icons/rx";
-import { Table } from 'react-bootstrap';
 import { errorHandler } from '@/helpers/errorHandler';
+import SortingArrow from '@/helpers/sorting/SortingArrow';
+import { CiSearch } from "react-icons/ci";
+import { MdOutlineRefresh } from "react-icons/md";
+import { ImCross } from "react-icons/im";
+import { useDispatch, useSelector } from 'react-redux';
+import Select from 'react-select';
+import { storeDepartment, totalItemsCount, fetchedItemsCount, updateDepartmentStatus, removeDepartment } from '@/redux/slice/administrator/departmentSlice';
 
 
 const DepartmentList = () => {
+    const dispatch = useDispatch();
     const token = Cookies.get('token');
-    const [loading, setLoading] = useState(true);
-    const [addModal, setAddModal] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [filterByStatus, setFilterByStatus] = useState(null);
+    const [activeSortBy, setActiveSortBy] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortBy, setSortBy] = useState('');
+    const [sortOrder, setSortOrder] = useState('asc')
     const [deleteModal, setDeleteModal] = useState(false)
-    const [updateModal, setUpdateModal] = useState(false)
-    const [data, setData] = useState();
     const [deleteItem, setDeleteItem] = useState({
         id: '',
         name: ''
-    })
-    const [updateItem, setUpdateItem] = useState({
-        id: '',
-        name: '',
-        errors: []
     })
     const [formData, setFormData] = useState({
         name: '',
         errors: []
     })
-
+    // pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [dataPerPage, setDataPerPage] = useState(10);
+    const handelPaginate = (pageNumber) => {
+        setCurrentPage(pageNumber)
+    }
+    // load data
     const fetchData = async () => {
         try {
             setLoading(true);
+            const data = {
+                perPage: dataPerPage,
+                page: currentPage,
+                searchTerm: searchTerm,
+                sortOrder: sortOrder,
+                sortBy: sortBy,
+                status: filterByStatus?.value === STATUS.SHOW_ALL ? '' : filterByStatus?.value,
+            }
             const response = await axios.get(`${config.api}/administrator/department/all`, {
+                params: data,
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setLoading(false);
-            if (response.data.status) {
-                setData(response.data.data);
-            }
+            setErrorMessage(null)
+            dispatch(storeDepartment(response.data.data))
+            dispatch(totalItemsCount(response.data.totalItems))
+            dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
-            setLoading(false);
-            return errorHandler({ error, toast })
+            return errorHandler({ error, setErrorMessage })
+        } finally {
+            setLoading(false)
         }
-    }
+    };
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [currentPage, dataPerPage, filterByStatus, sortOrder, sortBy])
 
-    const handelInputChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-            errors: {
-                ...formData.errors,
-                [event.target.name]: null
-            }
-        })
+    const reduxStoreDepartment = useSelector(state => state.administrator_departments.data);
+    const totalItems = useSelector(state => state.administrator_departments.totalItems);
+    const fetchedItems = useSelector(state => state.administrator_departments.fetchedItems);
+
+    // sort order
+    const handleSortOrderChange = (order, sortField) => {
+        setActiveSortBy(sortField)
+        setSortBy(sortField);
+        setSortOrder(order);
     };
-    // add department
-    const toggleAddModal = () => {
-        setAddModal(!addModal)
+
+    // filter by status
+    const statusList = [
+        STATUS.SHOW_ALL,
+        STATUS.ACTIVE,
+        STATUS.DISABLE,
+        STATUS.PENDING
+    ]
+    const statusOptions = statusList.map((status, index) => ({
+        value: status,
+        label: index === 0 ? `${status.split(" ")[1]} status` : `${status}`
+    }));
+    const handelFilterByStatus = (newValue) => {
+        setFilterByStatus(newValue);
     }
-    const formSubmit = async (event) => {
-        event.preventDefault();
+
+    // search 
+    const handelSearch = (event) => {
+        setSearchTerm(event.target.value);
+    };
+    const handelSearchSubmit = async () => {
         try {
-            setLoading(!loading);
+            setLoading(true);
+            await fetchData();
+        } catch (error) {
+            return errorHandler({ error, setErrorMessage })
+        } finally {
+            setSearchTerm('')
+            setLoading(false)
+        }
+    }
+
+    // update status
+    const handleStatusChange = async (event, id) => {
+        try {
+            const status = event.target.value;
             const data = {
-                name: formData?.name
+                'id': id,
+                'status': status
             }
-            const response = await axios.post(`${config.api}/administrator/department/create`, data, {
+            setLoading(true)
+            await axios.post(`${config.api}/administrator/department/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            setLoading(false);
-            if (response.data.status) {
-                setFormData({
-                    name: '',
-                    errors: []
-                });
-                setAddModal(false);
-                await fetchData();
-                toast.success(response.data.message);
-            }
+            setErrorMessage(null)
+            dispatch(updateDepartmentStatus({ id, status }))
         } catch (error) {
-            setLoading(false);
-            return errorHandler({ error, toast, setFormData, formData })
+            return errorHandler({ error, setErrorMessage })
+        } finally {
+            setLoading(false)
         }
-    }
-    // search input field
-    const [searchTerm, setSearchTerm] = useState('');
-    const handelSearch = (event) => {
-        setSearchTerm(event.target.value);
     };
-    const filterAndSearchData = data?.filter((item) => {
-        const searchMatch = searchTerm === '' ||
-            item.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return searchMatch;
-    })
-    //pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const [dataPerPage, setDataPerPage] = useState(5);
-    const indexOfLastData = currentPage * dataPerPage;
-    const indexOfFirstData = indexOfLastData - dataPerPage;
-    const currentData = filterAndSearchData?.slice(indexOfFirstData, indexOfLastData)
-    const handelPaginate = (pageNumber) => {
-        setCurrentPage(pageNumber)
-    }
 
     // delete
     const toggleDeleteModal = (id, name) => {
@@ -129,250 +155,390 @@ const DepartmentList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setLoading(false);
+            dispatch(removeDepartment(deleteItem?.id));
             toast.success("department deleted successfully!")
+            setErrorMessage(null)
             await fetchData()
         } catch (error) {
+            return errorHandler({ error, setErrorMessage })
+        } finally {
             setLoading(false)
-            return errorHandler({ error, toast })
-            // toast.error("internal server error!")
         }
     }
-    // update
-    const toggleUpdateModal = (id, name) => {
-        setUpdateModal(!updateModal)
-        setUpdateItem({ name: name ?? '', id: id ?? '' });
-    }
-    const handelUpdateChange = (event) => {
-        setUpdateItem({
-            ...updateItem,
-            [event.target.name]: event.target.value,
-            errors: {
-                ...updateItem.errors,
-                [event.target.name]: null
-            }
-        })
-    };
-    const handelUpdate = async () => {
+
+    // reset
+    const handelReset = async () => {
         try {
             setLoading(true)
-            const data = {
-                name: updateItem.name
-            }
-            await axios.patch(`${config.api}/administrator/department/${updateItem?.id}`, data, {
+            setFilterByStatus(null)
+            setActiveSortBy('')
+            setSearchTerm('')
+            setSortBy('')
+            setSortOrder('asc')
+            setDataPerPage(10)
+            setCurrentPage(1)
+            const response = await axios.get(`${config.api}/administrator/department/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setLoading(false);
-            setUpdateModal(false);
-            toast.success("department updated successfully!")
-            await fetchData()
+            setErrorMessage(null)
+            dispatch(storeDepartment(response.data.data))
+            dispatch(totalItemsCount(response.data.totalItems))
+            dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            return errorHandler({ error, setErrorMessage })
+        } finally {
             setLoading(false)
-            if (error.response) {
-                const errorStatus = error.response.status;
-                if (errorStatus === 422 || errorStatus === 409) {
-                    setUpdateItem({
-                        ...updateItem,
-                        errors: error.response.data.error
-                    });
-                    toast.error(error.response.data.message)
-                }
-                else if (errorStatus === 401 || errorStatus === 500) {
-                    toast.error(error.response.data.error)
-                }
-                else {
-                    toast.error("unexpected error. try again later!");
-                }
-            }
-            else if (error.isAxiosError) {
-                toast.error("network error. try again later!");
-            }
-            else {
-                toast.error("network error. try again later!");
-            }
         }
     }
+    const handelErrorMessage = () => {
+        setErrorMessage(null)
+    }
+
+    // add department 
+    const [addModal, setAddModal] = useState(false);
+    const [addLoading, setAddLoading] = useState(false);
+    const toggleAddModal = () => {
+        setAddModal(!addModal);
+        setFormData({
+            name: '',
+            errors: []
+        })
+    }
+    const handelInputChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name]: event.target.value,
+            errors: {
+                ...formData.errors,
+                [event.target.name]: null
+            }
+        })
+    };
+    const departmentFormSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            setAddLoading(true)
+            const data = {
+                name: formData.name
+            }
+            const response = await axios.post(`${config.api}/administrator/department/create`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.data.status) {
+                setFormData({
+                    name: '',
+                    errors: []
+                });
+                await fetchData()
+                setAddModal(!addModal);
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            return errorHandler({ error, toast, setFormData, formData })
+        } finally {
+            setAddLoading(false);
+        }
+    }
+
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            border: 'none',
+            boxShadow: 'none',
+            cursor: 'pointer'
+        }),
+        option: (provided) => ({
+            ...provided,
+            cursor: 'pointer',
+            'textTransform': 'uppercase',
+            fontSize: '12px'
+        }),
+    };
+    const statusColors = {
+        [STATUS.ACTIVE]: 'green',
+        [STATUS.PENDING]: 'red',
+        [STATUS.DISABLE]: 'grey'
+    };
+
+
     return (
-        <div className={`row py-4 ${styles.listArea}`}>
-            {loading ? (
-                <div className={styles.loadingArea}>
-                    <FadeLoader color='#d3d3d3' size="16" />
-                </div>
-            ) : (
-                <>
-                    <div>
-                        <div className="row">
-                            <div className="col-lg-3 col-12">
-                                <div className={`${styles.filterHeader}`}>
-                                    <span className='text-uppercase'>Show</span>
-                                    <select
-                                        value={dataPerPage}
-                                        className={`${styles.customSelect} form-select`}
-                                        onChange={(e) =>
-                                            setDataPerPage(parseInt(e.target.value))
-                                        }>
-                                        <option value="5" defaultValue={dataPerPage === 5}>05</option>
-                                        <option value="10" defaultValue={dataPerPage === 10}>10</option>
-                                        <option value="25" defaultValue={dataPerPage === 25}>25</option>
-                                        <option value="50" defaultValue={dataPerPage === 50}>50</option>
-                                        <option value="75" defaultValue={dataPerPage === 75}>75</option>
-                                        <option value="100" defaultValue={dataPerPage === 100}>100</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-lg-8 col-12">
-                                <div className={`${styles.searchArea}`}>
-                                    <input
-                                        type="text"
-                                        value={searchTerm}
-                                        onChange={handelSearch}
-                                        placeholder={`search here`}
-                                        className={`form-control ${styles.searchBox}`} />
-                                </div>
-                            </div>
-                            <div className="col-lg-1 col-12">
-                                <button onClick={toggleAddModal} className={`  btn btn-outline-secondary  ${styles.addBtn}`}>Add </button>
+        <div className={`py-3 ${styles.listArea}`}>
+            {
+                loading ? null : (
+                    errorMessage ? (
+                        <div className="alert alert-danger fw-bold">
+                            <div className='d-flex justify-content-between'>
+                                {errorMessage}
+                                <ImCross size="18px"
+                                    className='pt-1'
+                                    style={{ cursor: "pointer" }}
+                                    onClick={handelErrorMessage} />
                             </div>
                         </div>
-                        <div className="list-area">
-                            {
-                                currentData?.length === 0 ?
-                                    <div className={styles.notFound}>
-                                        <h6 className='fw-bold'>no department found.</h6>
-                                    </div>
-                                    : <div className='p-3 mt-3 table-area'>
-                                        <Table striped hover responsive>
-                                            <thead className='p-3'>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>DEPARTMENT ID</th>
-                                                    <th>DEPARTMENT NAME</th>
-                                                    <th className='text-center'>ACTION</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className='p-3'>
-                                                {
-                                                    currentData?.map((data, index) => {
-                                                        return (
-                                                            <tr key={index}>
-                                                                <td>{index + 1}</td>
-                                                                <td>{data.id}</td>
-                                                                <td>{data.name}</td>
-                                                                <td >
-                                                                    <div className='d-flex justify-content-center'>
-                                                                        <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                        <button onClick={() => toggleUpdateModal(data.id, data.name)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
-                                                                        <button onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    })
-                                                }
-                                            </tbody>
-                                        </Table>
-                                        {/* pagination */}
-                                        <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
-                                            {
-                                                currentData?.length > 0 ?
-                                                    <Pagination data={filterAndSearchData}
-                                                        dataPerPage={dataPerPage}
-                                                        currentPage={currentPage}
-                                                        handelPaginate={handelPaginate} />
-                                                    : null
-                                            }
-                                        </div>
-                                    </div>
-                            }
-                        </div>
+                    ) : null
+                )
+            }
+            <div className="row">
+                <div className="col-md-2">
+                    <div className={`${styles.filterHeader}`}>
+                        <span className='text-uppercase'>Show</span>
+                        <select
+                            value={dataPerPage}
+                            className={`${styles.customSelect} form-select`}
+                            onChange={(e) =>
+                                setDataPerPage(parseInt(e.target.value))
+                            }>
+                            <option value="5" defaultValue={dataPerPage === 5}>05</option>
+                            <option value="10" defaultValue={dataPerPage === 10}>10</option>
+                            <option value="25" defaultValue={dataPerPage === 25}>25</option>
+                            <option value="50" defaultValue={dataPerPage === 50}>50</option>
+                            <option value="75" defaultValue={dataPerPage === 75}>75</option>
+                            <option value="100" defaultValue={dataPerPage === 100}>100</option>
+                        </select>
                     </div>
-                    {addModal ? (
-                        <div>
-                            <Modal isOpen={addModal} className="modal-md">
-                                <ModalBody>
-                                    <div className='p-3'>
-                                        <div className='d-flex justify-content-between align-items-center mb-3'>
-                                            <h4 onClick={() => toggleAddModal()} className='fw-bold text-uppercase'>Add Department</h4>
-                                            <RxCross2 size="24px" color='red' onClick={() => toggleAddModal()} style={{ cursor: "pointer" }} />
-                                        </div>
-                                        <form onSubmit={formSubmit}>
-                                            <label className='mb-2'>
-                                                <span className='fw-bold'>Department Name</span>
-                                                <AiFillStar className='required' />
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                onChange={handelInputChange}
-                                                value={formData?.name}
-                                                className='form-control' />
-                                            <small className='validation-error'>
-                                                {
-                                                    formData?.errors?.name ? formData?.errors?.name : null
-                                                }
-                                            </small>
-                                            <input type="submit" value="submit" className='btn btn-primary w-100 mt-3 fw-bold' />
-                                        </form>
+                </div>
+                <div className="col-md-3">
+                    <div className={`${styles.customSelectFilter}`}>
+                        <Select
+                            value={filterByStatus}
+                            onChange={handelFilterByStatus}
+                            options={statusOptions}
+                            isSearchable
+                            placeholder="search or select status"
+                            styles={customStyles}
+                        />
+                    </div>
+                </div>
+                <div className="col-md-5">
+                    <div className={`input-group ${styles.searchArea}`}>
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={handelSearch}
+                            placeholder={`search for departments`}
+                            className={`form-control ${styles.searchBox}`} />
+                        <button
+                            onClick={handelSearchSubmit}
+                            className='btn btn-outline-secondary'
+                            style={{ border: "none" }}>
+                            <CiSearch size="24px" />
+                        </button>
+                        <button
+                            onClick={handelReset}
+                            className='btn btn-outline-secondary ms-2'
+                            style={{ border: "none" }}>
+                            <MdOutlineRefresh size="24px" />
+                        </button>
+                    </div>
+                </div>
+                <div className='col-md-2'>
+                    <div className={`${styles.searchArea}`}>
+                        <button
+                            onClick={toggleAddModal}
+                            style={{ border: "none" }}
+                            className='btn btn-outline-secondary fw-bold w-100 py-2'>add department</button>
+                    </div>
+                </div>
+            </div>
+            {
+                loading ?
+                    <div className={styles.loadingArea}>
+                        <FadeLoader color='#d3d3d3' size="16" />
+                    </div> :
+                    <div className="list-area">
+                        {
+                            reduxStoreDepartment.length > 0 ?
+                                <div className='p-3 mt-3 table-area'>
+                                    <Table striped hover responsive bordered size="sm">
+                                        <thead className='p-3 custom-scrollbar'>
+                                            <tr>
+                                                <th>#</th>
+                                                <th className='text-center'>
+                                                    <SortingArrow
+                                                        level={`ID`}
+                                                        sortBy={`departments.id`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th>
+                                                    <SortingArrow
+                                                        level={`DEPARTMENT`}
+                                                        sortBy={`departments.name`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th className='text-center'>
+                                                    <SortingArrow
+                                                        level={`AVAILABLE DOCTOR`}
+                                                        sortBy={`activeDoctor`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th className='text-center'>
+                                                    <SortingArrow
+                                                        level={`PENDING DOCTOR`}
+                                                        sortBy={`pendingDoctor`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th className='text-center'>
+                                                    <SortingArrow
+                                                        level={`DISABLED DOCTOR`}
+                                                        sortBy={`disableDoctor`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th className='text-center'>
+                                                    <SortingArrow
+                                                        level={`STATUS`}
+                                                        sortBy={`departments.status`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th className='text-center'>ACTION</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className='p-3'>
+                                            {
+                                                reduxStoreDepartment.map((data, index) => {
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td className='table-element'>{index + 1}</td>
+                                                            <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
+                                                            <td className='table-element'>{data.name}</td>
+                                                            <td className='text-center table-element'>{data.activeDoctor ?? 0}</td>
+                                                            <td className='text-center table-element'>{data.pendingDoctor ?? 0}</td>
+                                                            <td className='text-center table-element'>{data.disableDoctor ?? 0}</td>
+                                                            <td className='text-center'>
+                                                                <select
+                                                                    className="status-select form-select fw-bold"
+                                                                    value={data.status}
+                                                                    onChange={(event) => handleStatusChange(event, data.id)}
+                                                                    style={{
+                                                                        color: statusColors[data.status] || 'inherit'
+                                                                    }}>
+                                                                    {Object.entries(STATUS)
+                                                                        .filter(([key, value]) => value !== STATUS.SHOW_ALL)
+                                                                        .map(([key, value]) => (
+                                                                            <option key={key}
+                                                                                value={value}
+                                                                                className='fw-bold'
+                                                                                style={{
+                                                                                    color: statusColors[value] || 'inherit'
+                                                                                }}>
+                                                                                {value}
+                                                                            </option>
+                                                                        ))}
+                                                                </select>
+                                                            </td>
+                                                            <td >
+                                                                <div className='d-flex justify-content-center'>
+                                                                    <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                    <button onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </Table>
+                                    <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
+                                        {
+                                            reduxStoreDepartment.length > 0 ?
+                                                <Pagination totalItem={fetchedItems}
+                                                    dataPerPage={dataPerPage}
+                                                    currentPage={currentPage}
+                                                    handelPaginate={handelPaginate} />
+                                                : null
+                                        }
                                     </div>
-                                </ModalBody>
-                            </Modal>
-                        </div>
-                    ) : null}
-                    {deleteModal ? (
-                        <div>
-                            <Modal isOpen={deleteModal} className="modal-md" onClick={toggleDeleteModal}>
-                                <ModalBody>
-                                    <div className='p-3'>
-                                        <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.name ?? null}</span> department?</h6>
+                                </div> :
+                                <div className={styles.notFound}>
+                                    <h6 className='fw-bold'>no department found.</h6>
+                                </div>
+                        }
+                    </div>
+            }
+            {
+                deleteModal ? (
+                    <div>
+                        <Modal isOpen={deleteModal} className="modal-md" onClick={toggleDeleteModal}>
+                            <ModalBody>
+                                <div className='p-3'>
+                                    <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.name ?? null}</span> department?</h6>
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <div className='d-flex'>
+                                    <button onClick={toggleDeleteModal} className='btn btn-primary btn-sm fw-bold me-2'>close</button>
+                                    <button onClick={handelDelete} className='btn btn-danger btn-sm fw-bold'>delete</button>
+                                </div>
+                            </ModalFooter>
+                        </Modal>
+                    </div>
+                ) : null
+            }
+            {
+                addModal ? (
+                    <div>
+                        <Modal isOpen={addModal} className="modal-md">
+                            <ModalBody>
+                                <div className='p-3'>
+                                    <div className='d-flex justify-content-between'>
+                                        <h4 className='text-uppercase fw-bold mb-4'>Add Department</h4>
+                                        <ImCross size="24px"
+                                            className='pt-2'
+                                            style={{ cursor: "pointer", color: "red" }}
+                                            onClick={toggleAddModal} />
                                     </div>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <div className='d-flex'>
-                                        <button onClick={toggleDeleteModal} className='btn btn-primary btn-sm fw-bold me-2'>close</button>
-                                        <button onClick={handelDelete} className='btn btn-danger btn-sm fw-bold'>delete</button>
-                                    </div>
-                                </ModalFooter>
-                            </Modal>
-                        </div>
-                    ) : null}
-                    {updateModal ? (
-                        <div>
-                            <Modal isOpen={updateModal} className="modal-md">
-                                <ModalBody>
-                                    <div className='p-3'>
-                                        <div className='d-flex justify-content-between align-items-center mb-3'>
-                                            <h4 onClick={() => toggleAddModal()} className='fw-bold text-uppercase'>Update Department</h4>
-                                            <RxCross2 size="24px" color='red' onClick={toggleUpdateModal} style={{ cursor: "pointer" }} />
-                                        </div>
-                                        <form onSubmit={handelUpdate}>
-                                            <label className='mb-2'>
-                                                <span className='fw-bold'>Department Name</span>
-                                                <AiFillStar className='required' />
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                onChange={handelUpdateChange}
-                                                value={updateItem?.name}
-                                                className='form-control' />
-                                            <small className='validation-error'>
-                                                {
-                                                    updateItem?.errors?.name ? updateItem?.errors?.name : null
-                                                }
-                                            </small>
-                                            <input type="submit" value="submit" className='btn btn-primary w-100 mt-3 fw-bold' />
-                                        </form>
-                                    </div>
-                                </ModalBody>
-                            </Modal>
-                        </div>
-                    ) : null}
-                </>
-            )}
-        </div>
+                                    <form onSubmit={departmentFormSubmit}>
+                                        <label className='mb-3'>
+                                            <span className='fw-bold'>DEPARTMENT NAME</span>
+                                            <AiFillStar className='required' />
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handelInputChange}
+                                            placeholder='write department name'
+                                            className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`} />
+                                        <small className='validation-error'>
+                                            {
+                                                formData.errors?.name ? formData.errors?.name : null
+                                            }
+                                        </small>
+                                        {
+                                            addLoading ?
+                                                <button disabled className='mt-3 fw-bold w-100 btn btn-primary'>submitting...</button> :
+                                                <input type="submit" value="submit" className='mt-3 fw-bold w-100 btn btn-primary' />
+                                        }
+                                    </form>
+                                </div>
+                            </ModalBody>
+                        </Modal>
+                    </div>
+                ) : null
+            }
+
+        </div >
     );
 };
 
 export default DepartmentList;
+
+
+
+
