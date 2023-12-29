@@ -528,7 +528,7 @@ const ChamberList = () => {
                                     </div>
                                     <form onSubmit={chamberFormSubmit}>
                                         <label className='mb-3'>
-                                            <span className='fw-bold'>ROOM</span>
+                                            <span className='fw-bold'>ROOM NUMBER</span>
                                             <AiFillStar className='required' />
                                         </label>
                                         <input
