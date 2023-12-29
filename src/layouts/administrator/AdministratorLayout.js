@@ -22,7 +22,16 @@ const AdministratorLayout = ({ children }) => {
     if (loading) {
         return null;
     }
-    const isActive = (route) => router.pathname === route;
+    // const isActive = (route) => router.pathname === route;
+    const isActive = (route) => {
+        if (router.pathname === route) {
+            return true;
+        }
+        if (router.pathname.startsWith(route)) {
+            return true;
+        }
+        return false;
+    };
     const handelLogout = () => {
         Cookies.remove('name')
         Cookies.remove('token')
@@ -38,6 +47,10 @@ const AdministratorLayout = ({ children }) => {
                     <div className="row">
                         <div className="col-sm-5 col-md-4 col-lg-3 col-12 mb-4">
                             <div className='bg-light shadow-sm p-3 rounded-1'>
+
+
+
+
                                 <Link href="/administrator/dashboard"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/administrator/dashboard') ? styles.activeMenu : ''}`}>
@@ -81,6 +94,30 @@ const AdministratorLayout = ({ children }) => {
                                         <span>Chambers</span>
                                     </div>
                                 </Link>
+
+                                <Link href="/administrator/schedules"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/administrator/schedules') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>Schedules</span>
+                                    </div>
+                                </Link>
+
+                                {/* <Link href="/administrator/schedules"
+                                    className={`${styles.sidebarMenu}
+                                     ${isActive('/administrator/schedules') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>Schedules</span>
+                                    </div>
+                                </Link> */}
+
+
 
                                 <Link href="/administrator/assistants"
                                     className={`${styles.sidebarMenu} 
