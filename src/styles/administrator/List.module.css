@@ -180,3 +180,13 @@
     color: red;
     font-weight: bold;
 }
+
+.timeInput {
+    border: 0;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+}
+
+/* .timeInput:focus {
+    box-shadow: none;
+} */
