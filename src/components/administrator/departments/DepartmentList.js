@@ -18,6 +18,7 @@ import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { storeDepartment, totalItemsCount, fetchedItemsCount, updateDepartmentStatus, removeDepartment } from '@/redux/slice/administrator/departmentSlice';
+import { VscDiffAdded } from 'react-icons/vsc';
 
 
 const DepartmentList = () => {
@@ -283,7 +284,7 @@ const DepartmentList = () => {
                 )
             }
             <div className="row">
-                <div className="col-md-2">
+                <div className="col-md-3">
                     <div className={`${styles.filterHeader}`}>
                         <span className='text-uppercase'>Show</span>
                         <select
@@ -313,7 +314,7 @@ const DepartmentList = () => {
                         />
                     </div>
                 </div>
-                <div className="col-md-5">
+                <div className="col-md-6">
                     <div className={`input-group ${styles.searchArea}`}>
                         <input
                             type="text"
@@ -333,16 +334,22 @@ const DepartmentList = () => {
                             style={{ border: "none" }}>
                             <MdOutlineRefresh size="24px" />
                         </button>
+                        <button
+                            onClick={toggleAddModal}
+                            className='btn btn-outline-secondary ms-2'
+                            style={{ border: "none", "borderRadius": "0px 4px 4px 0" }}>
+                            <VscDiffAdded size="24px" />
+                        </button>
                     </div>
                 </div>
-                <div className='col-md-2'>
+                {/* <div className='col-md-2'>
                     <div className={`${styles.searchArea}`}>
                         <button
                             onClick={toggleAddModal}
                             style={{ border: "none" }}
                             className='btn btn-outline-secondary fw-bold w-100 py-2'>add department</button>
                     </div>
-                </div>
+                </div> */}
             </div>
             {
                 loading ?
