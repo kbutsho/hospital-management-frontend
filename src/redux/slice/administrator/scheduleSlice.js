@@ -13,9 +13,9 @@ const scheduleSlice = createSlice({
         },
         updateScheduleStatus: (state, action) => {
             const { id, status } = action.payload;
-            const index = state.data.findIndex(schedule => schedule.id === id);
+            const index = state.data.findIndex(schedule => schedule.scheduleId === id);
             if (index !== -1) {
-                state.data[index].status = status;
+                state.data[index].scheduleStatus = status;
             }
         },
         fetchedItemsCount: (state, action) => {
@@ -26,7 +26,7 @@ const scheduleSlice = createSlice({
         },
         removeSchedule: (state, action) => {
             const idToRemove = action.payload;
-            state.data = state.data.filter(schedule => schedule.id !== idToRemove);
+            state.data = state.data.filter(schedule => schedule.scheduleId !== idToRemove);
             state.totalItems -= 1;
         },
     }

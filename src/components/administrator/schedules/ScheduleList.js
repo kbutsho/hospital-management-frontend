@@ -64,7 +64,8 @@ const ScheduleList = () => {
     ]
     const dayOptions = dayList.map((day, index) => ({
         value: day,
-        label: day
+        // label: day
+        label: index === 0 ? `${day.split(" ").join(" ")} day` : `${day}`
     }));
 
     const [filterByTimeSlot, setFilterByTimeSlot] = useState(null); // filter by timeSlot
@@ -107,7 +108,7 @@ const ScheduleList = () => {
     });
     timeSlotOptions.unshift({
         value: 'show all',
-        label: 'SHOW ALL SLOT'
+        label: 'show all slot'
     });
 
 
@@ -129,7 +130,7 @@ const ScheduleList = () => {
     }, [])
     const doctorOptions = doctorNames.map((name, index) => ({
         value: name,
-        label: index === 0 ? `${name.split(" ")[1]}` : `${name}`
+        label: index === 0 ? `${name.split(" ")[1]} doctor` : `${name}`
     }));
 
     const [filterByRoom, setFilterByRoom] = useState(null); // filter by room
@@ -217,23 +218,24 @@ const ScheduleList = () => {
     }
 
     // update status
-    const handleStatusChange = async (event, userId) => {
+    const handleStatusChange = async (event, id) => {
         try {
             const status = event.target.value;
             const data = {
-                'userId': userId,
+                'id': id,
                 'status': status
             }
             setLoading(true)
-            await axios.post(`${config.api}/administrator/doctor/update/status`, data, {
+            const res = await axios.post(`${config.api}/administrator/schedule/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            // await fetchData()
+            console.log(res)
             setErrorMessage(null)
-            dispatch(updateDoctorStatus({ userId, status }))
+            dispatch(updateScheduleStatus({ id, status }))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -253,13 +255,13 @@ const ScheduleList = () => {
     const handelDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`${config.api}/administrator/doctor/${deleteItem?.id}`, {
+            await axios.delete(`${config.api}/administrator/schedule/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            dispatch(removeDoctor(deleteItem?.id));
-            toast.success("doctor deleted successfully!")
+            dispatch(removeSchedule(deleteItem?.id));
+            toast.success("schedule deleted successfully!")
             setErrorMessage(null)
             await fetchData()
         } catch (error) {
@@ -487,7 +489,6 @@ const ScheduleList = () => {
                                     <Table responsive bordered size="sm">
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
-                                                <th>#</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`SCHEDULE ID`}
@@ -537,7 +538,6 @@ const ScheduleList = () => {
                                                 reduxStoreSchedule.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td className='text-center table-element'>{index + 1}</td>
                                                             <td className='text-center table-element'>{String(data.scheduleId).padStart(5, '0')}</td>
                                                             <td className='text-center table-element'>{data.doctorName}</td>
                                                             <td className='text-center table-element'>{data.room}</td>
@@ -570,7 +570,7 @@ const ScheduleList = () => {
                                                                     <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' />
                                                                     </button>
-                                                                    <button onClick={() => toggleDeleteModal(data.id, data.scheduleId)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
+                                                                    <button onClick={() => toggleDeleteModal(data.scheduleId, data.scheduleId)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -605,7 +605,12 @@ const ScheduleList = () => {
                         <Modal isOpen={deleteModal} className="modal-md" onClick={toggleDeleteModal}>
                             <ModalBody>
                                 <div className='p-3'>
-                                    <h6 className='fw-bold text-center'>are you sure want to delete <span className='text-primary'>{deleteItem?.name ?? null}</span> doctor?</h6>
+                                    <h6 className='fw-bold text-center text-uppercase'>
+                                        are you sure want to delete
+                                        <span className='text-primary ms-1'>
+                                            {String(deleteItem.name).padStart(5, '0') ?? null}
+                                        </span> schedule?
+                                    </h6>
                                 </div>
                             </ModalBody>
                             <ModalFooter>
