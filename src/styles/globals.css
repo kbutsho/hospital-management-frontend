@@ -173,3 +173,9 @@
     white-space: nowrap;
     overflow-x: auto;
 }
+
+.table-area .error-row td {
+    color: red;
+    border: 1px solid red;
+    background-color: rgb(255, 255, 255);
+}
