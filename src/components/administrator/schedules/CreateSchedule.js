@@ -55,10 +55,10 @@ const CreateSchedule = ({ data, error }) => {
             };
             const entryExists = schedule.some(
                 (entry) =>
-                    entry.doctorId === newEntry.doctor_id &&
+                    entry.doctor_id === newEntry.doctor_id &&
                     entry.day === newEntry.day &&
-                    entry.openingTime === newEntry.opening_time &&
-                    entry.closingTime === newEntry.closing_time
+                    entry.opening_time === newEntry.opening_time &&
+                    entry.closing_time === newEntry.closing_time
             );
             if (!entryExists) {
                 setErrorMessage(null)
@@ -70,31 +70,44 @@ const CreateSchedule = ({ data, error }) => {
             setErrorMessage("please select all required fields!");
         }
     };
+    const [errorResponse, setErrorResponse] = useState([]);
 
+    // console.log(errorResponse)
+    // console.log(schedule)
     const formSubmit = async () => {
         try {
             setLoading(true);
             const data = {
                 data: schedule
             }
-            console.log(data)
-            const response = await axios.post(`${config.api}/administrator/schedule/create`, data, {
+            await axios.post(`${config.api}/administrator/schedule/create`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            console.log(response)
             setErrorMessage(null)
             router.push('/administrator/schedules')
             toast.success('schedule created successfully!')
         } catch (error) {
-            console.log(error)
+            if (error.response && error.response.data.error) {
+                setErrorResponse(error.response.data.error);
+            }
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
         }
     }
 
+    // handeling error
+    const isEqualSchedule = (scheduleA, scheduleB) => {
+        return (
+            scheduleA.doctor_id === scheduleB.doctor_id &&
+            scheduleA.chamber_id === scheduleB.chamber_id &&
+            scheduleA.day === scheduleB.day &&
+            scheduleA.opening_time === scheduleB.opening_time &&
+            scheduleA.closing_time === scheduleB.closing_time
+        );
+    };
     const customStyles = {
         control: (provided) => ({
             ...provided,
@@ -322,7 +335,7 @@ const CreateSchedule = ({ data, error }) => {
                                 <th className="text-center py-2">ACTION</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        {/* <tbody>
                             {schedule?.length > 0 && schedule?.map((schedule, index) => (
                                 <tr key={index}>
                                     <td className='text-center pt-2'>
@@ -347,7 +360,44 @@ const CreateSchedule = ({ data, error }) => {
                                     </td>
                                 </tr>
                             ))}
+                        </tbody> */}
+                        <tbody>
+                            {schedule?.length > 0 && schedule?.map((scheduleItem, index) => {
+                                const isError = errorResponse.some(errorItem =>
+                                    isEqualSchedule(errorItem, scheduleItem)
+                                );
+                                const rowClassName = isError ? 'error-row' : '';
+                                return (
+                                    <tr key={index} className={rowClassName}>
+                                        <td className='text-center pt-2'>
+                                            {String(index + 1).padStart(2, '0')}
+                                        </td>
+                                        <td className="text-center">{findDoctorName(scheduleItem.doctor_id)}</td>
+                                        <td className="text-center">{findChamberRoom(scheduleItem.chamber_id)}</td>
+                                        <td className="text-center">{scheduleItem.day}</td>
+                                        <td className="text-center">{convertTime(scheduleItem.opening_time)} - {convertTime(scheduleItem.closing_time)}</td>
+
+                                        <td className="text-center">
+                                            <ImCross
+                                                onClick={() => {
+                                                    setErrorResponse((prevSchedule) => {
+                                                        const updatedSchedule = prevSchedule.filter((_, idx) => idx !== index);
+                                                        return updatedSchedule;
+                                                    })
+                                                    setSchedule((prevSchedule) => {
+                                                        const updatedSchedule = prevSchedule.filter((_, idx) => idx !== index);
+                                                        return updatedSchedule;
+                                                    })
+                                                }}
+                                                size="14px"
+                                                color="red"
+                                                style={{ cursor: 'pointer' }} />
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
+
                     </Table>
                     {
                         schedule?.length > 0 ?
