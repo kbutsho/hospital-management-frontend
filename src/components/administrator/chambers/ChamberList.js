@@ -19,8 +19,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchedItemsCount, removeChamber, storeChamber, totalItemsCount, updateChamberStatus } from '@/redux/slice/administrator/chamberSlice';
 import Select from 'react-select';
 import { VscDiffAdded } from "react-icons/vsc";
+import { useRouter } from 'next/router';
 
 const ChamberList = () => {
+    const router = useRouter();
     const dispatch = useDispatch();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
@@ -208,11 +210,13 @@ const ChamberList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log(response)
             setErrorMessage(null)
             dispatch(storeChamber(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         } finally {
             setLoading(false)
@@ -273,6 +277,12 @@ const ChamberList = () => {
             setAddLoading(false);
         }
     }
+
+    const chamberDetails = (id) => {
+        router.push(`/administrator/chambers/${id}`);
+    }
+
+
 
     const customStyles = {
         control: (provided) => ({
@@ -393,7 +403,7 @@ const ChamberList = () => {
                         {
                             reduxStoreChamber.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table striped hover responsive bordered size="sm">
+                                    <Table hover responsive bordered size="sm">
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
                                                 <th className='text-center'>#</th>
@@ -408,14 +418,6 @@ const ChamberList = () => {
                                                 <th>
                                                     <SortingArrow
                                                         level={`ROOM NUMBER`}
-                                                        sortBy={`chambers.room`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
-                                                </th>
-                                                <th>
-                                                    <SortingArrow
-                                                        level={`ASSIGN DOCTORS`}
                                                         sortBy={`chambers.room`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -440,7 +442,6 @@ const ChamberList = () => {
                                                             <td className='text-center table-element'>{index + 1}</td>
                                                             <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
                                                             <td className='text-center table-element'>{data.room}</td>
-                                                            <td className='text-center table-element'>coming soon...</td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
@@ -466,7 +467,7 @@ const ChamberList = () => {
                                                             </td>
                                                             <td >
                                                                 <div className='d-flex justify-content-center'>
-                                                                    <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button onClick={() => chamberDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button onClick={() => toggleDeleteModal(data.id, data.room)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
