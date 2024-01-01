@@ -98,7 +98,7 @@ const CreateSchedule = ({ data, error }) => {
         }
     }
 
-    // handeling error
+    // handling error
     const isEqualSchedule = (scheduleA, scheduleB) => {
         return (
             scheduleA.doctor_id === scheduleB.doctor_id &&
