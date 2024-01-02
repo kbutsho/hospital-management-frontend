@@ -53,6 +53,20 @@
     padding-top: 6px;
 }
 
+.main .box .disableDatePicker {
+    cursor: not-allowed !important;
+    font-size: 14px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+.main .box .enableDatePicker {
+    cursor: auto !important;
+    font-size: 14px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
 @media (max-width: 768px) {
     .navTab .navItem {
         flex: 0 0 calc(50% - 10px);

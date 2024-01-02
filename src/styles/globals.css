@@ -195,3 +195,29 @@
     padding: 10px;
     border-radius: 4px;
 }
+
+.available-date {
+    background-color: #135713;
+    color: white !important;
+    ;
+    cursor: pointer !important;
+    ;
+}
+
+.unavailable-date {
+    background-color: rgb(172, 31, 31);
+    color: white !important;
+    cursor: not-allowed !important;
+}
+
+.unavailable-date:hover {
+    color: black !important;
+}
+
+.available-date:hover {
+    color: black !important;
+}
+
+.date-picker {
+    font-size: 10px !important;
+}
