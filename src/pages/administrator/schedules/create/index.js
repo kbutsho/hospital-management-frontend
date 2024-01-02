@@ -31,7 +31,7 @@ export async function getStaticProps() {
     try {
         const response = await fetch(`${config.api}/schedule/doctor-chamber`);
         if (!response.ok) {
-            return { props: { doctorList: [], errorMessage: 'Internal server error!' } };
+            return { props: { data: [], errorMessage: 'Internal server error!' } };
         }
         const data = await response.json();
         return {
@@ -43,6 +43,6 @@ export async function getStaticProps() {
         };
     } catch (error) {
         console.log(error)
-        return { props: { doctorList: [], errorMessage: 'Internal server error!' } };
+        return { props: { data: [], errorMessage: 'Internal server error!' } };
     }
 }
