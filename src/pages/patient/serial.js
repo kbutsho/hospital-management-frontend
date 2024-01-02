@@ -286,7 +286,39 @@ const PatientSerial = ({ data }) => {
 
                                 {
                                     selectedDate ? <div className="row">
-                                        <div className="col-md-12">
+                                        <div className="col-md-6">
+                                            <div className="form-group mb-3">
+                                                <label className='mb-2'>
+                                                    <span className='fw-bold text-uppercase'>Select Schedule</span>
+                                                    <AiFillStar className='required' />
+                                                </label>
+                                                <div style={{ textTransform: "uppercase", fontSize: "14px", }}>
+                                                    <Select
+                                                        value={selectedVisitingHour}
+                                                        options={visitingHourOptions}
+                                                        placeholder="select schedule"
+                                                        onChange={(selectedOption) => {
+                                                            setSelectedVisitingHour(selectedOption)
+                                                        }}
+                                                        styles={{
+                                                            menu: (provided) => ({
+                                                                ...provided,
+                                                                maxHeight: '160px',
+                                                                overflowY: 'auto',
+                                                            }),
+                                                            option: (provided) => ({
+                                                                ...provided,
+                                                                cursor: 'pointer',
+                                                                padding: '4px 10px',
+                                                                textTransform: "uppercase",
+                                                                fontSize: "14px",
+                                                                fontWeight: "bold"
+                                                            }),
+                                                        }} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
                                             <div className="form-group mb-3">
                                                 <label className='mb-2'>
                                                     <span className='fw-bold text-uppercase'>Select Schedule</span>
