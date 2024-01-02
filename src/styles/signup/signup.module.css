@@ -27,7 +27,8 @@
 .main .box .navTab {
     margin-bottom: 36px;
     display: flex;
-    justify-content: space-between;
+    border-radius: 0px;
+    justify-content: space-around;
 }
 
 .navTab .navItem {
@@ -35,7 +36,6 @@
     font-weight: bold;
     cursor: pointer;
     font-size: 14px;
-
 }
 
 .main .box input {
