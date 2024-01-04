@@ -7,9 +7,12 @@ import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from 'date-fns';
+import { errorHandler } from '@/helpers/errorHandler';
+import { toast } from 'react-toastify';
+
 
 const PatientSerial = ({ data }) => {
-    console.log(data)
+
     const [phone, setPhone] = useState('');
     const [activeTab, setActiveTab] = useState('doctor');
     const [formData, setFormData] = useState({
@@ -18,15 +21,34 @@ const PatientSerial = ({ data }) => {
         age: '',
         address: '',
         doctor_id: '',
-        datetime: '',
-        // schedule_id need to add
         errors: []
     })
+
+
+    const [selectDepartment, setSelectDepartment] = useState(null);
+    const departmentOptions = data?.data?.departments.map((dept, index) => ({
+        value: dept.id,
+        label: dept.name
+    }))
+
+
+
+
+
+
+
+
+
+
     const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const doctorOptions = data?.data?.doctors.map((doctor, index) => ({
-        value: doctor.id,
-        label: doctor.name
-    }));
+    const doctorOptions = data?.data?.doctors
+        .filter(doctor => doctor.department_id === selectDepartment?.value)
+        .map((doctor, index) => ({
+            value: doctor.id,
+            label: doctor.name
+        }));
+
+
 
     const doctorSchedules = data?.data?.schedules.filter(schedule => schedule.doctor_id === selectedDoctor?.value);
     const today = new Date();
@@ -51,13 +73,14 @@ const PatientSerial = ({ data }) => {
         formattedTime = `${hours12}:${minutes} ${suffix}`;
         return formattedTime;
     };
-
+    const getTime = (time) => {
+        const formattedTime = convertTime(time).split(":").map(part => part.padStart(2, '0')).join(" : ")
+        return formattedTime
+    }
     const [selectedVisitingHour, setSelectedVisitingHour] = useState(null);
     const visitingHourOptions = doctorVisitingHours?.map((hour, index) => ({
-        value: `${hour.day} ${convertTime(hour.opening_time).split(":").map(part => part.padStart(2, '0')).join(" : ")} 
-        - ${convertTime(hour.closing_time).split(":").map(part => part.padStart(2, '0')).join(" : ")}`,
-        label: `${hour.day} ${convertTime(hour.opening_time).split(":").map(part => part.padStart(2, '0')).join(" : ")} 
-        - ${convertTime(hour.closing_time).split(":").map(part => part.padStart(2, '0')).join(" : ")}`
+        value: `${hour.id} ${hour.day} ${getTime(hour.opening_time)} ${getTime(hour.closing_time)}`,
+        label: `${hour.day} ${getTime(hour.opening_time)} - ${getTime(hour.closing_time)}`
     }));
 
 
@@ -82,12 +105,10 @@ const PatientSerial = ({ data }) => {
                 const { name, phone, age, address } = response.data.data;
                 setFormData(prevData => ({
                     ...prevData,
-                    name: name || '',
-                    phone: phone || '',
-                    age: age || '',
-                    address: address || '',
-                    doctor_id: '',
-                    datetime: '',
+                    name: name ?? '',
+                    phone: phone ?? '',
+                    age: age ?? '',
+                    address: address ?? '',
                     errors: []
                 }));
             }
@@ -113,17 +134,38 @@ const PatientSerial = ({ data }) => {
         }));
     }, [phone]);
 
+    const onSubmit = async () => {
+        try {
+            const data = {
+                name: formData.name,
+                phone: formData.phone,
+                address: formData.address,
+                age: formData.age,
+                department_id: selectDepartment?.value,
+                doctor_id: selectedDoctor?.value,
+                date: selectedDate,
+                schedule: selectedVisitingHour?.value
+            }
+            const response = await axios.post(`${config.api}/patient/serial/create`, data);
+            console.log(response)
+
+        } catch (error) {
+            errorHandler({ error, formData, setFormData, toast })
+        }
+    }
+
     const customDateClass = date => {
         if (filterAvailableDates(date)) {
             return 'available-date';
         }
         return 'unavailable-date';
     };
+
     return (
         <div className={styles.body}>
             <div className={styles.main}>
                 <div className={styles.box}>
-                    <h4 className={styles.heading}>take a serial</h4>
+                    <h4 className={styles.heading}>take a patient serial</h4>
                     <div className="row">
                         <div className="col-md-6">
                             <div className="form-group mb-3">
@@ -133,11 +175,18 @@ const PatientSerial = ({ data }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    className='form-control'
                                     value={phone}
                                     onChange={handlePhoneChange}
                                     onBlur={handleBlur}
+                                    placeholder='patient phone number'
+                                    className='form-control text-uppercase'
+                                    style={{ fontSize: "14px" }}
                                 />
+                                <small className='validation-error'>
+                                    {
+                                        formData?.errors?.phone ? formData?.errors?.phone : null
+                                    }
+                                </small>
                             </div>
                             <div className="form-group mb-3">
                                 <label className='mb-2'>
@@ -150,9 +199,15 @@ const PatientSerial = ({ data }) => {
                                     disabled={!phone}
                                     value={formData.address}
                                     onChange={handelPatientData}
-                                    className='form-control'
-                                    style={{ cursor: !phone ? 'not-allowed' : 'auto' }}
+                                    placeholder='patient address'
+                                    className='form-control text-uppercase'
+                                    style={{ cursor: !phone ? 'not-allowed' : 'auto', fontSize: "14px" }}
                                 />
+                                <small className='validation-error'>
+                                    {
+                                        formData?.errors?.address ? formData?.errors?.address : null
+                                    }
+                                </small>
                             </div>
                         </div>
                         <div className="col-md-6">
@@ -167,9 +222,15 @@ const PatientSerial = ({ data }) => {
                                     disabled={!phone}
                                     value={formData.name}
                                     onChange={handelPatientData}
-                                    className='form-control'
-                                    style={{ cursor: !phone ? 'not-allowed' : 'auto' }}
+                                    placeholder='patient name'
+                                    className='form-control text-uppercase'
+                                    style={{ cursor: !phone ? 'not-allowed' : 'auto', fontSize: "14px" }}
                                 />
+                                <small className='validation-error'>
+                                    {
+                                        formData?.errors?.name ? formData?.errors?.name : null
+                                    }
+                                </small>
                             </div>
                             <div className="form-group mb-3">
                                 <label className='mb-2'>
@@ -182,14 +243,20 @@ const PatientSerial = ({ data }) => {
                                     disabled={!phone}
                                     value={formData.age}
                                     onChange={handelPatientData}
-                                    className='form-control'
-                                    style={{ cursor: !phone ? 'not-allowed' : 'auto' }}
+                                    placeholder='patient age'
+                                    className='form-control text-uppercase'
+                                    style={{ cursor: !phone ? 'not-allowed' : 'auto', fontSize: '14px' }}
                                 />
+                                <small className='validation-error'>
+                                    {
+                                        formData?.errors?.age ? formData?.errors?.age : null
+                                    }
+                                </small>
                             </div>
                         </div>
                     </div>
 
-                    <div className='mt-3'>
+                    <div className='my-3'>
                         <div className={`${styles.navTab}`} style={{ marginBottom: "28px", gap: "20px" }}>
                             <div className={`${styles.navItem}`}
                                 style={{ cursor: !(isPatientFound) ? 'not-allowed' : 'pointer' }}>
@@ -223,7 +290,7 @@ const PatientSerial = ({ data }) => {
                                     <div className="col-md-6">
                                         <div className="form-group mb-3">
                                             <label className='mb-2'>
-                                                <span className='fw-bold text-uppercase'>Select Doctor</span>
+                                                <span className='fw-bold text-uppercase'>select department</span>
                                                 <AiFillStar className='required' />
                                             </label>
                                             <div
@@ -233,11 +300,56 @@ const PatientSerial = ({ data }) => {
                                                     cursor: !(isPatientFound) ? 'not-allowed' : 'auto'
                                                 }}>
                                                 <Select
-                                                    value={selectedDoctor}
+                                                    value={selectDepartment}
                                                     isDisabled={!(isPatientFound)}
+                                                    options={departmentOptions}
+                                                    placeholder="search or select department"
+                                                    // menuPlacement="top"
+                                                    onChange={(selectedOption) => {
+                                                        setSelectDepartment(selectedOption)
+                                                        setSelectedDoctor(null)
+                                                        setSelectedDate(null)
+                                                        setSelectedVisitingHour(null)
+                                                    }}
+                                                    styles={{
+                                                        menu: (provided) => ({
+                                                            ...provided,
+                                                            maxHeight: '160px',
+                                                            overflowY: 'auto',
+                                                        }),
+                                                        option: (provided) => ({
+                                                            ...provided,
+                                                            cursor: 'pointer',
+                                                            padding: '4px 16px',
+                                                            textTransform: "uppercase",
+                                                            fontWeight: "bold"
+                                                        }),
+                                                    }} />
+                                            </div>
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.department_id ? formData?.errors?.department_id : null
+                                                }
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-group mb-3">
+                                            <label className='mb-2'>
+                                                <span className='fw-bold text-uppercase'>Select Doctor</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <div
+                                                style={{
+                                                    fontSize: "14px",
+                                                    textTransform: "uppercase",
+                                                    cursor: !isPatientFound || !selectDepartment ? 'not-allowed' : 'auto'
+                                                }}>
+                                                <Select
+                                                    value={selectedDoctor}
+                                                    isDisabled={!isPatientFound || !selectDepartment?.value}
                                                     options={doctorOptions}
                                                     placeholder="search or select doctor"
-                                                    // menuPlacement="top"
                                                     onChange={(selectedOption) => {
                                                         setSelectedDoctor(selectedOption)
                                                         setSelectedDate(null)
@@ -258,103 +370,91 @@ const PatientSerial = ({ data }) => {
                                                         }),
                                                     }} />
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group mb-3">
-                                            <label className='mb-2'>
-                                                <span className='fw-bold text-uppercase'>Choose Date</span>
-                                                <AiFillStar className='required' />
-                                            </label>
-                                            <div>
-                                                <DatePicker
-                                                    disabled={!isPatientFound || !selectedDoctor?.value}
-                                                    className={`${(!isPatientFound || !selectedDoctor?.value) ? styles.disableDatePicker : styles.enableDatePicker} form-control`}
-                                                    placeholderText="SELECT DATE"
-                                                    selected={selectedDate}
-                                                    minDate={today}
-                                                    maxDate={twoMonthsLater}
-                                                    onChange={date => setSelectedDate(date)}
-                                                    filterDate={filterAvailableDates}
-                                                    dayClassName={date => customDateClass(date)}
-                                                />
-                                            </div>
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.doctor_id ? formData?.errors?.doctor_id : null
+                                                }
+                                            </small>
                                         </div>
                                     </div>
                                 </div>
 
 
-                                {
-                                    selectedDate ? <div className="row">
-                                        <div className="col-md-6">
-                                            <div className="form-group mb-3">
-                                                <label className='mb-2'>
-                                                    <span className='fw-bold text-uppercase'>Select Schedule</span>
-                                                    <AiFillStar className='required' />
-                                                </label>
-                                                <div style={{ textTransform: "uppercase", fontSize: "14px", }}>
-                                                    <Select
-                                                        value={selectedVisitingHour}
-                                                        options={visitingHourOptions}
-                                                        placeholder="select schedule"
-                                                        onChange={(selectedOption) => {
-                                                            setSelectedVisitingHour(selectedOption)
-                                                        }}
-                                                        styles={{
-                                                            menu: (provided) => ({
-                                                                ...provided,
-                                                                maxHeight: '160px',
-                                                                overflowY: 'auto',
-                                                            }),
-                                                            option: (provided) => ({
-                                                                ...provided,
-                                                                cursor: 'pointer',
-                                                                padding: '4px 10px',
-                                                                textTransform: "uppercase",
-                                                                fontSize: "14px",
-                                                                fontWeight: "bold"
-                                                            }),
-                                                        }} />
-                                                </div>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="form-group mb-3">
+                                            <label className='mb-2'>
+                                                <span className='fw-bold text-uppercase'>select Date</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <div>
+                                                <DatePicker
+                                                    disabled={!isPatientFound || !selectDepartment?.value || !selectedDoctor?.value}
+                                                    className={`${(!isPatientFound || !selectDepartment?.value || !selectedDoctor?.value)
+                                                        ? styles.disableDatePicker : styles.enableDatePicker} form-control`}
+                                                    placeholderText="SELECT DATE"
+                                                    selected={selectedDate}
+                                                    minDate={today}
+                                                    maxDate={twoMonthsLater}
+                                                    onChange={date => {
+                                                        setSelectedDate(date)
+                                                        setSelectedVisitingHour(null)
+                                                    }}
+                                                    filterDate={filterAvailableDates}
+                                                    dayClassName={date => customDateClass(date)}
+                                                />
                                             </div>
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.date ? formData?.errors?.date : null
+                                                }
+                                            </small>
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group mb-3">
-                                                <label className='mb-2'>
-                                                    <span className='fw-bold text-uppercase'>Select Schedule</span>
-                                                    <AiFillStar className='required' />
-                                                </label>
-                                                <div style={{ textTransform: "uppercase", fontSize: "14px", }}>
-                                                    <Select
-                                                        value={selectedVisitingHour}
-                                                        options={visitingHourOptions}
-                                                        placeholder="select schedule"
-                                                        onChange={(selectedOption) => {
-                                                            setSelectedVisitingHour(selectedOption)
-                                                        }}
-                                                        styles={{
-                                                            menu: (provided) => ({
-                                                                ...provided,
-                                                                maxHeight: '160px',
-                                                                overflowY: 'auto',
-                                                            }),
-                                                            option: (provided) => ({
-                                                                ...provided,
-                                                                cursor: 'pointer',
-                                                                padding: '4px 10px',
-                                                                textTransform: "uppercase",
-                                                                fontSize: "14px",
-                                                                fontWeight: "bold"
-                                                            }),
-                                                        }} />
-                                                </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-group mb-3">
+                                            <label className='mb-2'>
+                                                <span className='fw-bold text-uppercase'>select schedule</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <div style={{
+                                                fontSize: "14px",
+                                                textTransform: "uppercase",
+                                                cursor: !isPatientFound || !selectDepartment?.value || !selectedDoctor?.value || !selectedDate
+                                                    ? 'not-allowed' : 'auto'
+                                            }}>
+                                                <Select
+                                                    isDisabled={!isPatientFound || !selectDepartment?.value || !selectedDoctor?.value || !selectedDate}
+                                                    value={selectedVisitingHour}
+                                                    options={visitingHourOptions}
+                                                    placeholder="select schedule"
+                                                    onChange={(selectedOption) => {
+                                                        setSelectedVisitingHour(selectedOption)
+                                                    }}
+                                                    styles={{
+                                                        menu: (provided) => ({
+                                                            ...provided,
+                                                            maxHeight: '160px',
+                                                            overflowY: 'auto',
+                                                        }),
+                                                        option: (provided) => ({
+                                                            ...provided,
+                                                            cursor: 'pointer',
+                                                            padding: '4px 10px',
+                                                            textTransform: "uppercase",
+                                                            fontSize: "14px",
+                                                            fontWeight: "bold"
+                                                        }),
+                                                    }} />
                                             </div>
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.schedule ? formData?.errors?.schedule : null
+                                                }
+                                            </small>
                                         </div>
-                                    </div> : null
-                                }
-
-
-
+                                    </div>
+                                </div>
 
                             </div> :
                             <div className='row'>
@@ -393,7 +493,7 @@ const PatientSerial = ({ data }) => {
                     </div>
 
 
-                    <input type="button" className='btn btn-primary w-100 mt-3 fw-bold' value="submit" />
+                    <input type="button" onClick={onSubmit} className='btn btn-primary w-100 fw-bold' value="submit" />
                 </div>
             </div>
         </div>
@@ -404,8 +504,7 @@ export default PatientSerial;
 
 export async function getStaticProps() {
     try {
-        const response = await fetch(`${config.api}/serial/doctor-schedule`);
-
+        const response = await fetch(`${config.api}/serial/department-doctor-schedule`);
         if (!response.ok) {
             return { props: { data: [], errorMessage: 'internal server error!' } };
         }
