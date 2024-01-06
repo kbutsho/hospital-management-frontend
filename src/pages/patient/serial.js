@@ -1,6 +1,6 @@
 import styles from '@/styles/signup/signup.module.css';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import { config } from '@/config';
 import Select from 'react-select';
@@ -9,10 +9,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from 'date-fns';
 import { errorHandler } from '@/helpers/errorHandler';
 import { toast } from 'react-toastify';
+import { Table } from 'react-bootstrap';
+import Link from 'next/link';
+import ReactToPrint from 'react-to-print';
 
 
 const PatientSerial = ({ data }) => {
-
+    const ref = useRef();
     const [phone, setPhone] = useState('');
     const [activeTab, setActiveTab] = useState('doctor');
     const [success, setSuccess] = useState(false)
@@ -25,21 +28,11 @@ const PatientSerial = ({ data }) => {
         errors: []
     })
 
-
     const [selectDepartment, setSelectDepartment] = useState(null);
     const departmentOptions = data?.data?.departments.map((dept, index) => ({
         value: dept.id,
         label: dept.name
     }))
-
-
-
-
-
-
-
-
-
 
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const doctorOptions = data?.data?.doctors
@@ -48,8 +41,6 @@ const PatientSerial = ({ data }) => {
             value: doctor.id,
             label: doctor.name
         }));
-
-
 
     const doctorSchedules = data?.data?.schedules.filter(schedule => schedule.doctor_id === selectedDoctor?.value);
     const today = new Date();
@@ -63,8 +54,6 @@ const PatientSerial = ({ data }) => {
 
     const dayList = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const doctorVisitingHours = doctorSchedules?.filter(hour => hour.day === dayList[selectedDate?.getDay()]);
-
-
 
     const convertTime = (time24) => {
         const [hours, minutes] = time24.split(':');
@@ -88,7 +77,6 @@ const PatientSerial = ({ data }) => {
 
     // choose by date
 
-
     // get all doctor_id from schedules
     const scheduleOptionsByDate = data?.data?.schedules.filter(schedule => schedule.day === dayList[selectedDate?.getDay()])
     const uniqueDoctorIds = [...new Set(scheduleOptionsByDate?.map(schedule => schedule.doctor_id))];
@@ -101,17 +89,21 @@ const PatientSerial = ({ data }) => {
             label: doctor.name
         }));
 
-
     const getScheduleOptionsByDate = scheduleOptionsByDate?.filter(schedule => schedule.doctor_id === selectedDoctor?.value)
         .map(hour => ({
             value: `${hour.id} ${hour.day} ${getTime(hour.opening_time)} ${getTime(hour.closing_time)}`,
             label: `${hour.day} ${getTime(hour.opening_time)} - ${getTime(hour.closing_time)}`
         }));
 
-
-
     const handlePhoneChange = (event) => {
         setPhone(event.target.value);
+        setFormData({
+            ...formData,
+            errors: {
+                ...formData.errors,
+                phone: null
+            }
+        });
     };
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -131,7 +123,7 @@ const PatientSerial = ({ data }) => {
                     phone: phone ?? '',
                     age: age ?? '',
                     address: address ?? '',
-                    errors: []
+                    errors: prevData.errors
                 }));
             }
         } catch (error) {
@@ -156,7 +148,7 @@ const PatientSerial = ({ data }) => {
         }));
     }, [phone]);
 
-    const [submitResponseData, setSubmitResponseData] = useState([]);
+    const [serialData, setSerialData] = useState(null);
     const handelFormSubmit = async () => {
         try {
             const data = {
@@ -169,10 +161,9 @@ const PatientSerial = ({ data }) => {
                 date: selectedDate,
                 schedule: selectedVisitingHour?.value
             }
-            setSubmitResponseData(prevSubmitData => [...prevSubmitData, data]);
             const response = await axios.post(`${config.api}/patient/serial/create`, data);
+            setSerialData(response.data.data)
             setSuccess(true)
-            console.log(response)
         } catch (error) {
             errorHandler({ error, formData, setFormData, toast })
         }
@@ -186,12 +177,79 @@ const PatientSerial = ({ data }) => {
         }
         return 'unavailable-date';
     };
-
+    const refresh = () => {
+        setSuccess(false)
+        setFormData({
+            name: '',
+            phone: '',
+            age: '',
+            address: '',
+            errors: []
+        })
+        setPhone('')
+        setSelectDepartment(null);
+        setSelectedDoctor(null);
+        setSelectedDate(null)
+        setSelectedVisitingHour(null)
+    }
     return (
         <div>
             {success ?
                 <div className='container py-5'>
-                    <pre>{JSON.stringify(submitResponseData, null, 2)}</pre>
+                    <div className='d-flex justify-content-end px-3'>
+                        <ReactToPrint trigger={() =>
+                            <button className='btn btn-primary fw-bold px-4 text-uppercase mb-3'>Print</button>}
+                            content={() => ref.current} />
+                    </div>
+                    <div ref={ref} className='p-3'>
+                        <Table striped hover bordered responsive size="sm" >
+                            <tbody>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>serial no</td>
+                                    <td className='p-2'>{String(serialData.serial_no).padStart(3, '0')}</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>patient name</td>
+                                    <td className='p-2'>{serialData?.name}</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>patient phone</td>
+                                    <td className='p-2'>{serialData?.phone}</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>patient address</td>
+                                    <td className='p-2'>{serialData?.address}</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>patient age</td>
+                                    <td className='p-2'>{serialData?.age} YEARS</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>department name</td>
+                                    <td className='p-2'>{serialData?.department_name}</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>doctor name</td>
+                                    <td className='p-2'>{serialData?.doctor_name}</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>appointment date</td>
+                                    <td className='p-2'>{serialData?.date} <span className='text-uppercase'>{serialData?.day}</span></td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>reporting time</td>
+                                    <td className='p-2'>{serialData?.opening_time}</td>
+                                </tr>
+                                <tr>
+                                    <td className='text-uppercase p-2 fw-bold'>room number</td>
+                                    <td className='p-2'>{serialData?.room_number}</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+                    <div className='d-flex justify-content-end'>
+                        <span style={{ textDecoration: "underline", color: "blue", cursor: "pointer" }} onClick={refresh}>take another serial</span>
+                    </div>
                 </div> :
                 <div className={styles.body}>
                     <div className={styles.main}>
@@ -335,12 +393,18 @@ const PatientSerial = ({ data }) => {
                                                             isDisabled={!(isPatientFound)}
                                                             options={departmentOptions}
                                                             placeholder="search or select department"
-                                                            // menuPlacement="top"
                                                             onChange={(selectedOption) => {
                                                                 setSelectDepartment(selectedOption)
                                                                 setSelectedDoctor(null)
                                                                 setSelectedDate(null)
                                                                 setSelectedVisitingHour(null)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        department_id: null
+                                                                    }
+                                                                });
                                                             }}
                                                             styles={{
                                                                 menu: (provided) => ({
@@ -385,6 +449,13 @@ const PatientSerial = ({ data }) => {
                                                                 setSelectedDoctor(selectedOption)
                                                                 setSelectedDate(null)
                                                                 setSelectedVisitingHour(null)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        doctor_id: null
+                                                                    }
+                                                                });
                                                             }}
                                                             styles={{
                                                                 menu: (provided) => ({
@@ -429,6 +500,13 @@ const PatientSerial = ({ data }) => {
                                                             onChange={date => {
                                                                 setSelectedDate(date)
                                                                 setSelectedVisitingHour(null)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        date: null
+                                                                    }
+                                                                });
                                                             }}
                                                             filterDate={filterAvailableDates}
                                                             dayClassName={date => customDateClass(date)}
@@ -460,6 +538,13 @@ const PatientSerial = ({ data }) => {
                                                             placeholder="select schedule"
                                                             onChange={(selectedOption) => {
                                                                 setSelectedVisitingHour(selectedOption)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        schedule: null
+                                                                    }
+                                                                });
                                                             }}
                                                             styles={{
                                                                 menu: (provided) => ({
@@ -511,6 +596,13 @@ const PatientSerial = ({ data }) => {
                                                                 setSelectedDoctor(null)
                                                                 setSelectedDate(null)
                                                                 setSelectedVisitingHour(null)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        department_id: null
+                                                                    }
+                                                                });
                                                             }}
                                                             styles={{
                                                                 menu: (provided) => ({
@@ -553,6 +645,13 @@ const PatientSerial = ({ data }) => {
                                                                 setSelectedDate(date)
                                                                 setSelectedDoctor(null)
                                                                 setSelectedVisitingHour(null)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        date: null
+                                                                    }
+                                                                });
                                                             }}
                                                             dayClassName={() => 'available-date'}
                                                         />
@@ -586,6 +685,13 @@ const PatientSerial = ({ data }) => {
                                                             onChange={(selectedOption) => {
                                                                 setSelectedDoctor(selectedOption)
                                                                 setSelectedVisitingHour(null)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        doctor_id: null
+                                                                    }
+                                                                });
                                                             }}
                                                             styles={{
                                                                 menu: (provided) => ({
@@ -628,6 +734,13 @@ const PatientSerial = ({ data }) => {
                                                             placeholder="select schedule"
                                                             onChange={(selectedOption) => {
                                                                 setSelectedVisitingHour(selectedOption)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    errors: {
+                                                                        ...formData.errors,
+                                                                        schedule: null
+                                                                    }
+                                                                });
                                                             }}
                                                             styles={{
                                                                 menu: (provided) => ({
