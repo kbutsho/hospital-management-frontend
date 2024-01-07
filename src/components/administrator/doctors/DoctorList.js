@@ -30,7 +30,7 @@ const DoctorList = () => {
     const [activeSortBy, setActiveSortBy] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
-    const [sortOrder, setSortOrder] = useState('asc')
+    const [sortOrder, setSortOrder] = useState('desc')
     const [departmentNames, setDepartmentNames] = useState([]);
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({
@@ -47,7 +47,7 @@ const DoctorList = () => {
     // load data
     const fetchData = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -68,9 +68,8 @@ const DoctorList = () => {
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            // setLoading(false)
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     };
 
@@ -136,13 +135,13 @@ const DoctorList = () => {
     };
     const handelSearchSubmit = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             await fetchData();
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         } finally {
             setSearchTerm('')
-            setLoading(false)
+            // setLoading(false)
         }
     }
 
@@ -154,7 +153,7 @@ const DoctorList = () => {
                 'userId': userId,
                 'status': status
             }
-            setLoading(true)
+            // setLoading(true)
             await axios.post(`${config.api}/administrator/doctor/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -164,9 +163,8 @@ const DoctorList = () => {
             setErrorMessage(null)
             dispatch(updateDoctorStatus({ userId, status }))
         } catch (error) {
-            return errorHandler({ error, setErrorMessage })
-        } finally {
             setLoading(false)
+            return errorHandler({ error, setErrorMessage })
         }
     };
 
@@ -177,7 +175,7 @@ const DoctorList = () => {
     }
     const handelDelete = async () => {
         try {
-            setLoading(true)
+            // setLoading(true)
             await axios.delete(`${config.api}/administrator/doctor/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -188,9 +186,8 @@ const DoctorList = () => {
             setErrorMessage(null)
             await fetchData()
         } catch (error) {
-            return errorHandler({ error, setErrorMessage })
-        } finally {
             setLoading(false)
+            return errorHandler({ error, setErrorMessage })
         }
     }
 
@@ -203,7 +200,7 @@ const DoctorList = () => {
             setActiveSortBy('')
             setSearchTerm('')
             setSortBy('')
-            setSortOrder('asc')
+            setSortOrder('desc')
             setDataPerPage(10)
             setCurrentPage(1)
             const response = await axios.get(`${config.api}/administrator/doctor/all`, {
@@ -335,7 +332,7 @@ const DoctorList = () => {
                         {
                             reduxStoreDoctor.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table striped hover responsive bordered size="sm" style={{ fontSize: "14px" }}>
+                                    <Table hover responsive bordered size="sm" style={{ fontSize: "14px" }}>
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
                                                 <th className='text-center'>
@@ -440,7 +437,7 @@ const DoctorList = () => {
                                                                 </select>
                                                             </td>
                                                             <td >
-                                                                <div className='d-flex justify-content-center'>
+                                                                <div className='d-flex justify-content-center align-items-center'>
                                                                     <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' />
                                                                     </button>
@@ -460,7 +457,7 @@ const DoctorList = () => {
                                                     <div className="col-md-6">
                                                         <div
                                                             style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {dataPerPage} out of {totalItems}
+                                                            showing {reduxStoreDoctor.length} out of {totalItems}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
