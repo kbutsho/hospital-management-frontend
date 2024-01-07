@@ -130,7 +130,16 @@ const AdministratorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
-
+                                <Link href="/administrator/patients"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/administrator/patients') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>patients</span>
+                                    </div>
+                                </Link>
 
                                 <Link href="/administrator/departments"
                                     className={`${styles.sidebarMenu} 
@@ -142,6 +151,30 @@ const AdministratorLayout = ({ children }) => {
                                         <span>Departments</span>
                                     </div>
                                 </Link>
+
+                                <Link href="/administrator/serials"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/administrator/serials') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>patient serials</span>
+                                    </div>
+                                </Link>
+
+                                <Link href="/administrator/appointments"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/administrator/appointments') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>appointments</span>
+                                    </div>
+                                </Link>
+
+
 
                                 <span
                                     onClick={handelLogout}
