@@ -30,7 +30,7 @@ const DepartmentList = () => {
     const [activeSortBy, setActiveSortBy] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
-    const [sortOrder, setSortOrder] = useState('asc')
+    const [sortOrder, setSortOrder] = useState('desc')
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({
         id: '',
@@ -49,7 +49,7 @@ const DepartmentList = () => {
     // load data
     const fetchData = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -70,9 +70,10 @@ const DepartmentList = () => {
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
+        // finally {
+        //     setLoading(false)
+        // }
     };
     useEffect(() => {
         fetchData()
@@ -110,13 +111,13 @@ const DepartmentList = () => {
     };
     const handelSearchSubmit = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             await fetchData();
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         } finally {
             setSearchTerm('')
-            setLoading(false)
+            // setLoading(false)
         }
     }
 
@@ -128,7 +129,7 @@ const DepartmentList = () => {
                 'id': id,
                 'status': status
             }
-            setLoading(true)
+            // setLoading(true)
             await axios.post(`${config.api}/administrator/department/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -138,9 +139,10 @@ const DepartmentList = () => {
             dispatch(updateDepartmentStatus({ id, status }))
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
+        // finally {
+        //     setLoading(false)
+        // }
     };
 
     // delete
@@ -150,7 +152,6 @@ const DepartmentList = () => {
     }
     const handelDelete = async () => {
         try {
-            setLoading(true)
             await axios.delete(`${config.api}/administrator/department/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -162,8 +163,6 @@ const DepartmentList = () => {
             await fetchData()
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     }
 
@@ -175,7 +174,7 @@ const DepartmentList = () => {
             setActiveSortBy('')
             setSearchTerm('')
             setSortBy('')
-            setSortOrder('asc')
+            setSortOrder('desc')
             setDataPerPage(10)
             setCurrentPage(1)
             const response = await axios.get(`${config.api}/administrator/department/all`, {
@@ -189,7 +188,8 @@ const DepartmentList = () => {
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
+        }
+        finally {
             setLoading(false)
         }
     }
@@ -240,7 +240,8 @@ const DepartmentList = () => {
             }
         } catch (error) {
             return errorHandler({ error, toast, setFormData, formData })
-        } finally {
+        }
+        finally {
             setAddLoading(false);
         }
     }
@@ -342,14 +343,6 @@ const DepartmentList = () => {
                         </button>
                     </div>
                 </div>
-                {/* <div className='col-md-2'>
-                    <div className={`${styles.searchArea}`}>
-                        <button
-                            onClick={toggleAddModal}
-                            style={{ border: "none" }}
-                            className='btn btn-outline-secondary fw-bold w-100 py-2'>add department</button>
-                    </div>
-                </div> */}
             </div>
             {
                 loading ?
@@ -360,7 +353,7 @@ const DepartmentList = () => {
                         {
                             reduxStoreDepartment.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table striped hover responsive bordered size="sm">
+                                    <Table hover responsive striped bordered size="sm" style={{ fontSize: "14px" }}>
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
                                                 <th className='text-center'>
@@ -421,9 +414,48 @@ const DepartmentList = () => {
                                                         <tr key={index}>
                                                             <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
                                                             <td className='table-element'>{data.name}</td>
-                                                            <td className='text-center table-element'>{data.activeDoctor ?? 0}</td>
-                                                            <td className='text-center table-element'>{data.pendingDoctor ?? 0}</td>
-                                                            <td className='text-center table-element'>{data.disableDoctor ?? 0}</td>
+                                                            <td>
+                                                                <div className='d-flex justify-content-around align-items-center'>
+                                                                    <h6 className='table-element fw-bold'>{data.activeDoctor}</h6>
+                                                                    <button
+                                                                        style={{
+                                                                            border: "0",
+                                                                            cursor: data.activeDoctor == 0 ? 'not-allowed' : 'pointer',
+                                                                            background: data.activeDoctor == 0 ? "#62AA89" : "auto"
+                                                                        }}
+                                                                        className='btn btn-success btn-sm'>
+                                                                        <AiFillEdit className='mb-1' />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div className='d-flex justify-content-around align-items-center'>
+                                                                    <h6 className='table-element fw-bold'>{data.pendingDoctor}</h6>
+                                                                    <button
+                                                                        style={{
+                                                                            border: "0",
+                                                                            cursor: data.pendingDoctor == 0 ? 'not-allowed' : 'pointer',
+                                                                            background: data.pendingDoctor == 0 ? "#62AA89" : "red"
+                                                                        }}
+                                                                        className='btn btn-success btn-sm'>
+                                                                        <AiFillEdit className='mb-1' />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div className='d-flex justify-content-around align-items-center'>
+                                                                    <h6 className='table-element fw-bold'>{data.disableDoctor}</h6>
+                                                                    <button
+                                                                        style={{
+                                                                            border: "0",
+                                                                            cursor: data.disableDoctor == 0 ? 'not-allowed' : 'pointer',
+                                                                            background: data.disableDoctor == 0 ? "#62AA89" : "red"
+                                                                        }}
+                                                                        className='btn btn-success btn-sm'>
+                                                                        <AiFillEdit className='mb-1' />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
@@ -447,10 +479,10 @@ const DepartmentList = () => {
                                                                 </select>
                                                             </td>
                                                             <td >
-                                                                <div className='d-flex justify-content-center'>
-                                                                    <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
-                                                                    <button onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
+                                                                <div className='d-flex justify-content-center align-items-center'>
+                                                                    <button style={{ border: "0" }} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                    <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -466,7 +498,7 @@ const DepartmentList = () => {
                                                     <div className="col-md-6">
                                                         <div
                                                             style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {dataPerPage} out of {totalItems}
+                                                            showing {reduxStoreDepartment.length} out of {totalItems}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
