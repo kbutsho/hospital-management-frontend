@@ -422,6 +422,10 @@ const ChamberList = () => {
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
+                                                {/* need to modify to short by */}
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>ASSIGNED DOCTOR</th>
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>PENDING DOCTOR</th>
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>DISABLED DOCTOR</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`STATUS`}
@@ -440,6 +444,48 @@ const ChamberList = () => {
                                                         <tr key={index}>
                                                             <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
                                                             <td className='text-center table-element'>{data.room}</td>
+                                                            <td>
+                                                                <div className='d-flex justify-content-around align-items-center'>
+                                                                    <h6 className='table-element fw-bold'>0</h6>
+                                                                    <button
+                                                                        style={{
+                                                                            border: "0",
+                                                                            // cursor: data.activeDoctor == 0 ? 'not-allowed' : 'pointer',
+                                                                            // background: data.activeDoctor == 0 ? "#62AA89" : "auto"
+                                                                        }}
+                                                                        className='btn btn-success btn-sm'>
+                                                                        <AiFillEdit className='mb-1' />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div className='d-flex justify-content-around align-items-center'>
+                                                                    <h6 className='table-element fw-bold'>0</h6>
+                                                                    <button
+                                                                        style={{
+                                                                            border: "0",
+                                                                            // cursor: data.pendingDoctor == 0 ? 'not-allowed' : 'pointer',
+                                                                            // background: data.pendingDoctor == 0 ? "#62AA89" : "red"
+                                                                        }}
+                                                                        className='btn btn-success btn-sm'>
+                                                                        <AiFillEdit className='mb-1' />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div className='d-flex justify-content-around align-items-center'>
+                                                                    <h6 className='table-element fw-bold'>0</h6>
+                                                                    <button
+                                                                        style={{
+                                                                            border: "0",
+                                                                            // cursor: data.disableDoctor == 0 ? 'not-allowed' : 'pointer',
+                                                                            // background: data.disableDoctor == 0 ? "#62AA89" : "red"
+                                                                        }}
+                                                                        className='btn btn-success btn-sm'>
+                                                                        <AiFillEdit className='mb-1' />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
