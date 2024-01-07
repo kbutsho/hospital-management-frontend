@@ -201,7 +201,7 @@ const ScheduleList = () => {
         fetchData()
     }, [currentPage, dataPerPage, filterByStatus, filterByTimeSlot, filterByDay, filterByRoom, filterByDoctor, sortOrder, sortBy])
     const reduxStoreSchedule = useSelector(state => state.administrator_schedules.data);
-    // const totalItems = useSelector(state => state.administrator_schedules.totalItems);
+    const totalItems = useSelector(state => state.administrator_schedules.totalItems);
     const fetchedItems = useSelector(state => state.administrator_schedules.fetchedItems);
 
 
@@ -539,9 +539,9 @@ const ScheduleList = () => {
                                                     return (
                                                         <tr key={index}>
                                                             <td className='text-center table-element'>{String(data.scheduleId).padStart(5, '0')}</td>
-                                                            <td className='text-center table-element'>{data.doctorName}</td>
+                                                            <td className='table-element'>{data.doctorName}</td>
                                                             <td className='text-center table-element'>{data.room}</td>
-                                                            <td className='table-element'>{data.day}</td>
+                                                            <td className='table-element text-uppercase'>{data.day}</td>
                                                             <td className='text-center table-element'>{convertTime(data.openingTime)} - {convertTime(data.closingTime)}</td>
                                                             <td className='text-center'>
                                                                 <select
@@ -582,13 +582,24 @@ const ScheduleList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreSchedule.length > 0 ?
-                                                <Pagination totalItem={fetchedItems}
-                                                    dataPerPage={dataPerPage}
-                                                    currentPage={currentPage}
-                                                    handelPaginate={(pageNumber) => {
-                                                        setCurrentPage(pageNumber)
-                                                    }}
-                                                />
+                                                <div className="row">
+                                                    <div className="col-md-6">
+                                                        <div
+                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {dataPerPage} out of {totalItems}
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        <Pagination totalItem={fetchedItems}
+                                                            dataPerPage={dataPerPage}
+                                                            currentPage={currentPage}
+                                                            handelPaginate={(pageNumber) => {
+                                                                setCurrentPage(pageNumber)
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+
                                                 : null
                                         }
                                     </div>
