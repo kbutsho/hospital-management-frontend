@@ -363,10 +363,9 @@ const DepartmentList = () => {
                                     <Table striped hover responsive bordered size="sm">
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
-                                                <th>#</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
-                                                        level={`ID`}
+                                                        level={`DEPT ID`}
                                                         sortBy={`departments.id`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -420,7 +419,6 @@ const DepartmentList = () => {
                                                 reduxStoreDepartment.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td className='table-element'>{index + 1}</td>
                                                             <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
                                                             <td className='table-element'>{data.name}</td>
                                                             <td className='text-center table-element'>{data.activeDoctor ?? 0}</td>
@@ -464,10 +462,21 @@ const DepartmentList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreDepartment.length > 0 ?
-                                                <Pagination totalItem={fetchedItems}
-                                                    dataPerPage={dataPerPage}
-                                                    currentPage={currentPage}
-                                                    handelPaginate={handelPaginate} />
+                                                <div className="row">
+                                                    <div className="col-md-6">
+                                                        <div
+                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {dataPerPage} out of {totalItems}
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        <Pagination totalItem={fetchedItems}
+                                                            dataPerPage={dataPerPage}
+                                                            currentPage={currentPage}
+                                                            handelPaginate={handelPaginate} />
+                                                    </div>
+                                                </div>
+
                                                 : null
                                         }
                                     </div>
