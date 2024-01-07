@@ -70,7 +70,7 @@ const ScheduleList = () => {
 
     const [filterByTimeSlot, setFilterByTimeSlot] = useState(null); // filter by timeSlot
     const [timeSlots, setTimeSlots] = useState([]);
-    useEffect(() => { // fetch all doctor
+    useEffect(() => { // fetch all time slot
         const fetchTimeSlots = async () => {
             try {
                 const response = await axios.get(`${config.api}/administrator/schedule/time-slots`, {
@@ -78,13 +78,10 @@ const ScheduleList = () => {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                // here my response is 
                 const times = response.data.data.map((time) => time.time);
-                // times.unshift("show all");
                 setTimeSlots(times);
                 setErrorMessage(null)
             } catch (error) {
-                console.log(error)
                 return errorHandler({ error, setErrorMessage })
             }
         }
@@ -155,7 +152,7 @@ const ScheduleList = () => {
     }));
 
     const [sortBy, setSortBy] = useState(''); // handel sort by
-    const [sortOrder, setSortOrder] = useState('asc') // handel sort order
+    const [sortOrder, setSortOrder] = useState('desc') // handel sort order
     const [activeSortBy, setActiveSortBy] = useState('');
     const handleSortOrderChange = (order, sortField) => {
         setActiveSortBy(sortField)
@@ -166,9 +163,8 @@ const ScheduleList = () => {
     // load data
     const fetchData = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const data = {
-
                 sortBy: sortBy,
                 sortOrder: sortOrder,
                 page: currentPage,
@@ -192,9 +188,8 @@ const ScheduleList = () => {
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
+            // setLoading(false)
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     };
     useEffect(() => {
@@ -207,13 +202,13 @@ const ScheduleList = () => {
 
     const handelSearchSubmit = async () => { // search field
         try {
-            setLoading(true);
+            // setLoading(true);
             await fetchData();
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         } finally {
             setSearchTerm('')
-            setLoading(false)
+            // setLoading(false)
         }
     }
 
@@ -225,20 +220,17 @@ const ScheduleList = () => {
                 'id': id,
                 'status': status
             }
-            setLoading(true)
+            // setLoading(true)
             const res = await axios.post(`${config.api}/administrator/schedule/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            console.log(res)
             setErrorMessage(null)
             dispatch(updateScheduleStatus({ id, status }))
         } catch (error) {
-            console.log(error)
-            return errorHandler({ error, setErrorMessage })
-        } finally {
             setLoading(false)
+            return errorHandler({ error, setErrorMessage })
         }
     };
 
@@ -254,7 +246,7 @@ const ScheduleList = () => {
     }
     const handelDelete = async () => {
         try {
-            setLoading(true)
+            // setLoading(true)
             await axios.delete(`${config.api}/administrator/schedule/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -265,9 +257,8 @@ const ScheduleList = () => {
             setErrorMessage(null)
             await fetchData()
         } catch (error) {
-            return errorHandler({ error, setErrorMessage })
-        } finally {
             setLoading(false)
+            return errorHandler({ error, setErrorMessage })
         }
     }
 
@@ -283,7 +274,7 @@ const ScheduleList = () => {
             setActiveSortBy('')
             setSearchTerm('')
             setSortBy('')
-            setSortOrder('asc')
+            setSortOrder('desc')
             setDataPerPage(10)
             setCurrentPage(1)
             const response = await axios.get(`${config.api}/administrator/schedule/all`, {
@@ -586,7 +577,7 @@ const ScheduleList = () => {
                                                     <div className="col-md-6">
                                                         <div
                                                             style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {dataPerPage} out of {totalItems}
+                                                            showing {reduxStoreSchedule.length} out of {totalItems}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
