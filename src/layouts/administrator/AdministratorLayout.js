@@ -174,9 +174,7 @@ const AdministratorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
-
-
-                                <span
+                                {/* <span
                                     onClick={handelLogout}
                                     className={styles.sidebarLogoutMenu}>
                                     <div className={styles.sidebarLogoutMenuIcon}>
@@ -185,7 +183,7 @@ const AdministratorLayout = ({ children }) => {
                                     <div className={styles.sidebarLogoutMenuLink}>
                                         <span>Logout</span>
                                     </div>
-                                </span>
+                                </span> */}
                             </div>
                         </div>
                         <div className="col-sm-7 col-md-8 col-lg-9 col-12">

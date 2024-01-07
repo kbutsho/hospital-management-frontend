@@ -50,7 +50,7 @@
 
 .table-area .table-element {
     white-space: nowrap;
-    padding: 10px 6px 5px;
+    padding: 6px 6px 0px 6px;
 }
 
 .table-area .status-select {
@@ -68,7 +68,7 @@
 }
 
 .table-area tr td {
-    min-height: 40px;
+    padding: 0px;
 }
 
 /* pagination */
