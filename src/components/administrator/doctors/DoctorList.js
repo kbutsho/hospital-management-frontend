@@ -335,13 +335,12 @@ const DoctorList = () => {
                         {
                             reduxStoreDoctor.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table striped hover responsive bordered size="sm">
+                                    <Table striped hover responsive bordered size="sm" style={{ fontSize: "14px" }}>
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
-                                                <th>#</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
-                                                        level={`USER ID`}
+                                                        level={`UID`}
                                                         sortBy={`users.id`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -349,7 +348,7 @@ const DoctorList = () => {
                                                 </th>
                                                 <th className='text-center'>
                                                     <SortingArrow
-                                                        level={`DOCTOR ID`}
+                                                        level={`DR. ID`}
                                                         sortBy={`doctors.id`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -411,7 +410,6 @@ const DoctorList = () => {
                                                 reduxStoreDoctor.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td className='table-element'>{index + 1}</td>
                                                             <td className='text-center table-element'>{data.userId}</td>
                                                             <td className='text-center table-element'>{data.doctorId}</td>
                                                             <td className='table-element'>{data.name}</td>
@@ -458,10 +456,20 @@ const DoctorList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreDoctor.length > 0 ?
-                                                <Pagination totalItem={fetchedItems}
-                                                    dataPerPage={dataPerPage}
-                                                    currentPage={currentPage}
-                                                    handelPaginate={handelPaginate} />
+                                                <div className='row'>
+                                                    <div className="col-md-6">
+                                                        <div
+                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {dataPerPage} out of {totalItems}
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        <Pagination totalItem={fetchedItems}
+                                                            dataPerPage={dataPerPage}
+                                                            currentPage={currentPage}
+                                                            handelPaginate={handelPaginate} />
+                                                    </div>
+                                                </div>
                                                 : null
                                         }
                                     </div>
