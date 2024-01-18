@@ -26,12 +26,12 @@ const AssistantList = () => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [filterByStatus, setFilterByStatus] = useState(null);
-    const [filterByDoctor, setFilterByDoctor] = useState(null);
+    const [filterByRoom, setFilterByRoom] = useState(null);
     const [activeSortBy, setActiveSortBy] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
     const [sortOrder, setSortOrder] = useState('asc')
-    const [doctorNames, setDoctorNames] = useState([]);
+    const [roomNumbers, setRoomNumbers] = useState([]);
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({
         id: '',
@@ -54,7 +54,7 @@ const AssistantList = () => {
                 status: filterByStatus?.value === STATUS.SHOW_ALL ? '' : filterByStatus?.value,
                 sortOrder: sortOrder,
                 sortBy: sortBy,
-                doctor: filterByDoctor?.value === STATUS.SHOW_ALL ? '' : filterByDoctor?.value
+                room: filterByRoom?.value === STATUS.SHOW_ALL ? '' : filterByRoom?.value
             }
             const response = await axios.get(`${config.api}/administrator/assistant/all`, {
                 params: data,
@@ -62,6 +62,7 @@ const AssistantList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log(response.data.data)
             setErrorMessage(null)
             dispatch(storeAssistant(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
@@ -76,7 +77,7 @@ const AssistantList = () => {
 
     useEffect(() => {
         fetchData()
-    }, [currentPage, dataPerPage, filterByStatus, filterByDoctor, sortOrder, sortBy])
+    }, [currentPage, dataPerPage, filterByStatus, filterByRoom, sortOrder, sortBy])
 
     const reduxStoreAssistant = useSelector(state => state.administrator_assistants.data);
     const totalItems = useSelector(state => state.administrator_assistants.totalItems);
@@ -84,18 +85,18 @@ const AssistantList = () => {
 
     // load doctor
     useEffect(() => {
-        const fetchDoctor = async () => {
+        const fetchRoom = async () => {
             try {
-                const response = await axios.get(`${config.api}/doctor/all`);
-                const doctorNames = response.data.data.map((doctor) => doctor.name);
-                doctorNames.unshift("show all");
-                setDoctorNames(doctorNames);
+                const response = await axios.get(`${config.api}/room/all`);
+                const roomNumber = response.data.data.map((chamber) => chamber.room);
+                roomNumber.unshift("show all");
+                setRoomNumbers(roomNumber);
                 setErrorMessage(null)
             } catch (error) {
                 return errorHandler({ error, setErrorMessage })
             }
         }
-        fetchDoctor();
+        fetchRoom();
     }, [])
 
     // sort order
@@ -106,12 +107,13 @@ const AssistantList = () => {
     };
 
     // filter by doctor
-    const doctorOptions = doctorNames.map((name, index) => ({
-        value: name,
-        label: index === 0 ? `${name.split(" ")[1]} doctor` : `${name}`
+    const roomOptions = roomNumbers.map((room, index) => ({
+        value: room,
+        label: room
+        // label: index === 0 ? `${room.split(" ")[1]}` : `${room}`
     }));
-    const handelFilterByDoctor = (newValue) => {
-        setFilterByDoctor(newValue);
+    const handelFilterByRoom = (newValue) => {
+        setFilterByRoom(newValue);
     }
 
     // filter by status
@@ -197,7 +199,7 @@ const AssistantList = () => {
     const handelReset = async () => {
         try {
             setLoading(true)
-            setFilterByDoctor(null)
+            setFilterByRoom(null)
             setFilterByStatus(null)
             setActiveSortBy('')
             setSearchTerm('')
@@ -289,11 +291,11 @@ const AssistantList = () => {
                 <div className="col-md-3">
                     <div className={`${styles.customSelectFilter}`}>
                         <Select
-                            value={filterByDoctor}
-                            onChange={handelFilterByDoctor}
-                            options={doctorOptions}
+                            value={filterByRoom}
+                            onChange={handelFilterByRoom}
+                            options={roomOptions}
                             isSearchable
-                            placeholder="search or select doctor"
+                            placeholder="search or select room"
                             styles={customStyles}
                         />
                     </div>
@@ -333,7 +335,6 @@ const AssistantList = () => {
                                     <Table striped hover responsive bordered>
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
-                                                <th>#</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`USER ID`}
@@ -352,7 +353,7 @@ const AssistantList = () => {
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`ASSISTANT NAME`}
+                                                        level={`NAME`}
                                                         sortBy={`name`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -360,7 +361,7 @@ const AssistantList = () => {
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`ASSISTANT EMAIL`}
+                                                        level={`EMAIL`}
                                                         sortBy={`email`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -368,7 +369,7 @@ const AssistantList = () => {
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`ASSISTANT PHONE`}
+                                                        level={`PHONE`}
                                                         sortBy={`phone`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -376,16 +377,8 @@ const AssistantList = () => {
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`DOCTOR NAME`}
-                                                        sortBy={`doctors.name`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
-                                                </th>
-                                                <th className='text-center'>
-                                                    <SortingArrow
-                                                        level={`CHAMBER ADDRESS`}
-                                                        sortBy={`chambers.address`}
+                                                        level={`ROOM`}
+                                                        sortBy={`chambers.room`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
@@ -406,14 +399,23 @@ const AssistantList = () => {
                                                 reduxStoreAssistant.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td className='text-center'>{data.userId}</td>
-                                                            <td className='text-center'>{data.assistantId}</td>
-                                                            <td>{data.name}</td>
-                                                            <td>{data.email}</td>
-                                                            <td>{data.phone}</td>
-                                                            <td>{data.doctorName}</td>
-                                                            <td>{data.chamberAddress}</td>
+                                                            <td className='text-center table-element'>{data.userId}</td>
+                                                            <td className='text-center table-element'>{data.assistantId}</td>
+                                                            <td className='table-element'>{data.name}</td>
+                                                            <td className='table-element'>{data.email}</td>
+                                                            <td className='table-element'>{data.phone}</td>
+                                                            <td>
+                                                                {
+                                                                    data.room === "null" ?
+                                                                        <div className='px-2'>
+                                                                            <button
+                                                                                className='btn btn-success btn-sm'>
+                                                                                <AiFillEdit />
+                                                                            </button>
+                                                                        </div>
+                                                                        : <span className='table-element'>{data.room}</span>
+                                                                }
+                                                            </td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
