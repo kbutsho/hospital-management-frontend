@@ -17,7 +17,13 @@ import { MdOutlineRefresh } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
-import { storeDepartment, totalItemsCount, fetchedItemsCount, updateDepartmentStatus, removeDepartment } from '@/redux/slice/administrator/departmentSlice';
+import {
+    storeDepartment,
+    totalItemsCount,
+    fetchedItemsCount,
+    updateDepartmentStatus,
+    removeDepartment
+} from '@/redux/slice/administrator/departmentSlice';
 import { VscDiffAdded } from 'react-icons/vsc';
 
 
@@ -25,6 +31,7 @@ const DepartmentList = () => {
     const dispatch = useDispatch();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
+    const [found, setFound] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null);
     const [filterByStatus, setFilterByStatus] = useState(null);
     const [activeSortBy, setActiveSortBy] = useState('');
@@ -42,7 +49,7 @@ const DepartmentList = () => {
     })
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [dataPerPage, setDataPerPage] = useState(10);
+    const [dataPerPage, setDataPerPage] = useState(5);
     const handelPaginate = (pageNumber) => {
         setCurrentPage(pageNumber)
     }
@@ -64,16 +71,15 @@ const DepartmentList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log(response.data.data)
             setErrorMessage(null)
             dispatch(storeDepartment(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
+            setFound(true)
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         }
-        // finally {
-        //     setLoading(false)
-        // }
     };
     useEffect(() => {
         fetchData()
@@ -111,13 +117,11 @@ const DepartmentList = () => {
     };
     const handelSearchSubmit = async () => {
         try {
-            // setLoading(true);
             await fetchData();
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         } finally {
             setSearchTerm('')
-            // setLoading(false)
         }
     }
 
@@ -129,7 +133,6 @@ const DepartmentList = () => {
                 'id': id,
                 'status': status
             }
-            // setLoading(true)
             await axios.post(`${config.api}/administrator/department/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -140,9 +143,6 @@ const DepartmentList = () => {
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         }
-        // finally {
-        //     setLoading(false)
-        // }
     };
 
     // delete
@@ -175,22 +175,20 @@ const DepartmentList = () => {
             setSearchTerm('')
             setSortBy('')
             setSortOrder('desc')
-            setDataPerPage(10)
+            setDataPerPage(5)
             setCurrentPage(1)
             const response = await axios.get(`${config.api}/administrator/department/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
+            setLoading(false)
             setErrorMessage(null)
             dispatch(storeDepartment(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        }
-        finally {
-            setLoading(false)
         }
     }
     const handelErrorMessage = () => {
@@ -353,7 +351,7 @@ const DepartmentList = () => {
                         {
                             reduxStoreDepartment.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table hover responsive striped bordered size="sm" style={{ fontSize: "14px" }}>
+                                    <Table responsive bordered size="sm" style={{ fontSize: "14px" }}>
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
                                                 <th className='text-center'>
@@ -415,45 +413,43 @@ const DepartmentList = () => {
                                                             <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
                                                             <td className='table-element'>{data.name}</td>
                                                             <td>
-                                                                <div className='d-flex justify-content-around align-items-center'>
-                                                                    <h6 className='table-element fw-bold'>{data.activeDoctor}</h6>
-                                                                    <button
-                                                                        style={{
-                                                                            border: "0",
-                                                                            cursor: data.activeDoctor == 0 ? 'not-allowed' : 'pointer',
-                                                                            background: data.activeDoctor == 0 ? "#62AA89" : "auto"
-                                                                        }}
-                                                                        className='btn btn-success btn-sm'>
-                                                                        <AiFillEdit className='mb-1' />
-                                                                    </button>
+                                                                <div className='d-flex justify-content-around align-items-center'
+                                                                    style={{
+                                                                        margin: "3px",
+                                                                        padding: "3px",
+                                                                        fontWeight: "bold",
+                                                                        color: typeof (data.activeDoctor) === 'object' ? 'black' : data.activeDoctor === 0 ? 'black' : 'white',
+                                                                        cursor: typeof (data.activeDoctor) === 'object' ? 'not-allowed' : data.activeDoctor === 0 ? 'not-allowed' : 'pointer',
+                                                                        background: typeof (data.activeDoctor) === 'object' ? '#D2E9E9' : data.activeDoctor === 0 ? '#D2E9E9' : '#0B5ED7',
+                                                                    }}>
+                                                                    {data.activeDoctor === null ? "0" : data.activeDoctor}
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <div className='d-flex justify-content-around align-items-center'>
-                                                                    <h6 className='table-element fw-bold'>{data.pendingDoctor}</h6>
-                                                                    <button
-                                                                        style={{
-                                                                            border: "0",
-                                                                            cursor: data.pendingDoctor == 0 ? 'not-allowed' : 'pointer',
-                                                                            background: data.pendingDoctor == 0 ? "#62AA89" : "red"
-                                                                        }}
-                                                                        className='btn btn-success btn-sm'>
-                                                                        <AiFillEdit className='mb-1' />
-                                                                    </button>
+                                                                <div className='d-flex justify-content-around align-items-center'
+                                                                    style={{
+                                                                        margin: "3px",
+                                                                        padding: "3px",
+                                                                        fontWeight: "bold",
+                                                                        color: typeof (data.pendingDoctor) === 'object' ? 'black' : data.pendingDoctor === 0 ? 'black' : 'white',
+                                                                        cursor: typeof (data.pendingDoctor) === 'object' ? 'not-allowed' : data.pendingDoctor === 0 ? 'not-allowed' : 'pointer',
+                                                                        background: typeof (data.pendingDoctor) === 'object' ? '#D2E9E9' : data.pendingDoctor === 0 ? '#D2E9E9' : '#BB2D3B',
+                                                                    }}>
+
+                                                                    {data.pendingDoctor === null ? "0" : data.pendingDoctor}
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <div className='d-flex justify-content-around align-items-center'>
-                                                                    <h6 className='table-element fw-bold'>{data.disableDoctor}</h6>
-                                                                    <button
-                                                                        style={{
-                                                                            border: "0",
-                                                                            cursor: data.disableDoctor == 0 ? 'not-allowed' : 'pointer',
-                                                                            background: data.disableDoctor == 0 ? "#62AA89" : "red"
-                                                                        }}
-                                                                        className='btn btn-success btn-sm'>
-                                                                        <AiFillEdit className='mb-1' />
-                                                                    </button>
+                                                                <div className='d-flex justify-content-around align-items-center'
+                                                                    style={{
+                                                                        margin: "3px",
+                                                                        padding: "3px",
+                                                                        fontWeight: "bold",
+                                                                        color: typeof (data.disableDoctor) === 'object' ? 'black' : data.disableDoctor === 0 ? 'black' : 'white',
+                                                                        cursor: typeof (data.disableDoctor) === 'object' ? 'not-allowed' : data.disableDoctor === 0 ? 'not-allowed' : 'pointer',
+                                                                        background: typeof (data.disableDoctor) === 'object' ? '#D2E9E9' : data.disableDoctor === 0 ? '#D2E9E9' : '#BB2D3B',
+                                                                    }}>
+                                                                    {data.disableDoctor === null ? "0" : data.disableDoctor}
                                                                 </div>
                                                             </td>
                                                             <td className='text-center'>
@@ -478,8 +474,8 @@ const DepartmentList = () => {
                                                                         ))}
                                                                 </select>
                                                             </td>
-                                                            <td >
-                                                                <div className='d-flex justify-content-center align-items-center'>
+                                                            <td>
+                                                                <div className='d-flex justify-content-center'>
                                                                     <button style={{ border: "0" }} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
@@ -512,9 +508,11 @@ const DepartmentList = () => {
                                         }
                                     </div>
                                 </div> :
-                                <div className={styles.notFound}>
-                                    <h6 className='fw-bold'>no department found.</h6>
-                                </div>
+                                (
+                                    found ? <div className={styles.notFound}>
+                                        <h6 className='fw-bold'>no department found.</h6>
+                                    </div> : null
+                                )
                         }
                     </div>
             }
@@ -579,8 +577,7 @@ const DepartmentList = () => {
                     </div>
                 ) : null
             }
-
-        </div >
+        </div>
     );
 };
 
