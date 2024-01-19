@@ -46,7 +46,7 @@ const AssistantList = () => {
     // load data
     const fetchData = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -70,8 +70,6 @@ const AssistantList = () => {
         } catch (error) {
             console.log(error)
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     };
 
@@ -137,13 +135,13 @@ const AssistantList = () => {
     };
     const handelSearchSubmit = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             await fetchData();
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         } finally {
             setSearchTerm('')
-            setLoading(false)
+            // setLoading(false)
         }
     }
 
@@ -155,7 +153,7 @@ const AssistantList = () => {
                 'userId': userId,
                 'status': status
             }
-            setLoading(true)
+            // setLoading(true)
             await axios.post(`${config.api}/administrator/assistant/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -166,8 +164,6 @@ const AssistantList = () => {
             dispatch(updateAssistantStatus({ userId, status }))
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     };
 
@@ -178,7 +174,7 @@ const AssistantList = () => {
     }
     const handelDelete = async () => {
         try {
-            setLoading(true)
+            // setLoading(true)
             await axios.delete(`${config.api}/administrator/assistant/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -190,8 +186,6 @@ const AssistantList = () => {
             await fetchData()
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     }
 
@@ -230,7 +224,7 @@ const AssistantList = () => {
             ...provided,
             border: 'none',
             boxShadow: 'none',
-            cursor: 'pointer'
+            // cursor: 'pointer'
         }),
         option: (provided) => ({
             ...provided,
@@ -332,7 +326,7 @@ const AssistantList = () => {
                         {
                             reduxStoreAssistant.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
-                                    <Table striped hover responsive bordered>
+                                    <Table hover responsive bordered>
                                         <thead className='p-3 custom-scrollbar'>
                                             <tr>
                                                 <th className='text-center'>
@@ -406,13 +400,7 @@ const AssistantList = () => {
                                                             <td className='table-element'>{data.phone}</td>
                                                             <td>
                                                                 {
-                                                                    data.room === "null" ?
-                                                                        <div className='px-2'>
-                                                                            <button
-                                                                                className='btn btn-success btn-sm'>
-                                                                                <AiFillEdit />
-                                                                            </button>
-                                                                        </div>
+                                                                    data.room === "null" ? null
                                                                         : <span className='table-element'>{data.room}</span>
                                                                 }
                                                             </td>
@@ -451,10 +439,20 @@ const AssistantList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreAssistant.length > 0 ?
-                                                <Pagination totalItem={fetchedItems}
-                                                    dataPerPage={dataPerPage}
-                                                    currentPage={currentPage}
-                                                    handelPaginate={handelPaginate} />
+                                                <div className="row">
+                                                    <div className="col-md-6">
+                                                        <div
+                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {reduxStoreAssistant.length} out of {totalItems}
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        <Pagination totalItem={fetchedItems}
+                                                            dataPerPage={dataPerPage}
+                                                            currentPage={currentPage}
+                                                            handelPaginate={handelPaginate} />
+                                                    </div>
+                                                </div>
                                                 : null
                                         }
                                     </div>
