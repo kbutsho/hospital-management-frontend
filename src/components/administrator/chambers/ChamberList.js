@@ -28,12 +28,12 @@ const ChamberList = () => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [filterByStatus, setFilterByStatus] = useState(null);
-    const [filterByDoctor, setFilterByDoctor] = useState(null);
+    // const [filterByDoctor, setFilterByDoctor] = useState(null);
     const [activeSortBy, setActiveSortBy] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
-    const [sortOrder, setSortOrder] = useState('asc')
-    const [doctorNames, setDoctorNames] = useState([]);
+    const [sortOrder, setSortOrder] = useState('desc')
+    // const [doctorNames, setDoctorNames] = useState([]);
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({
         id: '',
@@ -56,7 +56,7 @@ const ChamberList = () => {
                 status: filterByStatus?.value === STATUS.SHOW_ALL ? '' : filterByStatus?.value,
                 sortOrder: sortOrder,
                 sortBy: sortBy,
-                doctor: filterByDoctor?.value === STATUS.SHOW_ALL ? '' : filterByDoctor?.value
+                // doctor: filterByDoctor?.value === STATUS.SHOW_ALL ? '' : filterByDoctor?.value
             }
             const response = await axios.get(`${config.api}/administrator/chamber/all`, {
                 params: data,
@@ -77,27 +77,27 @@ const ChamberList = () => {
 
     useEffect(() => {
         fetchData()
-    }, [currentPage, dataPerPage, filterByStatus, filterByDoctor, sortOrder, sortBy])
+    }, [currentPage, dataPerPage, filterByStatus, sortOrder, sortBy])
 
     const reduxStoreChamber = useSelector(state => state.administrator_chambers.data);
     const totalItems = useSelector(state => state.administrator_chambers.totalItems);
     const fetchedItems = useSelector(state => state.administrator_chambers.fetchedItems);
 
     // load doctor
-    useEffect(() => {
-        const fetchDoctor = async () => {
-            try {
-                const response = await axios.get(`${config.api}/doctor/all`);
-                const doctorNames = response.data.data.map((doctor) => doctor.name);
-                doctorNames.unshift("show all");
-                setDoctorNames(doctorNames);
-                setErrorMessage(null)
-            } catch (error) {
-                return errorHandler({ error, setErrorMessage })
-            }
-        }
-        fetchDoctor();
-    }, [])
+    // useEffect(() => {
+    //     const fetchDoctor = async () => {
+    //         try {
+    //             const response = await axios.get(`${config.api}/doctor/all`);
+    //             const doctorNames = response.data.data.map((doctor) => doctor.name);
+    //             doctorNames.unshift("show all");
+    //             setDoctorNames(doctorNames);
+    //             setErrorMessage(null)
+    //         } catch (error) {
+    //             return errorHandler({ error, setErrorMessage })
+    //         }
+    //     }
+    //     fetchDoctor();
+    // }, [])
 
     // sort order
     const handleSortOrderChange = (order, sortField) => {
@@ -107,13 +107,13 @@ const ChamberList = () => {
     };
 
     // filter by doctor
-    const doctorOptions = doctorNames.map((name, index) => ({
-        value: name,
-        label: index === 0 ? `${name.split(" ")[1]} doctor` : `${name}`
-    }));
-    const handelFilterByDoctor = (newValue) => {
-        setFilterByDoctor(newValue);
-    }
+    // const doctorOptions = doctorNames.map((name, index) => ({
+    //     value: name,
+    //     label: index === 0 ? `${name.split(" ")[1]} doctor` : `${name}`
+    // }));
+    // const handelFilterByDoctor = (newValue) => {
+    //     setFilterByDoctor(newValue);
+    // }
 
     // filter by status
     const userStatus = [
@@ -202,7 +202,7 @@ const ChamberList = () => {
             setActiveSortBy('')
             setSearchTerm('')
             setSortBy('')
-            setSortOrder('asc')
+            setSortOrder('desc')
             setDataPerPage(10)
             setCurrentPage(1)
             const response = await axios.get(`${config.api}/administrator/chamber/all`, {
@@ -323,7 +323,7 @@ const ChamberList = () => {
                 )
             }
             <div className="row">
-                <div className="col-md-2">
+                <div className="col-md-3">
                     <div className={`${styles.filterHeader}`}>
                         <span className='text-uppercase'>Show</span>
                         <select
@@ -353,7 +353,7 @@ const ChamberList = () => {
                         />
                     </div>
                 </div>
-                <div className="col-md-3">
+                {/* <div className="col-md-3">
                     <div className={`${styles.customSelectFilter}`}>
                         <Select
                             value={filterByDoctor}
@@ -364,8 +364,8 @@ const ChamberList = () => {
                             styles={customStyles}
                         />
                     </div>
-                </div>
-                <div className="col-md-4">
+                </div> */}
+                <div className="col-md-6">
                     <div className={`input-group ${styles.searchArea}`}>
                         <input
                             type="text"
@@ -416,17 +416,17 @@ const ChamberList = () => {
                                                 </th>
                                                 <th>
                                                     <SortingArrow
-                                                        level={`ROOM NO`}
+                                                        level={`ROOM NUMBER`}
                                                         sortBy={`chambers.room`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
                                                 {/* need to modify to short by */}
-                                                <th className='text-center' style={{ paddingBottom: "8px" }}>ASSIGNED DOCTOR</th>
+                                                {/* <th className='text-center' style={{ paddingBottom: "8px" }}>ASSIGNED DOCTOR</th>
                                                 <th className='text-center' style={{ paddingBottom: "8px" }}>PENDING DOCTOR</th>
                                                 <th className='text-center' style={{ paddingBottom: "8px" }}>ASSIGNED ASSISTANT</th>
-                                                <th className='text-center' style={{ paddingBottom: "8px" }}>PENDING ASSISTANT</th>
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>PENDING ASSISTANT</th> */}
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`STATUS`}
@@ -445,10 +445,10 @@ const ChamberList = () => {
                                                         <tr key={index}>
                                                             <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
                                                             <td className='text-center table-element'>{data.room}</td>
-                                                            <td>
+                                                            {/* <td>
                                                                 <div className='d-flex justify-content-around align-items-center'>
                                                                     <h6 className='table-element fw-bold'>0</h6>
-                                                                    {/* <button
+                                                                    <button
                                                                         style={{
                                                                             border: "0",
                                                                             cursor: data.activeDoctor == 0 ? 'not-allowed' : 'pointer',
@@ -456,13 +456,13 @@ const ChamberList = () => {
                                                                         }}
                                                                         className='btn btn-primary btn-sm'>
                                                                         <AiFillEye className='mb-1' />
-                                                                    </button> */}
+                                                                    </button>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-around align-items-center'>
                                                                     <h6 className='table-element fw-bold'>0</h6>
-                                                                    {/* <button
+                                                                    <button
                                                                         style={{
                                                                             border: "0",
                                                                             cursor: data.pendingDoctor == 0 ? 'not-allowed' : 'pointer',
@@ -470,13 +470,13 @@ const ChamberList = () => {
                                                                         }}
                                                                         className='btn btn-primary btn-sm'>
                                                                         <AiFillEye className='mb-1' />
-                                                                    </button> */}
+                                                                    </button>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-around align-items-center'>
                                                                     <h6 className='table-element fw-bold'>0</h6>
-                                                                    {/* <button
+                                                                    <button
                                                                         style={{
                                                                             border: "0",
                                                                             cursor: data.disableDoctor == 0 ? 'not-allowed' : 'pointer',
@@ -484,13 +484,13 @@ const ChamberList = () => {
                                                                         }}
                                                                         className='btn btn-primary btn-sm'>
                                                                         <AiFillEye className='mb-1' />
-                                                                    </button> */}
+                                                                    </button>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-around align-items-center'>
                                                                     <h6 className='table-element fw-bold'>0</h6>
-                                                                    {/* <button
+                                                                    <button
                                                                         style={{
                                                                             border: "0",
                                                                             cursor: data.disableDoctor == 0 ? 'not-allowed' : 'pointer',
@@ -498,9 +498,9 @@ const ChamberList = () => {
                                                                         }}
                                                                         className='btn btn-primary btn-sm'>
                                                                         <AiFillEye className='mb-1' />
-                                                                    </button> */}
+                                                                    </button>
                                                                 </div>
-                                                            </td>
+                                                            </td> */}
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
