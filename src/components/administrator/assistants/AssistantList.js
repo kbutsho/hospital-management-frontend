@@ -30,7 +30,7 @@ const AssistantList = () => {
     const [activeSortBy, setActiveSortBy] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
-    const [sortOrder, setSortOrder] = useState('asc')
+    const [sortOrder, setSortOrder] = useState('desc')
     const [roomNumbers, setRoomNumbers] = useState([]);
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({
@@ -198,7 +198,7 @@ const AssistantList = () => {
             setActiveSortBy('')
             setSearchTerm('')
             setSortBy('')
-            setSortOrder('asc')
+            setSortOrder('desc')
             setDataPerPage(10)
             setCurrentPage(1)
             const response = await axios.get(`${config.api}/administrator/assistant/all`, {
@@ -393,15 +393,14 @@ const AssistantList = () => {
                                                 reduxStoreAssistant.map((data, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td className='text-center table-element'>{data.userId}</td>
-                                                            <td className='text-center table-element'>{data.assistantId}</td>
+                                                            <td className='text-center table-element'>{String(data.userId).padStart(5, '0')}</td>
+                                                            <td className='text-center table-element'>{String(data.assistantId).padStart(5, '0')}</td>
                                                             <td className='table-element'>{data.name}</td>
                                                             <td className='table-element'>{data.email}</td>
                                                             <td className='table-element'>{data.phone}</td>
-                                                            <td>
+                                                            <td className='table-element'>
                                                                 {
-                                                                    data.room === "null" ? null
-                                                                        : <span className='table-element'>{data.room}</span>
+                                                                    data.room === "null" ? null : data.room
                                                                 }
                                                             </td>
                                                             <td className='text-center'>
