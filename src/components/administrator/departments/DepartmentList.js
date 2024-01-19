@@ -475,7 +475,7 @@ const DepartmentList = () => {
                                                                 </select>
                                                             </td>
                                                             <td>
-                                                                <div className='d-flex justify-content-center'>
+                                                                <div className='d-flex justify-content-center table-btn'>
                                                                     <button style={{ border: "0" }} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
@@ -490,18 +490,16 @@ const DepartmentList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreDepartment.length > 0 ?
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <div
-                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {reduxStoreDepartment.length} out of {totalItems}
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
+                                                <div className="d-flex justify-content-end">
+                                                    <div>
                                                         <Pagination totalItem={fetchedItems}
                                                             dataPerPage={dataPerPage}
                                                             currentPage={currentPage}
                                                             handelPaginate={handelPaginate} />
+                                                        <div className='d-flex justify-content-end'
+                                                            style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {reduxStoreDepartment.length} out of {totalItems}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 : null

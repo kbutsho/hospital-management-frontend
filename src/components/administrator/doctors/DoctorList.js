@@ -16,7 +16,13 @@ import { CiSearch } from "react-icons/ci";
 import { MdOutlineRefresh } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchedItemsCount, removeDoctor, storeDoctor, totalItemsCount, updateDoctorStatus } from '@/redux/slice/administrator/doctorSlice';
+import {
+    fetchedItemsCount,
+    removeDoctor,
+    storeDoctor,
+    totalItemsCount,
+    updateDoctorStatus
+} from '@/redux/slice/administrator/doctorSlice';
 import Select from 'react-select';
 
 
@@ -24,6 +30,7 @@ const DoctorList = () => {
     const dispatch = useDispatch();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
+    const [found, setFound] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null);
     const [filterByStatus, setFilterByStatus] = useState(null);
     const [filterByDepartment, setFilterByDepartment] = useState(null);
@@ -47,7 +54,6 @@ const DoctorList = () => {
     // load data
     const fetchData = async () => {
         try {
-            // setLoading(true);
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -67,8 +73,8 @@ const DoctorList = () => {
             dispatch(storeDoctor(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
+            setFound(true)
         } catch (error) {
-            // setLoading(false)
             return errorHandler({ error, setErrorMessage })
         }
     };
@@ -208,14 +214,14 @@ const DoctorList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            setLoading(false)
             setErrorMessage(null)
             dispatch(storeDoctor(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
-            return errorHandler({ error, setErrorMessage })
-        } finally {
             setLoading(false)
+            return errorHandler({ error, setErrorMessage })
         }
     }
     const handelErrorMessage = () => {
@@ -453,27 +459,27 @@ const DoctorList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreDoctor.length > 0 ?
-                                                <div className='row'>
-                                                    <div className="col-md-6">
-                                                        <div
-                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {reduxStoreDoctor.length} out of {totalItems}
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
+                                                <div className="d-flex justify-content-end">
+                                                    <div>
                                                         <Pagination totalItem={fetchedItems}
                                                             dataPerPage={dataPerPage}
                                                             currentPage={currentPage}
                                                             handelPaginate={handelPaginate} />
+                                                        <div className='d-flex justify-content-end'
+                                                            style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {reduxStoreDoctor.length} out of {totalItems}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 : null
                                         }
                                     </div>
                                 </div> :
-                                <div className={styles.notFound}>
-                                    <h6 className='fw-bold'>no doctor found.</h6>
-                                </div>
+                                (
+                                    found ? <div className={styles.notFound}>
+                                        <h6 className='fw-bold'>no doctor found.</h6>
+                                    </div> : null
+                                )
                         }
                     </div>
             }

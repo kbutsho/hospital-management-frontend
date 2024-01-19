@@ -33,6 +33,7 @@ const ScheduleList = () => {
     const router = useRouter();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
+    const [found, setFound] = useState(false)
     const [searchTerm, setSearchTerm] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
 
@@ -163,7 +164,6 @@ const ScheduleList = () => {
     // load data
     const fetchData = async () => {
         try {
-            // setLoading(true);
             const data = {
                 sortBy: sortBy,
                 sortOrder: sortOrder,
@@ -187,8 +187,8 @@ const ScheduleList = () => {
             dispatch(storeSchedule(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
+            setFound(true)
         } catch (error) {
-            // setLoading(false)
             return errorHandler({ error, setErrorMessage })
         }
     };
@@ -573,31 +573,29 @@ const ScheduleList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreSchedule.length > 0 ?
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <div
-                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {reduxStoreSchedule.length} out of {totalItems}
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
+                                                <div className="d-flex justify-content-end">
+                                                    <div>
                                                         <Pagination totalItem={fetchedItems}
                                                             dataPerPage={dataPerPage}
                                                             currentPage={currentPage}
                                                             handelPaginate={(pageNumber) => {
                                                                 setCurrentPage(pageNumber)
-                                                            }}
-                                                        />
+                                                            }} />
+                                                        <div className='d-flex justify-content-end'
+                                                            style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {reduxStoreSchedule.length} out of {totalItems}
+                                                        </div>
                                                     </div>
                                                 </div>
-
                                                 : null
                                         }
                                     </div>
                                 </div> :
-                                <div className={styles.notFound}>
-                                    <h6 className='fw-bold'>no schedule found.</h6>
-                                </div>
+                                (
+                                    found ? <div className={styles.notFound}>
+                                        <h6 className='fw-bold'>no department found.</h6>
+                                    </div> : null
+                                )
                         }
                     </div>
             }

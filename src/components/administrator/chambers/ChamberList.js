@@ -26,6 +26,7 @@ const ChamberList = () => {
     const dispatch = useDispatch();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
+    const [found, setFound] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null);
     const [filterByStatus, setFilterByStatus] = useState(null);
     // const [filterByDoctor, setFilterByDoctor] = useState(null);
@@ -48,7 +49,6 @@ const ChamberList = () => {
     // load data
     const fetchData = async () => {
         try {
-            setLoading(true);
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -68,10 +68,9 @@ const ChamberList = () => {
             dispatch(storeChamber(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
+            setFound(true)
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     };
 
@@ -136,13 +135,13 @@ const ChamberList = () => {
     };
     const handelSearchSubmit = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             await fetchData();
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         } finally {
             setSearchTerm('')
-            setLoading(false)
+            // setLoading(false)
         }
     }
 
@@ -154,7 +153,6 @@ const ChamberList = () => {
                 'id': id,
                 'status': status
             }
-            setLoading(true)
             await axios.post(`${config.api}/administrator/chamber/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -164,8 +162,6 @@ const ChamberList = () => {
             dispatch(updateChamberStatus({ id, status }))
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     };
 
@@ -176,7 +172,6 @@ const ChamberList = () => {
     }
     const handelDelete = async () => {
         try {
-            setLoading(true)
             await axios.delete(`${config.api}/administrator/chamber/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -188,8 +183,6 @@ const ChamberList = () => {
             await fetchData()
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
     }
 
@@ -211,15 +204,15 @@ const ChamberList = () => {
                 }
             });
             console.log(response)
+            setLoading(false)
             setErrorMessage(null)
             dispatch(storeChamber(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
             console.log(error)
-            return errorHandler({ error, setErrorMessage })
-        } finally {
             setLoading(false)
+            return errorHandler({ error, setErrorMessage })
         }
     }
     const handelErrorMessage = () => {
@@ -281,8 +274,6 @@ const ChamberList = () => {
     const chamberDetails = (id) => {
         router.push(`/administrator/chambers/${id}`);
     }
-
-
 
     const customStyles = {
         control: (provided) => ({
@@ -422,11 +413,7 @@ const ChamberList = () => {
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
-                                                {/* need to modify to short by */}
-                                                {/* <th className='text-center' style={{ paddingBottom: "8px" }}>ASSIGNED DOCTOR</th>
-                                                <th className='text-center' style={{ paddingBottom: "8px" }}>PENDING DOCTOR</th>
-                                                <th className='text-center' style={{ paddingBottom: "8px" }}>ASSIGNED ASSISTANT</th>
-                                                <th className='text-center' style={{ paddingBottom: "8px" }}>PENDING ASSISTANT</th> */}
+
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`STATUS`}
@@ -540,28 +527,27 @@ const ChamberList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreChamber.length > 0 ?
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <div
-                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {dataPerPage} out of {totalItems}
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
+                                                <div className="d-flex justify-content-end">
+                                                    <div>
                                                         <Pagination totalItem={fetchedItems}
                                                             dataPerPage={dataPerPage}
                                                             currentPage={currentPage}
                                                             handelPaginate={handelPaginate} />
+                                                        <div className='d-flex justify-content-end'
+                                                            style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {reduxStoreChamber.length} out of {totalItems}
+                                                        </div>
                                                     </div>
                                                 </div>
-
                                                 : null
                                         }
                                     </div>
                                 </div> :
-                                <div className={styles.notFound}>
-                                    <h6 className='fw-bold'>no chamber found.</h6>
-                                </div>
+                                (
+                                    found ? <div className={styles.notFound}>
+                                        <h6 className='fw-bold'>no department found.</h6>
+                                    </div> : null
+                                )
                         }
                     </div>
             }

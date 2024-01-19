@@ -67,6 +67,10 @@
     box-shadow: none;
 }
 
+.table-area .table-btn {
+    margin-top: 2px;
+}
+
 .table-area tr td {
     padding: 0px;
 }
@@ -79,15 +83,16 @@
 }
 
 .paginationBtn {
-    background-color: #f4f4f4;
+    background-color: #E9E9E9;
     border: none;
-    color: #333;
+    color: black;
     padding: 6px 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin: 0 4px;
     border-radius: 4px;
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .paginationBtn:hover {

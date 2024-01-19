@@ -221,6 +221,7 @@ const AssistantList = () => {
             ...provided,
             border: 'none',
             boxShadow: 'none',
+            cursor: 'pointer',
         }),
         option: (provided) => ({
             ...provided,
@@ -442,18 +443,16 @@ const AssistantList = () => {
                                     <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreAssistant.length > 0 ?
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <div
-                                                            style={{ paddingTop: "30px", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {reduxStoreAssistant.length} out of {totalItems}
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
+                                                <div className="d-flex justify-content-end">
+                                                    <div>
                                                         <Pagination totalItem={fetchedItems}
                                                             dataPerPage={dataPerPage}
                                                             currentPage={currentPage}
                                                             handelPaginate={handelPaginate} />
+                                                        <div className='d-flex justify-content-end'
+                                                            style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
+                                                            showing {reduxStoreAssistant.length} out of {totalItems}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 : null
