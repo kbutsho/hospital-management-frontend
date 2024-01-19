@@ -508,7 +508,6 @@ const DepartmentList = () => {
                                                             handelPaginate={handelPaginate} />
                                                     </div>
                                                 </div>
-
                                                 : null
                                         }
                                     </div>
