@@ -24,6 +24,7 @@ const AssistantList = () => {
     const dispatch = useDispatch();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
+    const [found, setFound] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [filterByStatus, setFilterByStatus] = useState(null);
     const [filterByRoom, setFilterByRoom] = useState(null);
@@ -46,7 +47,6 @@ const AssistantList = () => {
     // load data
     const fetchData = async () => {
         try {
-            // setLoading(true);
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -61,14 +61,13 @@ const AssistantList = () => {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-            });
-            console.log(response.data.data)
+            })
             setErrorMessage(null)
             dispatch(storeAssistant(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
+            setFound(true)
         } catch (error) {
-            console.log(error)
             return errorHandler({ error, setErrorMessage })
         }
     };
@@ -108,7 +107,6 @@ const AssistantList = () => {
     const roomOptions = roomNumbers.map((room, index) => ({
         value: room,
         label: room
-        // label: index === 0 ? `${room.split(" ")[1]}` : `${room}`
     }));
     const handelFilterByRoom = (newValue) => {
         setFilterByRoom(newValue);
@@ -153,13 +151,11 @@ const AssistantList = () => {
                 'userId': userId,
                 'status': status
             }
-            // setLoading(true)
             await axios.post(`${config.api}/administrator/assistant/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            // await fetchData()
             setErrorMessage(null)
             dispatch(updateAssistantStatus({ userId, status }))
         } catch (error) {
@@ -174,7 +170,6 @@ const AssistantList = () => {
     }
     const handelDelete = async () => {
         try {
-            // setLoading(true)
             await axios.delete(`${config.api}/administrator/assistant/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -206,25 +201,26 @@ const AssistantList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            setLoading(false)
             setErrorMessage(null)
             dispatch(storeAssistant(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
-            return errorHandler({ error, setErrorMessage })
-        } finally {
             setLoading(false)
+            return errorHandler({ error, setErrorMessage })
         }
     }
+
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
+
     const customStyles = {
         control: (provided) => ({
             ...provided,
             border: 'none',
             boxShadow: 'none',
-            // cursor: 'pointer'
         }),
         option: (provided) => ({
             ...provided,
@@ -232,6 +228,12 @@ const AssistantList = () => {
             'textTransform': 'uppercase',
             fontSize: '12px'
         }),
+    };
+
+    const statusColors = {
+        [STATUS.ACTIVE]: 'green',
+        [STATUS.PENDING]: 'red',
+        [STATUS.DISABLE]: 'grey'
     };
 
     return (
@@ -259,8 +261,7 @@ const AssistantList = () => {
                             value={dataPerPage}
                             className={`${styles.customSelect} form-select`}
                             onChange={(e) =>
-                                setDataPerPage(parseInt(e.target.value))
-                            }>
+                                setDataPerPage(parseInt(e.target.value))}>
                             <option value="5" defaultValue={dataPerPage === 5}>05</option>
                             <option value="10" defaultValue={dataPerPage === 10}>10</option>
                             <option value="25" defaultValue={dataPerPage === 25}>25</option>
@@ -339,7 +340,7 @@ const AssistantList = () => {
                                                 </th>
                                                 <th className='text-center'>
                                                     <SortingArrow
-                                                        level={`ASSISTANT ID`}
+                                                        level={`ASST ID`}
                                                         sortBy={`assistants.id`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
@@ -400,7 +401,7 @@ const AssistantList = () => {
                                                             <td className='table-element'>{data.phone}</td>
                                                             <td className='table-element'>
                                                                 {
-                                                                    data.room === "null" ? null : data.room
+                                                                    data.room === "null" ? <span style={{ color: "red", fontWeight: "bold" }}>unavailable</span> : data.room
                                                                 }
                                                             </td>
                                                             <td className='text-center'>
@@ -408,21 +409,24 @@ const AssistantList = () => {
                                                                     className="status-select form-select fw-bold"
                                                                     value={data.status}
                                                                     onChange={(event) => handleStatusChange(event, data.userId)}
-                                                                    style={{ color: data.status === 'active' ? 'green' : 'red' }}
-                                                                >
+                                                                    style={{
+                                                                        color: statusColors[data.status] || 'inherit'
+                                                                    }}>
                                                                     {Object.entries(STATUS)
                                                                         .filter(([key, value]) => value !== STATUS.SHOW_ALL)
                                                                         .map(([key, value]) => (
                                                                             <option key={key}
                                                                                 value={value}
                                                                                 className='fw-bold'
-                                                                                style={{ color: value === 'active' ? 'green' : 'red' }}>
+                                                                                style={{
+                                                                                    color: statusColors[value] || 'inherit'
+                                                                                }}>
                                                                                 {value}
                                                                             </option>
                                                                         ))}
                                                                 </select>
                                                             </td>
-                                                            <td >
+                                                            <td>
                                                                 <div className='d-flex justify-content-center'>
                                                                     <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
@@ -456,9 +460,11 @@ const AssistantList = () => {
                                         }
                                     </div>
                                 </div> :
-                                <div className={styles.notFound}>
-                                    <h6 className='fw-bold'>no assistant found.</h6>
-                                </div>
+                                (
+                                    found ? <div className={styles.notFound}>
+                                        <h6 className='fw-bold'>no assistant found.</h6>
+                                    </div> : null
+                                )
                         }
                     </div>
             }
