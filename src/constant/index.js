@@ -9,6 +9,8 @@ export const STATUS = {
     ACTIVE: 'active',
     DISABLE: 'disable',
     PENDING: 'pending',
+    UNPAID: 'unpaid',
+    PAID: 'paid',
     SHOW_ALL: 'show all'
 }
 export const TIME_SLOT = {
