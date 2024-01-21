@@ -50,9 +50,7 @@ const DepartmentList = () => {
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [dataPerPage, setDataPerPage] = useState(5);
-    const handelPaginate = (pageNumber) => {
-        setCurrentPage(pageNumber)
-    }
+
     // load data
     const fetchData = async () => {
         try {
@@ -107,9 +105,6 @@ const DepartmentList = () => {
         value: status,
         label: index === 0 ? `${status.split(" ")[1]} status` : `${status}`
     }));
-    const handelFilterByStatus = (newValue) => {
-        setFilterByStatus(newValue);
-    }
 
     // search 
     const handelSearch = (event) => {
@@ -305,7 +300,9 @@ const DepartmentList = () => {
                     <div className={`${styles.customSelectFilter}`}>
                         <Select
                             value={filterByStatus}
-                            onChange={handelFilterByStatus}
+                            onChange={(newValue) => {
+                                setFilterByStatus(newValue);
+                            }}
                             options={statusOptions}
                             isSearchable
                             placeholder="search or select status"
@@ -495,7 +492,9 @@ const DepartmentList = () => {
                                                         <Pagination totalItem={fetchedItems}
                                                             dataPerPage={dataPerPage}
                                                             currentPage={currentPage}
-                                                            handelPaginate={handelPaginate} />
+                                                            handelPaginate={(pageNumber) => {
+                                                                setCurrentPage(pageNumber)
+                                                            }} />
                                                         <div className='d-flex justify-content-end'
                                                             style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
                                                             showing {reduxStoreDepartment.length} out of {totalItems}
