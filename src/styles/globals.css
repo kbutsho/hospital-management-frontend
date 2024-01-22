@@ -205,9 +205,7 @@
 .available-date {
     background-color: #135713;
     color: white !important;
-    ;
     cursor: pointer !important;
-    ;
 }
 
 .unavailable-date {
@@ -226,4 +224,15 @@
 
 .date-picker {
     font-size: 10px !important;
+}
+
+.serial-date-picker {
+    border: none !important;
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+    font-weight: bold !important;
+}
+
+.serial-date-picker:focus {
+    box-shadow: none !important;
 }

@@ -109,7 +109,6 @@ const ScheduleList = () => {
         label: 'show all slot'
     });
 
-
     const [filterByDoctor, setFilterByDoctor] = useState(null); // filter by doctor
     const [doctorNames, setDoctorNames] = useState([]);
     useEffect(() => { // fetch all doctor
@@ -583,7 +582,7 @@ const ScheduleList = () => {
                                                             }} />
                                                         <div className='d-flex justify-content-end'
                                                             style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {reduxStoreSchedule.length} out of {totalItems}
+                                                            showing {reduxStoreSchedule.length} out of {fetchedItems}
                                                         </div>
                                                     </div>
                                                 </div>

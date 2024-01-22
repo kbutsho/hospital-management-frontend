@@ -29,8 +29,13 @@ const serialSlice = createSlice({
             state.data = state.data.filter(serial => serial.id !== idToRemove);
             state.totalItems -= 1;
         },
+        resetSerial: (state) => {
+            state.data = [];
+            state.totalItems = 0;
+            state.fetchedItems = 0;
+        },
     }
 })
 
-export const { updateSerialStatus, storeSerial, removeSerial, totalItemsCount, fetchedItemsCount } = serialSlice.actions;
+export const { updateSerialStatus, resetSerial, storeSerial, removeSerial, totalItemsCount, fetchedItemsCount } = serialSlice.actions;
 export default serialSlice.reducer; 

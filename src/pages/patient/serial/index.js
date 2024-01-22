@@ -16,7 +16,6 @@ const PatientSerial = ({ data }) => {
     const router = useRouter()
     const [phone, setPhone] = useState('');
     const [activeTab, setActiveTab] = useState('doctor');
-    const [success, setSuccess] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -113,7 +112,6 @@ const PatientSerial = ({ data }) => {
     const handleBlur = async () => {
         try {
             const response = await axios.get(`${config.api}/patient/${phone}`);
-            console.log(response)
             if (response.data.data) {
                 const { name, phone, age, address } = response.data.data;
                 setFormData(prevData => ({

@@ -18,14 +18,17 @@ import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { VscDiffAdded } from 'react-icons/vsc';
+import DatePicker from "react-datepicker";
+import { addMonths } from 'date-fns';
+import "react-datepicker/dist/react-datepicker.css";
 import {
     storeSerial,
     totalItemsCount,
     fetchedItemsCount,
     updateSerialStatus,
-    removeSerial
+    removeSerial,
+    resetSerial
 } from '@/redux/slice/administrator/serialSlice';
-
 
 
 const SerialList = () => {
@@ -34,11 +37,19 @@ const SerialList = () => {
     const [loading, setLoading] = useState(false);
     const [found, setFound] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null);
-    const [filterByStatus, setFilterByStatus] = useState(null);
+
+    // sort by 
     const [activeSortBy, setActiveSortBy] = useState('');
-    const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
+
+    // sort order
     const [sortOrder, setSortOrder] = useState('desc')
+    const handleSortOrderChange = (order, sortField) => {
+        setActiveSortBy(sortField)
+        setSortBy(sortField);
+        setSortOrder(order);
+    };
+
     const [deleteModal, setDeleteModal] = useState(false)
     const [deleteItem, setDeleteItem] = useState({ id: '', name: '' })
 
@@ -46,7 +57,74 @@ const SerialList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [dataPerPage, setDataPerPage] = useState(10);
 
-    // load data
+    // filter by date
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const today = new Date();
+    const twoMonthsLater = addMonths(today, 2);
+
+    // filter by doctor
+    const [filterByDoctor, setFilterByDoctor] = useState(null);
+    const [doctor, setDoctor] = useState([]);
+    const doctorOptions = doctor.map((doctor) => ({
+        value: doctor.id, label: doctor.name
+    }))
+
+    // filter by schedule
+    const [filterByTimeSlot, setFilterByTimeSlot] = useState(null);
+    const [timeSlots, setTimeSlots] = useState([]);
+    const formatTimes = (time) => {
+        const [hours, minutes] = time.split(':');
+        const timeObject = new Date();
+        timeObject.setHours(hours, minutes);
+        return timeObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+    const timeSlotOptions = timeSlots?.map((time) => {
+        const [startTime, endTime] = time.split(' - ');
+        const formattedStartTime = formatTimes(startTime);
+        const formattedEndTime = formatTimes(endTime);
+        const formattedTimeSlot = `${formattedStartTime} - ${formattedEndTime}`
+        return {
+            value: time,
+            label: formattedTimeSlot
+        };
+    });
+    timeSlotOptions.unshift({ value: '', label: 'show all' })
+
+    // filter by status
+    const [filterByStatus, setFilterByStatus] = useState(null);
+    const statusList = ['', STATUS.UNPAID, STATUS.PAID]
+    const statusOptions = statusList.map((status, index) => ({
+        value: status,
+        label: index === 0 ? 'show all' : `${status} `
+    }));
+
+    // filter by department
+    const [filterByDepartment, setFilterByDepartment] = useState(null);
+    const [department, setDepartment] = useState([]);
+    const departmentOptions = department.map((dept) => ({
+        value: dept.id, label: dept.name
+    }))
+
+    // load doctor, department & schedule
+    useEffect(() => {
+        const fetchDoctorDepartmentSchedule = async () => {
+            try {
+                const response = await axios.get(`${config.api}/administrator/serial/doctor-department-schedule`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setDoctor([{ id: '', name: 'show all' }, ...response.data.data.doctors])
+                setDepartment([{ id: '', name: 'show all' }, ...response.data.data.departments])
+                const times = response.data.data.schedule.map((time) => time.time)
+                setTimeSlots(times)
+                setErrorMessage(null)
+            } catch (error) {
+                return errorHandler({ error, setErrorMessage })
+            }
+        }
+        fetchDoctorDepartmentSchedule()
+    }, [])
+
+    // load serial data
     const fetchData = async () => {
         try {
             const data = {
@@ -55,10 +133,12 @@ const SerialList = () => {
                 searchTerm: searchTerm,
                 sortOrder: sortOrder,
                 sortBy: sortBy,
-                status: filterByStatus?.value === STATUS.SHOW_ALL ? '' : filterByStatus?.value,
-                // filterByDate
-                // filterByDoctor
-                // FIlterBySchedule
+                date: selectedDate === null ? '' :
+                    `${selectedDate.getFullYear()}-${selectedDate?.getMonth() + 1}-${selectedDate?.getDate()}`,
+                status: filterByStatus === null ? '' : filterByStatus.value,
+                doctor: filterByDoctor === null ? '' : filterByDoctor.value,
+                schedule: filterByTimeSlot === null ? '' : filterByTimeSlot.value,
+                department: filterByDepartment === null ? '' : filterByDepartment?.value
             }
             const response = await axios.get(`${config.api}/administrator/serial/all`, {
                 params: data,
@@ -66,7 +146,6 @@ const SerialList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log(response.data.data)
             setErrorMessage(null)
             dispatch(storeSerial(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
@@ -79,34 +158,14 @@ const SerialList = () => {
     };
     useEffect(() => {
         fetchData()
-    }, [currentPage, dataPerPage, filterByStatus, sortOrder, sortBy])
+    }, [currentPage, dataPerPage, filterByStatus, filterByDoctor, filterByTimeSlot, filterByDepartment, selectedDate, sortOrder, sortBy])
 
     const reduxStoreSerial = useSelector(state => state.administrator_serials.data);
     const totalItems = useSelector(state => state.administrator_serials.totalItems);
     const fetchedItems = useSelector(state => state.administrator_serials.fetchedItems);
 
-    // sort order
-    const handleSortOrderChange = (order, sortField) => {
-        setActiveSortBy(sortField)
-        setSortBy(sortField);
-        setSortOrder(order);
-    };
-
-    // filter by status
-    const statusList = [
-        STATUS.SHOW_ALL,
-        STATUS.UNPAID,
-        STATUS.PAID
-    ]
-    const statusOptions = statusList.map((status, index) => ({
-        value: status,
-        label: index === 0 ? `${status.split(" ")[1]} status` : `${status}`
-    }));
-
     // search 
-    const handelSearch = (event) => {
-        setSearchTerm(event.target.value);
-    };
+    const [searchTerm, setSearchTerm] = useState('');
     const handelSearchSubmit = async () => {
         try {
             await fetchData();
@@ -125,9 +184,9 @@ const SerialList = () => {
                 'id': id,
                 'status': status
             }
-            await axios.post(`${config.api}/administrator/serial/update/status`, data, {
+            await axios.post(`${config.api} /administrator/serial / update / status`, data, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token} `
                 }
             })
             setErrorMessage(null)
@@ -144,9 +203,9 @@ const SerialList = () => {
     }
     const handelDelete = async () => {
         try {
-            await axios.delete(`${config.api}/administrator/serial/${deleteItem?.id}`, {
+            await axios.delete(`${config.api} /administrator/serial/${deleteItem?.id} `, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token} `
                 }
             });
             dispatch(removeSerial(deleteItem?.id));
@@ -163,78 +222,36 @@ const SerialList = () => {
         try {
             setLoading(true)
             setFilterByStatus(null)
+            setFilterByDoctor(null)
+            setFilterByDepartment(null)
+            setFilterByTimeSlot(null)
+            setSelectedDate(null)
             setActiveSortBy('')
             setSearchTerm('')
             setSortBy('')
             setSortOrder('desc')
             setDataPerPage(10)
             setCurrentPage(1)
+            dispatch(resetSerial());
             const response = await axios.get(`${config.api}/administrator/serial/all`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token} `
                 }
             });
             setLoading(false)
             setErrorMessage(null)
-            dispatch(storeDepartment(response.data.data))
+            dispatch(storeSerial(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
             dispatch(fetchedItemsCount(response.data.fetchedItems))
         } catch (error) {
             return errorHandler({ error, setErrorMessage })
         }
     }
+
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
 
-    // add department 
-    const [addModal, setAddModal] = useState(false);
-    const [addLoading, setAddLoading] = useState(false);
-    const toggleAddModal = () => {
-        setAddModal(!addModal);
-        setFormData({
-            name: '',
-            errors: []
-        })
-    }
-    const handelInputChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-            errors: {
-                ...formData.errors,
-                [event.target.name]: null
-            }
-        })
-    };
-    const departmentFormSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            setAddLoading(true)
-            const data = {
-                name: formData.name
-            }
-            const response = await axios.post(`${config.api}/administrator/department/create`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            if (response.data.status) {
-                setFormData({
-                    name: '',
-                    errors: []
-                });
-                await fetchData()
-                setAddModal(!addModal);
-                toast.success(response.data.message)
-            }
-        } catch (error) {
-            return errorHandler({ error, toast, setFormData, formData })
-        }
-        finally {
-            setAddLoading(false);
-        }
-    }
     const convertTime = (time24) => {
         const [hours, minutes] = time24.split(':');
         let formattedTime = '';
@@ -243,7 +260,7 @@ const SerialList = () => {
         if (hours12 < 10) {
             hours12 = String(hours12).padStart(2, '0')
         }
-        formattedTime = `${hours12}:${minutes} ${suffix}`;
+        formattedTime = `${hours12}:${minutes} ${suffix} `;
         return formattedTime;
     };
     const customStyles = {
@@ -264,7 +281,6 @@ const SerialList = () => {
         [STATUS.UNPAID]: 'red',
         [STATUS.PAID]: 'green'
     };
-
 
     return (
         <div className={`py-3 ${styles.listArea}`}>
@@ -304,6 +320,48 @@ const SerialList = () => {
                 </div>
                 <div className="col-md-3">
                     <div className={`${styles.customSelectFilter}`}>
+                        <DatePicker
+                            placeholderText="select date"
+                            selected={selectedDate}
+                            minDate={today}
+                            maxDate={twoMonthsLater}
+                            onChange={(date) => setSelectedDate(date)}
+                            className='form-control serial-date-picker'
+                        />
+                    </div>
+                </div>
+                <div className="col-md-3">
+                    <div className={`${styles.customSelectFilter} `}>
+                        <Select
+                            onChange={(filterValue) => {
+                                setFilterByDoctor(filterValue)
+                            }}
+                            value={filterByDoctor}
+                            options={doctorOptions}
+                            isSearchable
+                            placeholder="select or search doctor"
+                            styles={customStyles}
+                        />
+                    </div>
+                </div>
+                <div className="col-md-3">
+                    <div className={`${styles.customSelectFilter}`}>
+                        <Select
+                            onChange={(filterValue) => {
+                                setFilterByTimeSlot(filterValue)
+                            }}
+                            value={filterByTimeSlot}
+                            options={timeSlotOptions}
+                            isSearchable
+                            placeholder="search or select time slot"
+                            styles={customStyles}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-md-3">
+                    <div className={`${styles.customSelectFilter}`}>
                         <Select
                             value={filterByStatus}
                             onChange={(newValue) => {
@@ -316,13 +374,29 @@ const SerialList = () => {
                         />
                     </div>
                 </div>
+                <div className="col-md-3">
+                    <div className={`${styles.customSelectFilter}`}>
+                        <Select
+                            onChange={(filterValue) => {
+                                setFilterByDepartment(filterValue)
+                            }}
+                            value={filterByDepartment}
+                            options={departmentOptions}
+                            isSearchable
+                            placeholder="select or search department"
+                            styles={customStyles}
+                        />
+                    </div>
+                </div>
                 <div className="col-md-6">
                     <div className={`input-group ${styles.searchArea}`}>
                         <input
                             type="text"
                             value={searchTerm}
-                            onChange={handelSearch}
-                            placeholder={`search for departments`}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value)
+                            }}
+                            placeholder={`search for serial`}
                             className={`form-control ${styles.searchBox}`} />
                         <button
                             onClick={handelSearchSubmit}
@@ -335,12 +409,6 @@ const SerialList = () => {
                             className='btn btn-outline-secondary ms-2'
                             style={{ border: "none" }}>
                             <MdOutlineRefresh size="24px" />
-                        </button>
-                        <button
-                            onClick={toggleAddModal}
-                            className='btn btn-outline-secondary ms-2'
-                            style={{ border: "none", "borderRadius": "0px 4px 4px 0" }}>
-                            <VscDiffAdded size="24px" />
                         </button>
                     </div>
                 </div>
@@ -392,7 +460,7 @@ const SerialList = () => {
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`DEPT`}
-                                                        sortBy={`serials.department`}
+                                                        sortBy={`departments.name`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
@@ -400,19 +468,12 @@ const SerialList = () => {
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`DOCTOR`}
-                                                        sortBy={`serials.doctor`}
+                                                        sortBy={`doctors.name`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
-                                                <th className='text-center'>
-                                                    <SortingArrow
-                                                        level={`SCHEDULE`}
-                                                        sortBy={`serial.schedule`}
-                                                        sortOrder={sortOrder}
-                                                        activeSortBy={activeSortBy}
-                                                        handleSortOrderChange={handleSortOrderChange} />
-                                                </th>
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>SCHEDULE</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`FEES`}
@@ -424,7 +485,7 @@ const SerialList = () => {
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`STATUS`}
-                                                        sortBy={`serial.payment_status`}
+                                                        sortBy={`serials.payment_status`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
@@ -480,7 +541,7 @@ const SerialList = () => {
                                             }
                                         </tbody>
                                     </Table>
-                                    <div className={`${styles.pagination}`} style={{ marginTop: "0px" }}>
+                                    <div className={`${styles.pagination} `} style={{ marginTop: "0px" }}>
                                         {
                                             reduxStoreSerial.length > 0 ?
                                                 <div className="d-flex justify-content-end">
@@ -493,7 +554,7 @@ const SerialList = () => {
                                                             }} />
                                                         <div className='d-flex justify-content-end'
                                                             style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {reduxStoreSerial.length} out of {totalItems}
+                                                            showing {reduxStoreSerial.length} out of {fetchedItems}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -503,7 +564,7 @@ const SerialList = () => {
                                 </div> :
                                 (
                                     found ? <div className={styles.notFound}>
-                                        <h6 className='fw-bold'>no department found.</h6>
+                                        <h6 className='fw-bold'>no serial found.</h6>
                                     </div> : null
                                 )
                         }
@@ -524,48 +585,6 @@ const SerialList = () => {
                                     <button onClick={handelDelete} className='btn btn-danger btn-sm fw-bold'>delete</button>
                                 </div>
                             </ModalFooter>
-                        </Modal>
-                    </div>
-                ) : null
-            }
-            {
-                addModal ? (
-                    <div>
-                        <Modal isOpen={addModal} className="modal-md">
-                            <ModalBody>
-                                <div className='p-3'>
-                                    <div className='d-flex justify-content-between'>
-                                        <h4 className='text-uppercase fw-bold mb-4'>Add Department</h4>
-                                        <ImCross size="24px"
-                                            className='pt-2'
-                                            style={{ cursor: "pointer", color: "red" }}
-                                            onClick={toggleAddModal} />
-                                    </div>
-                                    <form onSubmit={departmentFormSubmit}>
-                                        <label className='mb-3'>
-                                            <span className='fw-bold'>DEPARTMENT NAME</span>
-                                            <AiFillStar className='required' />
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handelInputChange}
-                                            placeholder='write department name'
-                                            className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`} />
-                                        <small className='validation-error'>
-                                            {
-                                                formData.errors?.name ? formData.errors?.name : null
-                                            }
-                                        </small>
-                                        {
-                                            addLoading ?
-                                                <button disabled className='mt-3 fw-bold w-100 btn btn-primary'>submitting...</button> :
-                                                <input type="submit" value="submit" className='mt-3 fw-bold w-100 btn btn-primary' />
-                                        }
-                                    </form>
-                                </div>
-                            </ModalBody>
                         </Modal>
                     </div>
                 ) : null

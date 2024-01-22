@@ -535,7 +535,7 @@ const ChamberList = () => {
                                                             handelPaginate={handelPaginate} />
                                                         <div className='d-flex justify-content-end'
                                                             style={{ margin: "12px 6px 0 0", fontWeight: "bold", color: "#0B5ED7" }}>
-                                                            showing {reduxStoreChamber.length} out of {totalItems}
+                                                            showing {reduxStoreChamber.length} out of {fetchedItems}
                                                         </div>
                                                     </div>
                                                 </div>
