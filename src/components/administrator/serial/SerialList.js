@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
-import { PAYMENT_STATUS, STATUS } from '@/constant';
+import { PAYMENT_STATUS } from '@/constant';
 import { config } from "@/config/index";
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -108,7 +108,7 @@ const SerialList = () => {
     useEffect(() => {
         const fetchDoctorDepartmentSchedule = async () => {
             try {
-                const response = await axios.get(`${config.api}/administrator/serial/doctor-department-schedule`, {
+                const response = await axios.get(`${config.api}/administrator/doctor-department-schedule`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setDoctor([{ id: '', name: 'show all' }, ...response.data.data.doctors])
@@ -185,7 +185,7 @@ const SerialList = () => {
             }
             const response = await axios.post(`${config.api}/administrator/serial/update/status`, data, {
                 headers: {
-                    Authorization: `Bearer ${token} `
+                    Authorization: `Bearer ${token}`
                 }
             })
             console.log(response.data.data)
@@ -205,9 +205,9 @@ const SerialList = () => {
     }
     const handelDelete = async () => {
         try {
-            await axios.delete(`${config.api} /administrator/serial/${deleteItem?.id} `, {
+            await axios.delete(`${config.api}/administrator/serial/${deleteItem?.id} `, {
                 headers: {
-                    Authorization: `Bearer ${token} `
+                    Authorization: `Bearer ${token}`
                 }
             });
             dispatch(removeSerial(deleteItem?.id));
