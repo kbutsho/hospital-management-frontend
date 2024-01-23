@@ -228,11 +228,22 @@
 
 .serial-date-picker {
     border: none !important;
-    padding-top: 7px !important;
-    padding-bottom: 7px !important;
+
     font-weight: bold !important;
 }
 
 .serial-date-picker:focus {
     box-shadow: none !important;
+}
+
+.datePickerActive {
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+    font-size: 16px !important;
+}
+
+.datePickerDisable {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    font-size: 14px !important;
 }
