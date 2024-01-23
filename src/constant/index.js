@@ -16,6 +16,12 @@ export const PAYMENT_STATUS = {
     PAID: 'paid',
     SHOW_ALL: 'show all'
 }
+export const APPOINTMENT_STATUS = {
+    CONFIRMED: 'confirmed',
+    IN_PROGRESS: 'in progress',
+    CLOSED: 'closed',
+    SHOW_ALL: 'show all'
+}
 export const TIME_SLOT = {
     AM_06: '06 AM',
     AM_07: '07 AM',
