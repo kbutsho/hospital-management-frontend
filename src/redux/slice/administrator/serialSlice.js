@@ -15,7 +15,7 @@ const serialSlice = createSlice({
             const { id, status } = action.payload;
             const SerialIndex = state.data.findIndex(serial => serial.id === id);
             if (SerialIndex !== -1) {
-                state.data[SerialIndex].status = status;
+                state.data[SerialIndex].payment_status = status;
             }
         },
         fetchedItemsCount: (state, action) => {
