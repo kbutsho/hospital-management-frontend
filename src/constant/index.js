@@ -9,6 +9,9 @@ export const STATUS = {
     ACTIVE: 'active',
     DISABLE: 'disable',
     PENDING: 'pending',
+    SHOW_ALL: 'show all'
+}
+export const PAYMENT_STATUS = {
     UNPAID: 'unpaid',
     PAID: 'paid',
     SHOW_ALL: 'show all'
@@ -35,7 +38,6 @@ export const TIME_SLOT = {
     AM_12: '12 AM',
     SHOW_ALL: 'show all'
 }
-
 export const DAY = {
     SATURDAY: 'saturday',
     SUNDAY: 'sunday',
