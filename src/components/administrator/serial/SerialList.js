@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
-import { STATUS } from '@/constant';
+import { PAYMENT_STATUS, STATUS } from '@/constant';
 import { config } from "@/config/index";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FadeLoader } from 'react-spinners';
-import { AiFillDelete, AiFillEdit, AiFillEye, AiFillStar } from 'react-icons/ai';
+import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -17,7 +17,6 @@ import { MdOutlineRefresh } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
-import { VscDiffAdded } from 'react-icons/vsc';
 import DatePicker from "react-datepicker";
 import { addMonths } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
@@ -58,7 +57,7 @@ const SerialList = () => {
     const [dataPerPage, setDataPerPage] = useState(10);
 
     // filter by date
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(null);
     const today = new Date();
     const twoMonthsLater = addMonths(today, 2);
 
@@ -92,7 +91,7 @@ const SerialList = () => {
 
     // filter by status
     const [filterByStatus, setFilterByStatus] = useState(null);
-    const statusList = ['', STATUS.UNPAID, STATUS.PAID]
+    const statusList = ['', PAYMENT_STATUS.PAID, PAYMENT_STATUS.UNPAID]
     const statusOptions = statusList.map((status, index) => ({
         value: status,
         label: index === 0 ? 'show all' : `${status} `
@@ -182,16 +181,19 @@ const SerialList = () => {
             const status = event.target.value;
             const data = {
                 'id': id,
-                'status': status
+                'payment_status': status
             }
-            await axios.post(`${config.api} /administrator/serial / update / status`, data, {
+            const response = await axios.post(`${config.api}/administrator/serial/update/status`, data, {
                 headers: {
                     Authorization: `Bearer ${token} `
                 }
             })
+            console.log(response.data.data)
             setErrorMessage(null)
+            // fetchData()
             dispatch(updateSerialStatus({ id, status }))
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         }
     };
@@ -251,7 +253,6 @@ const SerialList = () => {
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
-
     const convertTime = (time24) => {
         const [hours, minutes] = time24.split(':');
         let formattedTime = '';
@@ -278,10 +279,9 @@ const SerialList = () => {
         }),
     };
     const statusColors = {
-        [STATUS.UNPAID]: 'red',
-        [STATUS.PAID]: 'green'
+        [PAYMENT_STATUS.UNPAID]: 'red',
+        [PAYMENT_STATUS.PAID]: 'green'
     };
-
     return (
         <div className={`py-3 ${styles.listArea}`}>
             {
@@ -326,7 +326,7 @@ const SerialList = () => {
                             minDate={today}
                             maxDate={twoMonthsLater}
                             onChange={(date) => setSelectedDate(date)}
-                            className='form-control serial-date-picker'
+                            className={`form-control serial-date-picker ${selectedDate ? 'datePickerActive' : 'datePickerDisable'}`}
                         />
                     </div>
                 </div>
@@ -514,8 +514,8 @@ const SerialList = () => {
                                                                     style={{
                                                                         color: statusColors[data.payment_status] || 'inherit'
                                                                     }}>
-                                                                    {Object.entries(STATUS)
-                                                                        .filter(([key, value]) => value !== STATUS.SHOW_ALL)
+                                                                    {Object.entries(PAYMENT_STATUS)
+                                                                        .filter(([key, value]) => value !== PAYMENT_STATUS.SHOW_ALL)
                                                                         .map(([key, value]) => (
                                                                             <option key={key}
                                                                                 value={value}
