@@ -6,9 +6,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import DashboardNavbar from '../dashboard/DashboardNavbar';
 import Link from 'next/link';
 import { BiSolidDashboard } from 'react-icons/bi';
-import { ImSwitch } from 'react-icons/im';
-import Cookies from 'js-cookie';
-import { toast } from 'react-toastify';
 import DashboardFooter from '../dashboard/DashboardFooter';
 
 
@@ -22,7 +19,6 @@ const AdministratorLayout = ({ children }) => {
     if (loading) {
         return null;
     }
-    // const isActive = (route) => router.pathname === route;
     const isActive = (route) => {
         if (router.pathname === route) {
             return true;
@@ -32,13 +28,7 @@ const AdministratorLayout = ({ children }) => {
         }
         return false;
     };
-    const handelLogout = () => {
-        Cookies.remove('name')
-        Cookies.remove('token')
-        Cookies.remove('role')
-        router.push('/login')
-        toast.success("logout successfully!")
-    }
+
     return (
         <div>
             <DashboardNavbar />
@@ -173,17 +163,6 @@ const AdministratorLayout = ({ children }) => {
                                         <span>appointments</span>
                                     </div>
                                 </Link>
-
-                                {/* <span
-                                    onClick={handelLogout}
-                                    className={styles.sidebarLogoutMenu}>
-                                    <div className={styles.sidebarLogoutMenuIcon}>
-                                        <ImSwitch />
-                                    </div>
-                                    <div className={styles.sidebarLogoutMenuLink}>
-                                        <span>Logout</span>
-                                    </div>
-                                </span> */}
                             </div>
                         </div>
                         <div className="col-sm-7 col-md-8 col-lg-9 col-12">
