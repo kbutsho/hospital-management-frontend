@@ -60,6 +60,17 @@ const DoctorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
+                                <Link href="/doctor/appointments"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/doctor/appointments') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>Appointments</span>
+                                    </div>
+                                </Link>
+
                                 <Link href="/doctor/chambers"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/doctor/chambers') ? styles.activeMenu : ''}`}>
@@ -67,7 +78,7 @@ const DoctorLayout = ({ children }) => {
                                         <BiSolidDashboard />
                                     </div>
                                     <div className={styles.sidebarMenuLink}>
-                                        <span>CHambers</span>
+                                        <span>Chambers</span>
                                     </div>
                                 </Link>
 
