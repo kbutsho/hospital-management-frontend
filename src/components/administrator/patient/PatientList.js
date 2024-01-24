@@ -285,8 +285,8 @@ const PatientList = () => {
                                                             <td className='table-element'>{data.name}</td>
                                                             <td className='table-element'>{data.phone}</td>
                                                             <td className='table-element'>{data.age}</td>
-                                                            <td className='table-element'>{data.email}</td>
-                                                            <td className='table-element'>{data.gender}</td>
+                                                            <td className='table-element text-center'>{data.email ?? <span className='fw-bold'>--</span>}</td>
+                                                            <td className='table-element text-center'>{data.gender ?? <span className='fw-bold'>--</span>}</td>
                                                             <td className='table-element'>{data.address}</td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
