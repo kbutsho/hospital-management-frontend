@@ -400,11 +400,7 @@ const AssistantList = () => {
                                                             <td className='table-element'>{data.name}</td>
                                                             <td className='table-element'>{data.email}</td>
                                                             <td className='table-element'>{data.phone}</td>
-                                                            <td className='table-element'>
-                                                                {
-                                                                    data.room === "null" ? <span style={{ color: "red", fontWeight: "bold" }}>unavailable</span> : data.room
-                                                                }
-                                                            </td>
+                                                            <td className='table-element text-center'>{data.room === 'null' ? <span className='fw-bold'>--</span> : data.room}</td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
