@@ -18,7 +18,7 @@ const DashboardNavbar = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light py-2">
             <div className="container">
-                <div className="navbar-brand d-flex justify-content-between fw-bold text-dark">
+                <div className="navbar-brand d-flex justify-content-between align-items-center fw-bold text-dark" style={{ fontSize: "16px" }}>
                     <Image src={userImage}
                         className={styles.userImage}
                         height={30} width={30} alt="image" />
