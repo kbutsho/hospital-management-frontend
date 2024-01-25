@@ -8,6 +8,7 @@ import scheduleSlice from '../slice/administrator/scheduleSlice';
 import serialSlice from '../slice/administrator/serialSlice';
 import patientSlice from '../slice/administrator/patientSlice';
 import appointmentSlice from '../slice/administrator/appointmentSlice';
+import doctorAppointmentSlice from '../slice/doctor/appointmentSlice';
 
 const store = configureStore({
     reducer: {
@@ -20,6 +21,8 @@ const store = configureStore({
         administrator_serials: serialSlice,
         administrator_patients: patientSlice,
         administrator_appointments: appointmentSlice,
+        // doctor
+        doctor_appointments: doctorAppointmentSlice
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

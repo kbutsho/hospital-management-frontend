@@ -17,7 +17,7 @@ export const PAYMENT_STATUS = {
     SHOW_ALL: 'show all'
 }
 export const APPOINTMENT_STATUS = {
-    CONFIRMED: 'confirmed',
+    PAID: 'paid',
     IN_PROGRESS: 'in progress',
     CLOSED: 'closed',
     SHOW_ALL: 'show all'

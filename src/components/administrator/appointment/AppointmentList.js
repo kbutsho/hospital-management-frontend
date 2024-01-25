@@ -85,7 +85,7 @@ const AppointmentList = () => {
 
     // filter by status
     const [filterByStatus, setFilterByStatus] = useState(null);
-    const statusList = ['', APPOINTMENT_STATUS.CONFIRMED, APPOINTMENT_STATUS.IN_PROGRESS, APPOINTMENT_STATUS.CLOSED]
+    const statusList = ['', APPOINTMENT_STATUS.PAID, APPOINTMENT_STATUS.IN_PROGRESS, APPOINTMENT_STATUS.CLOSED]
     const statusOptions = statusList.map((status, index) => ({
         value: status,
         label: index === 0 ? 'show all' : `${status} `
@@ -274,7 +274,7 @@ const AppointmentList = () => {
         }),
     };
     const statusColors = {
-        [APPOINTMENT_STATUS.CONFIRMED]: 'blue',
+        [APPOINTMENT_STATUS.PAID]: 'blue',
         [APPOINTMENT_STATUS.IN_PROGRESS]: 'green',
         [APPOINTMENT_STATUS.CLOSED]: 'red'
     };
@@ -392,7 +392,7 @@ const AppointmentList = () => {
                             onChange={(e) => {
                                 setSearchTerm(e.target.value)
                             }}
-                            placeholder={`search for serial`}
+                            placeholder={`search for appointment`}
                             className={`form-control ${styles.searchBox}`} />
                         <button
                             onClick={handelSearchSubmit}
