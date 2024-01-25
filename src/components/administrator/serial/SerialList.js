@@ -295,6 +295,7 @@ const SerialList = () => {
             font-size: 20px;">
         <h6>${data.name}</h6>
         <h6>${data.phone}</h6>
+        <p>${new Date()}</p>
          </div>
         `;
         document.body.appendChild(element);
