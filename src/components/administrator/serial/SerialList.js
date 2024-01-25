@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
 import { PAYMENT_STATUS } from '@/constant';
 import { config } from "@/config/index";
@@ -20,6 +20,8 @@ import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import { addMonths } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
+import html2canvas from 'html2canvas';
+import { renderToString } from 'react-dom/server';
 import {
     storeSerial,
     totalItemsCount,
@@ -282,6 +284,37 @@ const SerialList = () => {
         [PAYMENT_STATUS.UNPAID]: 'red',
         [PAYMENT_STATUS.PAID]: 'green'
     };
+    const handleInvoiceDownload = async (data) => {
+        const element = document.createElement('div');
+        element.style.cssText = 'position: absolute; left: -9999px;';
+        element.innerHTML = `
+         <div style="width: 500px;
+            padding: 20px;
+            height: 300px;
+            background-color: white;
+            font-size: 20px;">
+        <h6>${data.name}</h6>
+        <h6>${data.phone}</h6>
+         </div>
+        `;
+        document.body.appendChild(element);
+        let link;
+        try {
+            const canvas = await html2canvas(element);
+            const imageURL = canvas.toDataURL('image/png');
+            link = document.createElement('a');
+            link.href = imageURL;
+            link.download = `invoice.${data.id}.png`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+        } finally {
+            document.body.removeChild(element);
+            if (link) {
+                document.body.removeChild(link);
+            }
+        }
+    };
     return (
         <div className={`py-3 ${styles.listArea}`}>
             {
@@ -482,6 +515,7 @@ const SerialList = () => {
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>INVOICE</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`STATUS`}
@@ -506,6 +540,21 @@ const SerialList = () => {
                                                             <td className='table-element'>{data.doctorName}</td>
                                                             <td className='table-element'>{data.date.split('-').reverse().join('/')} {convertTime(data.opening_time)}</td>
                                                             <td className='table-element text-uppercase'>{data.fees}</td>
+                                                            <td className='table-element text-center'>{data.payment_status === PAYMENT_STATUS.PAID ?
+                                                                <div>
+                                                                    <button
+                                                                        onClick={() => handleInvoiceDownload(data)}
+                                                                        style={{
+                                                                            color: "white",
+                                                                            background: "#157347",
+                                                                            fontWeight: "bold",
+                                                                            borderRadius: "3px",
+                                                                            border: "none",
+                                                                            padding: "0 9px 3px 9px",
+                                                                            margin: "0 0 5px 0"
+                                                                        }}
+                                                                    >print</button>
+                                                                </div> : <span className='fw-bold'>--</span>}</td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
