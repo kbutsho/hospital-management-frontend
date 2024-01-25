@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
 import { PAYMENT_STATUS } from '@/constant';
 import { config } from "@/config/index";
@@ -21,7 +21,8 @@ import DatePicker from "react-datepicker";
 import { addMonths } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
 import html2canvas from 'html2canvas';
-import { renderToString } from 'react-dom/server';
+import ReactDOM from 'react-dom';
+
 import {
     storeSerial,
     totalItemsCount,
@@ -30,6 +31,7 @@ import {
     removeSerial,
     resetSerial
 } from '@/redux/slice/administrator/serialSlice';
+import Invoice from './Invoice';
 
 
 const SerialList = () => {
@@ -177,6 +179,7 @@ const SerialList = () => {
         }
     }
 
+
     // update status
     const handleStatusChange = async (event, id) => {
         try {
@@ -284,37 +287,54 @@ const SerialList = () => {
         [PAYMENT_STATUS.UNPAID]: 'red',
         [PAYMENT_STATUS.PAID]: 'green'
     };
+
+    // print invoice
+    const [serialLoading, setSerialLoading] = useState(false);
     const handleInvoiceDownload = async (data) => {
         const element = document.createElement('div');
         element.style.cssText = 'position: absolute; left: -9999px;';
-        element.innerHTML = `
-         <div style="width: 500px;
-            padding: 20px;
-            height: 300px;
-            background-color: white;
-            font-size: 20px;">
-        <h6>${data.name}</h6>
-        <h6>${data.phone}</h6>
-        <p>${new Date()}</p>
-         </div>
-        `;
-        document.body.appendChild(element);
         let link;
         try {
-            const canvas = await html2canvas(element);
-            const imageURL = canvas.toDataURL('image/png');
-            link = document.createElement('a');
-            link.href = imageURL;
-            link.download = `invoice.${data.id}.png`;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-        } finally {
-            document.body.removeChild(element);
-            if (link) {
-                document.body.removeChild(link);
+            setSerialLoading(true);
+            const response = await axios.get(`${config.api}/administrator/serial/${data.id}/serial-number`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.data) {
+                const date = String(new Date());
+                const invoiceContent = <Invoice
+                    data={data}
+                    date={date}
+                    patientId={response.data.patientId}
+                    serialNumber={response.data.serialNumber} />;
+                ReactDOM.render(invoiceContent, element);
+                document.body.appendChild(element);
+
+                const canvas = await html2canvas(element);
+                const imageURL = canvas.toDataURL('image/png');
+                link = document.createElement('a');
+                link.href = imageURL;
+                link.download = `invoice.${data.id}.png`;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
             }
         }
+        catch (error) {
+            console.log(error)
+            return errorHandler({ error, setErrorMessage })
+        }
+        finally {
+            setSerialLoading(false);
+            if (element && element.parentNode) {
+                element.parentNode.removeChild(element);
+            }
+            if (link && link.parentNode) {
+                link.parentNode.removeChild(link);
+            }
+        }
+
     };
     return (
         <div className={`py-3 ${styles.listArea}`}>
@@ -365,7 +385,7 @@ const SerialList = () => {
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <div className={`${styles.customSelectFilter} `}>
+                    <div className={`${styles.customSelectFilter}`}>
                         <Select
                             onChange={(filterValue) => {
                                 setFilterByDoctor(filterValue)
@@ -544,6 +564,7 @@ const SerialList = () => {
                                                             <td className='table-element text-center'>{data.payment_status === PAYMENT_STATUS.PAID ?
                                                                 <div>
                                                                     <button
+                                                                        disabled={serialLoading}
                                                                         onClick={() => handleInvoiceDownload(data)}
                                                                         style={{
                                                                             color: "white",
@@ -555,7 +576,8 @@ const SerialList = () => {
                                                                             margin: "0 0 5px 0"
                                                                         }}
                                                                     >print</button>
-                                                                </div> : <span className='fw-bold'>--</span>}</td>
+                                                                </div> : <span className='fw-bold'>--</span>}
+                                                            </td>
                                                             <td className='text-center'>
                                                                 <select
                                                                     className="status-select form-select fw-bold"
