@@ -5,7 +5,7 @@ import { config } from "@/config/index";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FadeLoader } from 'react-spinners';
+import { SyncLoader } from 'react-spinners';
 import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
@@ -27,10 +27,12 @@ import {
     resetAppointment,
     updateAppointmentStatus
 } from '@/redux/slice/doctor/appointmentSlice';
+import { useRouter } from 'next/router';
 
 
 const AppointmentList = () => {
     const dispatch = useDispatch();
+    const router = useRouter();
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
     const [found, setFound] = useState(false)
@@ -109,6 +111,7 @@ const AppointmentList = () => {
     // load serial data
     const fetchData = async () => {
         try {
+            setLoading(true)
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -126,6 +129,7 @@ const AppointmentList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            setLoading(false)
             setErrorMessage(null)
             dispatch(storeAppointment(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
@@ -133,6 +137,7 @@ const AppointmentList = () => {
             setFound(true)
         } catch (error) {
             console.log(error)
+            setLoading(false)
             return errorHandler({ error, setErrorMessage })
         }
     };
@@ -231,6 +236,9 @@ const AppointmentList = () => {
 
     const handelErrorMessage = () => {
         setErrorMessage(null)
+    }
+    const handelPatientPrescribe = (id) => {
+        router.push(`/doctor/appointments/${id}`);
     }
     const convertTime = (time24) => {
         const [hours, minutes] = time24.split(':');
@@ -368,7 +376,8 @@ const AppointmentList = () => {
             {
                 loading ?
                     <div className={styles.loadingArea}>
-                        <FadeLoader color='#d3d3d3' size="16" />
+                        <SyncLoader
+                            color='#36D7B7' size="12" />
                     </div> :
                     <div className="list-area">
                         {
@@ -474,7 +483,7 @@ const AppointmentList = () => {
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
-                                                                    <button style={{ border: "0" }} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button style={{ border: "0" }} onClick={() => handelPatientPrescribe(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>

@@ -91,7 +91,7 @@ const Invoice = ({ data, date, serialNumber, patientId }) => {
                 </ol>
             </div>
             <div className='d-flex justify-content-end align-items-baseline'>
-                <small style={{ fontSize: "10px" }}>Printed {date}</small>
+                <small style={{ fontSize: "10px" }}>{date}</small>
             </div>
         </div>
     )

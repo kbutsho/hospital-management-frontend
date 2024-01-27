@@ -4,7 +4,7 @@ import { config } from "@/config/index";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FadeLoader } from 'react-spinners';
+import { SyncLoader } from 'react-spinners';
 import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
@@ -208,7 +208,7 @@ const PatientList = () => {
             {
                 loading ?
                     <div className={styles.loadingArea}>
-                        <FadeLoader color='#d3d3d3' size="16" />
+                        <SyncLoader color='#d3d3d3' size="12" />
                     </div> :
                     <div className="list-area">
                         {
