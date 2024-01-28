@@ -22,7 +22,8 @@ const DoctorLayout = ({ children }) => {
     if (loading) {
         return null;
     }
-    const isActive = (route) => router.pathname === route;
+    // const isActive = (route) => router.pathname === route;
+    const isActive = (route) => router.pathname.startsWith(route);
     const handelLogout = () => {
         Cookies.remove('name')
         Cookies.remove('token')
@@ -68,6 +69,17 @@ const DoctorLayout = ({ children }) => {
                                     </div>
                                     <div className={styles.sidebarMenuLink}>
                                         <span>Appointments</span>
+                                    </div>
+                                </Link>
+
+                                <Link href="/doctor/prescriptions"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/doctor/prescriptions') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>Prescriptions</span>
                                     </div>
                                 </Link>
 
