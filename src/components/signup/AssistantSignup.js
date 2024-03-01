@@ -344,7 +344,7 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
                         <div className='d-flex justify-content-between'>
                             <div>
                                 <span className='small'>
-                                    <Link href="/home" className='link'>Home</Link>
+                                    <Link href="/" className='link'>Home</Link>
                                 </span>
                             </div>
                             <div>

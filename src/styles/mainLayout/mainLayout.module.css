@@ -1,0 +1,14 @@
+.mainFooter {
+    text-align: center;
+    padding: 20px 0;
+    font-weight: bold;
+}
+
+.mainFooter small {
+    font-size: 14px;
+}
+
+.mainFooter small a {
+    text-decoration: none;
+    color: black;
+}

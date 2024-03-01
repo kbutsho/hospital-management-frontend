@@ -1,10 +1,14 @@
 .body {
     min-height: 100vh;
     max-width: 100%;
-    background-color: rgba(211, 211, 211, 0.5);
+    /* background-color: rgba(211, 211, 211, 0.5); */
     display: flex;
     justify-content: center;
     align-items: center;
+    background-image: url('../../assets/login-bg.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 .main {
@@ -14,7 +18,8 @@
 .main .box {
     padding: 24px;
     border-radius: 6px;
-    background-color: #fff;
+    background-color: #00000080;
+    color: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 

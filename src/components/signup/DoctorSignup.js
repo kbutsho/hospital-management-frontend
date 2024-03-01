@@ -216,7 +216,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                                     <input
                                         type="text"
                                         name="bmdc_id"
-                                        placeholder='your bmdc is'
+                                        placeholder='your bmdc id'
                                         value={formData.bmdc_id}
                                         onChange={handelInputChange}
                                         className={`form-control ${formData.errors?.bmdc_id ? 'is-invalid' : null}`}
@@ -356,7 +356,7 @@ const DoctorSignup = ({ activeComponent, handleTabClick }) => {
                         <div className='d-flex justify-content-between'>
                             <div>
                                 <span className='small'>
-                                    <Link href="/home" className='link'>Home</Link>
+                                    <Link href="/" className='link'>Home</Link>
                                 </span>
                             </div>
                             <div>

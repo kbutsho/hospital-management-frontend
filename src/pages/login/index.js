@@ -198,7 +198,7 @@ const Login = () => {
                     }
                     <div className='d-flex justify-content-between'>
                         <div>
-                            <span className='small'><Link href="/home" className='link'>Home</Link></span>
+                            <span className='small'><Link href="/" className='link'>Home</Link></span>
                         </div>
 
                         <div>
