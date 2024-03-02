@@ -3,8 +3,8 @@ import React from 'react';
 
 const Navbar = () => {
     return (
-        <div>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className='container py-3'>
+            <nav className=" navbar navbar-expand-lg ">
                 <div className="container">
                     <Link className="navbar-brand fw-bold" href="/">ABC HOSPITAL</Link>
                     <button
