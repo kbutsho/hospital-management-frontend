@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { Table } from 'react-bootstrap';
 import ReactToPrint from 'react-to-print';
 import Head from 'next/head';
+import Link from 'next/link';
 
 
 const PatientSerial = ({ data }) => {
@@ -281,7 +282,10 @@ const PatientSerial = ({ data }) => {
                 <div className={styles.body}>
                     <div className={styles.main}>
                         <div className={styles.box}>
-                            <h4 className={styles.heading}>take a patient serial</h4>
+                            <div className='d-flex justify-content-between'>
+                                <h4 className={styles.heading}>take a patient serial</h4>
+                                <Link style={{ textDecoration: "none", borderRadius: "2px" }} className={`${styles.heading} py-1 px-2 btn btn-outline-primary`} href="/">HOME</Link >
+                            </div>
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group mb-3">
