@@ -1,5 +1,5 @@
 import Link from 'next/link';
-
+import styles from '@/styles/Home.module.css';
 import ent from '../../../assets/department/ent.png';
 import urology from '../../../assets/department/urology.png';
 import geriatrics from '../../../assets/department/old-man.png';
@@ -12,6 +12,7 @@ import cardiology from '../../../assets/department/cardiology.png';
 import Image from 'next/image';
 
 const Department = () => {
+
     const deptData = [
         { name: "ENT", description: "The Ear, Nose, and Throat (ENT) department specializes in the diagnosis and treatment of conditions affecting the ears, nose, throat, and related structures.", imageUrl: ent },
         { name: "Urology", description: "The Urology department deals with the diagnosis and treatment of disorders of the urinary tract system in both males and females, as well as the male reproductive system.", imageUrl: urology },
@@ -30,7 +31,7 @@ const Department = () => {
             <div className="row">
                 {deptData.map((dept, index) => (
                     <div key={index} className="col-md-4">
-                        <div className="card mb-4" style={{ border: "0", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
+                        <div className={`card mb-4 ${styles.deptCard}`}>
                             <div className="card-body">
                                 <Image height={80} width={80} src={dept.imageUrl} alt={dept.name} />
                                 <h5 className="card-title fw-bold text-success mt-4 text-uppercase">{dept.name}</h5>
