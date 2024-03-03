@@ -21,9 +21,10 @@ const Navbar = () => {
                         <div className="navbar-nav ms-auto">
                             <Link className="nav-link fw-bold" href="/">HOME</Link>
                             <Link className="nav-link fw-bold" href="/about">ABOUT US</Link>
-                            <Link className="nav-link fw-bold" href="/doctor">DOCTOR</Link>
+                            <Link className="nav-link fw-bold" href="/our-doctor">DOCTOR</Link>
                             <Link className="nav-link fw-bold" href="/department">DEPARTMENT</Link>
                             <Link className="nav-link fw-bold" href="/serial">TAKE SERIAL</Link>
+                            <Link className="nav-link fw-bold" href="/contact">CONTACT US</Link>
                             <Link className="nav-link fw-bold" href="/signup">SIGNUP</Link>
                             <Link className="nav-link fw-bold" href="/login">LOGIN</Link>
                         </div>
