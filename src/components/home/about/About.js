@@ -18,7 +18,7 @@ const About = () => {
                     </div>
                 </div>
                 <div className="col-md-6 py-2">
-                    <Image src={aboutImage} height={100} width={100} layout="responsive" />
+                    <Image style={{ borderRadius: "6px" }} src={aboutImage} height={100} width={100} layout="responsive" />
                 </div>
             </div>
         </div>
