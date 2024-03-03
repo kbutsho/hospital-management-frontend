@@ -1,0 +1,26 @@
+.deptCard {
+    border: 0px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    transition: 0.3s;
+}
+
+.deptCard:hover {
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 5px 1px;
+}
+
+.doctorCard {
+    border-radius: 6px;
+    border: 0px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    transition: 0.3s;
+}
+
+.doctorCard .img {
+    border-radius: 6px;
+}
+
+.doctorCard:hover {
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 5px 1px;
+}
