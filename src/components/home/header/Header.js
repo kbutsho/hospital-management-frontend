@@ -4,7 +4,7 @@ import header from "../../../assets/home/header.jpg"
 const Header = () => {
     return (
         <div className="container">
-            <Image src={header} height={100} width={100} layout="responsive" />
+            <Image style={{ borderRadius: "6px" }} src={header} height={100} width={100} layout="responsive" />
         </div>
     );
 };
