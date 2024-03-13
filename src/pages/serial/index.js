@@ -15,7 +15,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 
-const PatientSerial = ({ data }) => {
+const PatientSerial = ({ data, errorMessage }) => {
+    useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage)
+        }
+    }, [errorMessage])
     const ref = useRef()
     const [phone, setPhone] = useState('');
     const [activeTab, setActiveTab] = useState('doctor');
@@ -284,7 +289,6 @@ const PatientSerial = ({ data }) => {
                         <div className={styles.box}>
                             <div className='d-flex justify-content-between'>
                                 <h4 className={styles.heading}>take a patient serial</h4>
-                                <Link style={{ textDecoration: "none", borderRadius: "2px" }} className={`${styles.heading} py-1 px-2 btn btn-outline-primary`} href="/">HOME</Link >
                             </div>
                             <div className="row">
                                 <div className="col-md-6">
@@ -800,7 +804,17 @@ const PatientSerial = ({ data }) => {
                                 }
                             </div>
                             <input type="button" onClick={handelFormSubmit} className='btn btn-primary w-100 fw-bold' value="submit" />
+                            <div className='d-flex justify-content-between mt-3'>
+                                <small>
+                                    <Link className='fw-bold' style={{ textDecoration: "none" }} href="/">Home</Link>
+                                </small>
+                                <small className='fw-bold'>
+                                    <span className=''>already have a serial?</span>
+                                    <Link className='ms-1' style={{ textDecoration: "none" }} href="/">click here</Link>
+                                </small>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             }
@@ -814,6 +828,7 @@ export default PatientSerial;
 export async function getStaticProps() {
     try {
         const response = await fetch(`${config.api}/serial/department-doctor-schedule`);
+        console.log(response)
         if (!response.ok) {
             return { props: { data: [], errorMessage: 'internal server error!' } };
         }

@@ -1,7 +1,7 @@
-import Image from "next/image";
+// import Image from "next/image";
 import aboutImage from '../../../assets/home/about.jpg'
 import Link from "next/link";
-
+import Image from 'next/legacy/image'
 
 const About = () => {
     return (
@@ -18,7 +18,7 @@ const About = () => {
                     </div>
                 </div>
                 <div className="col-md-6 py-2">
-                    <Image style={{ borderRadius: "6px" }} src={aboutImage} height={100} width={100} layout="responsive" />
+                    <Image priority={true} style={{ borderRadius: "6px" }} src={aboutImage} layout="responsive" alt="img" />
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 import { doctorData } from './doctorData';
-import Image from 'next/image';
+// import Image from 'next/image';
+import Image from 'next/legacy/image'
 import styles from '@/styles/Home.module.css';
 
 const Doctor = () => {

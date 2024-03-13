@@ -9,7 +9,8 @@ import pediatrics from '../../../assets/department/pediatrics.png';
 import neurology from '../../../assets/department/neurology.png';
 import orthopedics from '../../../assets/department/bone.png';
 import cardiology from '../../../assets/department/cardiology.png';
-import Image from 'next/image';
+// import Image from 'next/image';
+import Image from 'next/legacy/image'
 
 const Department = () => {
 

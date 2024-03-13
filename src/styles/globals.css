@@ -247,3 +247,14 @@
     padding-bottom: 8px !important;
     font-size: 14px !important;
 }
+
+.card {
+    border: 0px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 5px 1px;
+}
