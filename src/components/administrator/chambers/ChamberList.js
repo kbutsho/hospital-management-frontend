@@ -190,7 +190,7 @@ const ChamberList = () => {
     const handelReset = async () => {
         try {
             setLoading(true)
-            setFilterByDoctor(null)
+            // setFilterByDoctor(null)
             setFilterByStatus(null)
             setActiveSortBy('')
             setSearchTerm('')
