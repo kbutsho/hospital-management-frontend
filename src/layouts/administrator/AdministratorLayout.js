@@ -163,6 +163,17 @@ const AdministratorLayout = ({ children }) => {
                                         <span>appointments</span>
                                     </div>
                                 </Link>
+
+                                <Link href="/administrator/settings"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/administrator/settings') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>settings</span>
+                                    </div>
+                                </Link>
                             </div>
                         </div>
                         <div className="col-sm-7 col-md-8 col-lg-9 col-12">
