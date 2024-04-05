@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
 import { config } from "@/config/index";
 import Cookies from 'js-cookie';
