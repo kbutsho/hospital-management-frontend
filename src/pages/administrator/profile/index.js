@@ -10,8 +10,8 @@ const AdministratorProfile = () => {
                 <title>profile</title>
             </Head>
             <Breadcrumb />
-            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
-                <h5 className="fw-bold text-danger">admin profile</h5>
+            <div className={`row py-3 px-2`} style={{ minHeight: "70vh" }}>
+                hello
             </div>
         </div>
     );

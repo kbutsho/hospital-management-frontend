@@ -3,7 +3,7 @@ import { IoCall } from "react-icons/io5";
 
 const Contact = () => {
     return (
-        <div className='container py-5'>
+        <div className='container pt-5'>
             <h2 className="text-center mb-5 fw-bold text-uppercase text-success">Contact us</h2>
             <div className="row">
                 <div className="col-md-6">

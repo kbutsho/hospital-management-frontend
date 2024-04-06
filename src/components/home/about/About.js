@@ -5,7 +5,7 @@ import Image from 'next/legacy/image'
 
 const About = () => {
     return (
-        <div className="container py-5">
+        <div className="container pt-5">
             <div className="row">
                 <div className="col-md-6 py-2">
                     <h3 className="fw-bold text-success text-uppercase">About ABC Hospital</h3>
