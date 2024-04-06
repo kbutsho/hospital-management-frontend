@@ -1,17 +1,387 @@
 import Breadcrumb from '@/components/breadcrumb';
 import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import styles from "@/styles/administrator/List.module.css"
+import { FadeLoader } from 'react-spinners';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { config } from '@/config';
+import { errorHandler } from '@/helpers/errorHandler';
+import { toast } from 'react-toastify';
+import { AiFillStar } from 'react-icons/ai';
+import Image from 'next/image';
+import demoUser from '../../../assets/user.png'
+import { MdDelete, MdModeEdit } from 'react-icons/md';
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { ImCross } from 'react-icons/im';
 
 const AdministratorProfile = () => {
+    const token = Cookies.get('token');
+    const [loading, setLoading] = useState(true)
+    const [data, setData] = useState(null);
+    const [formData, setFormData] = useState({
+        name: '',
+        address: '',
+        email: '',
+        phone: '',
+        age: '',
+        gender: '',
+        photo: null,
+        errors: []
+    })
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const res = await axios.get(`${config.api}/administrator/profile`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setLoading(false)
+            setData(res.data.data)
+            setFormData(res.data.data)
+            console.log(res)
+        } catch (error) {
+            setLoading(false)
+            console.log(error)
+            return errorHandler({ error, toast })
+        }
+    }
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const handelInputChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name]: event.target.value,
+            errors: {
+                ...formData.errors,
+                [event.target.name]: null
+            }
+        });
+    };
+
+    const formSubmit = async () => {
+        try {
+            setLoading(true)
+            const data = {
+                'name': formData.name,
+                'email': formData.email,
+                'phone': formData.phone,
+                'address': formData.address,
+                'age': formData.age,
+                'gender': formData.gender
+            }
+            const res = await axios.post(`${config.api}/administrator/profile/update`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setLoading(false)
+            fetchData();
+            toast.success(res.data.message)
+
+        } catch (error) {
+            setLoading(false)
+            console.log(error.response)
+            if (error.response.data.error) {
+                // setFormData(prevState => ({
+                //     ...prevState,
+                //     errors: error.response.data.error
+                // }));
+                setFormData({
+                    ...data,
+                    errors: error.response.data.error
+                });
+            }
+            return errorHandler({ error, toast })
+        }
+    }
+
+
+    // update photo
+    const [photoAddModal, setPhotoAddModal] = useState(false)
+    const [addLoading, setAddLoading] = useState(false)
+    const togglePhotoAddModal = () => {
+        setPhotoAddModal(!photoAddModal);
+    }
+
+    const handlePhotoChange = (e) => {
+        const { name, value, files } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: name === 'photo' ? files[0] : value
+        }));
+    };
+    const handlePhotoSubmit = async (e) => {
+        e.preventDefault();
+        const formDataToSend = new FormData();
+        formDataToSend.append('photo', formData.photo);
+        try {
+            setAddLoading(true)
+            const res = await axios.post(`${config.api}/administrator/profile/photo/update`, formDataToSend, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setAddLoading(false)
+            fetchData();
+            togglePhotoAddModal()
+            toast.success(res.data.message)
+        } catch (error) {
+            setAddLoading(false)
+            console.log(error)
+            if (error.response.data.error) {
+                setFormData(prevState => ({
+                    ...prevState, // here i need not revState i need data . in data i have all field without errors
+                    errors: error.response.data.error
+                }));
+            }
+            return errorHandler({ error, toast })
+        }
+    };
+
+    // delete photo
+    const [photoDeleteModal, setPhotoDeleteModal] = useState(false)
+    const togglePhotoDeleteModal = () => {
+        setPhotoDeleteModal(!photoDeleteModal);
+    }
+    const handelDeletePhoto = async () => {
+        try {
+            setAddLoading(true);
+            const res = await axios.get(`${config.api}/administrator/profile/photo/delete`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            fetchData()
+            console.log(res)
+            setAddLoading(false)
+            toast.success(res.data.message)
+        } catch (error) {
+            console.log(error)
+            setAddLoading(false)
+            return errorHandler({ error, toast })
+        }
+    }
     return (
         <div>
             <Head>
                 <title>profile</title>
             </Head>
             <Breadcrumb />
-            <div className={`row py-3 px-2`} style={{ minHeight: "70vh" }}>
-                hello
+            <div className={`row py-3 px-2 ${styles.listArea}`}>
+                {
+                    loading ? (
+                        <div className={styles.loadingArea}>
+                            <FadeLoader color='#d3d3d3' size="16" />
+                        </div>
+                    ) : (
+                        data ?
+                            <div>
+                                <div className='row'>
+                                    {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
+                                    <div className="col-md-6">
+                                        <div className='d-flex align-items-end'>
+                                            {
+                                                data.photo ?
+                                                    <Image src={`${config.backend_api}/uploads/adminProfile/${data.photo}`} height={186} width={186} alt="profile" /> :
+                                                    <Image src={demoUser} height={186} width={186} alt="profile" />
+                                            }
+                                            <button onClick={togglePhotoAddModal} className='ms-3 me-2 btn btn-primary btn-sm'><MdModeEdit /></button>
+                                            {
+                                                data.photo ? <button onClick={togglePhotoDeleteModal} className='btn btn-danger btn-sm'><MdDelete /></button> : null
+                                            }
+
+                                        </div>
+
+                                        <div className='my-3'>
+                                            <label className='fw-bold my-2'>
+                                                <span>Name</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                name="name"
+                                                onChange={handelInputChange}
+                                                defaultValue={data?.name}
+                                                type="text"
+                                                placeholder='your name'
+                                                className='form-control' />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.name ? formData?.errors?.name : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='my-3'>
+                                            <label className='fw-bold my-2'>
+                                                <span>Phone</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                name="phone"
+                                                onChange={handelInputChange}
+                                                defaultValue={data?.phone}
+                                                type="text"
+                                                placeholder='your phone'
+                                                className='form-control' />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.phone ? formData?.errors?.phone : null
+                                                }
+                                            </small>
+                                        </div>
+
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className='my-3'>
+                                            <label className='fw-bold my-2'>
+                                                <span>Email</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                name="email"
+                                                onChange={handelInputChange}
+                                                defaultValue={data?.email}
+                                                type="text"
+                                                placeholder='your email'
+                                                className='form-control' />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.email ? formData?.errors?.email : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='my-3'>
+                                            <label className='fw-bold my-2'>
+                                                <span>Address</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                name="address"
+                                                onChange={handelInputChange}
+                                                defaultValue={data?.address}
+                                                type="text"
+                                                placeholder='your address'
+                                                className='form-control' />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.address ? formData?.errors?.address : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='my-3'>
+                                            <label className='fw-bold my-2'>
+                                                <span>Age</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                name="age"
+                                                onChange={handelInputChange}
+                                                defaultValue={data?.age}
+                                                type="number"
+                                                placeholder='your age'
+                                                className='form-control' />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData?.errors?.age ? formData?.errors?.age : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='my-3'>
+                                            <label className='fw-bold my-2'>
+                                                <span>Gender</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <select
+                                                name="gender"
+                                                onChange={handelInputChange}
+                                                value={formData.gender}
+                                                className='form-select'
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                            <small className='validation-error'>
+                                                {formData?.errors?.gender ? formData?.errors?.gender : null}
+                                            </small>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-end'>
+                                    <button className='btn btn-success btn-sm me-2 fw-bold'>change password</button>
+                                    <button className='btn btn-primary px-4 fw-bold' onClick={formSubmit}>update</button>
+                                </div>
+
+                            </div> :
+                            <div className={styles.notFound}>
+                                <h6 className='fw-bold'>something went wrong!</h6>
+                            </div>
+                    )
+                }
+                {
+                    photoAddModal ? (
+                        <div>
+                            <Modal isOpen={photoAddModal} className="modal-md">
+                                <ModalBody>
+                                    <div className='p-3'>
+                                        <div className='d-flex justify-content-between'>
+                                            <h4 className='text-uppercase fw-bold mb-4'>profile photo</h4>
+                                            <ImCross size="24px"
+                                                className='pt-2'
+                                                style={{ cursor: "pointer", color: "red" }}
+                                                onClick={togglePhotoAddModal} />
+                                        </div>
+                                        <form onSubmit={handlePhotoSubmit} encType='multiple/form-data'>
+                                            <div>
+                                                <label className='mb-3'>
+                                                    <span className='fw-bold'>upload photo</span>
+                                                    <AiFillStar className='required' />
+                                                </label>
+                                                <input type="file" name="photo" className='form-control' onChange={handlePhotoChange} />
+                                            </div>
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.photo ? formData.errors?.photo : null
+                                                }
+                                            </small>
+                                            {
+                                                addLoading ?
+                                                    <button disabled className='mt-4 fw-bold w-100 btn btn-primary'>submitting...</button> :
+                                                    <input type="submit" value="submit" className='mt-4 fw-bold w-100 btn btn-primary' />
+                                            }
+                                        </form>
+                                    </div>
+                                </ModalBody>
+                            </Modal>
+                        </div>
+                    ) : null
+                }
+                {
+                    photoDeleteModal ? (
+                        <div>
+                            <Modal isOpen={photoDeleteModal} className="modal-md" onClick={togglePhotoDeleteModal}>
+                                <ModalBody>
+                                    <div className='p-3'>
+                                        <h6 className='fw-bold text-center text-danger'>are you sure want to delete your profile photo?</h6>
+                                    </div>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <div className='d-flex'>
+                                        <button onClick={togglePhotoDeleteModal} className='btn btn-primary btn-sm fw-bold me-2'>close</button>
+                                        <button onClick={handelDeletePhoto} className='btn btn-danger btn-sm fw-bold'>delete</button>
+                                    </div>
+                                </ModalFooter>
+                            </Modal>
+                        </div>
+                    ) : null
+                }
             </div>
         </div>
     );
