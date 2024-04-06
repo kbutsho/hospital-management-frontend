@@ -4,7 +4,7 @@ import React from 'react';
 const Navbar = () => {
     return (
         <div className=''>
-            <nav className=" navbar navbar-expand-lg bg-info px-3">
+            <nav className=" navbar navbar-expand-lg bg-info px-3 py-3">
                 <div className="container">
                     <Link className="navbar-brand fw-bold text-white" href="/">ABC HOSPITAL</Link>
                     <button

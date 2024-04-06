@@ -21,3 +21,5 @@ export default Index;
 Index.getLayout = function getLayout(page) {
   return <MainLayout>{page}</MainLayout>;
 };
+
+// here i need to get static props and get data from 
