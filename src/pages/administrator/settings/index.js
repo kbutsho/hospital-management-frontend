@@ -74,9 +74,16 @@ const AdministratorSettings = () => {
             toast.success(res.data.message)
             console.log(formData)
         } catch (error) {
-            setLoading(false)
             console.log(error)
+            setLoading(false)
+            if (error.response.data.error) {
+                setFormData(prevState => ({
+                    ...prevState,
+                    errors: error.response.data.error
+                }));
+            }
             return errorHandler({ error, toast })
+
         }
     }
     return (
@@ -105,6 +112,11 @@ const AdministratorSettings = () => {
                                             type="text"
                                             placeholder='organization name'
                                             className='form-control' />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.organization_name ? formData?.errors?.organization_name : null
+                                            }
+                                        </small>
                                     </div>
                                     <div className='my-4'>
                                         <label className='fw-bold my-2'>Organization Address</label>
@@ -115,6 +127,11 @@ const AdministratorSettings = () => {
                                             type="text"
                                             placeholder='organization address'
                                             className='form-control' />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.address ? formData?.errors?.address : null
+                                            }
+                                        </small>
                                     </div>
                                 </div>
                                 <div className="col-md-6">
@@ -127,6 +144,11 @@ const AdministratorSettings = () => {
                                             type="text"
                                             placeholder='organization phone'
                                             className='form-control' />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.phone ? formData?.errors?.phone : null
+                                            }
+                                        </small>
                                     </div>
                                     <div className='my-4'>
                                         <label className='my-2 fw-bold'>Organization Email</label>
@@ -137,6 +159,11 @@ const AdministratorSettings = () => {
                                             type="text"
                                             placeholder='organization email'
                                             className='form-control' />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.email ? formData?.errors?.email : null
+                                            }
+                                        </small>
                                     </div>
                                     <div className='d-flex justify-content-end'>
                                         <button onClick={formSubmit} className='px-4 btn btn-primary fw-bold'>save</button>

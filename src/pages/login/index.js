@@ -46,6 +46,7 @@ const Login = () => {
                 password: formData?.password,
             }
             const response = await axios.post(`${config.api}/login`, data)
+            console.log(response)
             setErrorMessage(null)
             setLoading(false);
             if (response.data.status) {
