@@ -9,6 +9,7 @@ import styles from "@/styles/administrator/List.module.css"
 import { FadeLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 import { errorHandler } from '@/helpers/errorHandler';
+import { AiFillStar } from 'react-icons/ai';
 
 
 const AdministratorSettings = () => {
@@ -20,6 +21,8 @@ const AdministratorSettings = () => {
         address: '',
         email: '',
         phone: '',
+        facebook: '',
+        youtube: '',
         errors: []
     })
     const fetchSiteInfo = async () => {
@@ -61,7 +64,9 @@ const AdministratorSettings = () => {
                 organization_name: formData.organization_name,
                 address: formData.address,
                 email: formData.email,
-                phone: formData.phone
+                phone: formData.phone,
+                youtube: formData.youtube,
+                facebook: formData.facebook,
             }
             const res = await axios.post(`${config.api}/administrator/setting/info/update`, data, {
                 headers: {
@@ -104,7 +109,10 @@ const AdministratorSettings = () => {
                                 {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
                                 <div className="col-md-6">
                                     <div className='my-4'>
-                                        <label className='fw-bold my-2'>Organization Name</label>
+                                        <label className='fw-bold my-2'>
+                                            <span>Organization Name</span>
+                                            <AiFillStar className='required' />
+                                        </label>
                                         <input
                                             name="organization_name"
                                             onChange={handelInputChange}
@@ -119,7 +127,10 @@ const AdministratorSettings = () => {
                                         </small>
                                     </div>
                                     <div className='my-4'>
-                                        <label className='fw-bold my-2'>Organization Address</label>
+                                        <label className='fw-bold my-2'>
+                                            <span>Organization Address</span>
+                                            <AiFillStar className='required' />
+                                        </label>
                                         <input
                                             name="address"
                                             onChange={handelInputChange}
@@ -133,10 +144,11 @@ const AdministratorSettings = () => {
                                             }
                                         </small>
                                     </div>
-                                </div>
-                                <div className="col-md-6">
                                     <div className='my-4'>
-                                        <label className='my-2 fw-bold'>Organization Phone</label>
+                                        <label className='fw-bold my-2'>
+                                            <span>Organization Phone</span>
+                                            <AiFillStar className='required' />
+                                        </label>
                                         <input
                                             name="phone"
                                             onChange={handelInputChange}
@@ -150,8 +162,14 @@ const AdministratorSettings = () => {
                                             }
                                         </small>
                                     </div>
+                                </div>
+                                <div className="col-md-6">
+
                                     <div className='my-4'>
-                                        <label className='my-2 fw-bold'>Organization Email</label>
+                                        <label className='fw-bold my-2'>
+                                            <span>Organization Email</span>
+                                            <AiFillStar className='required' />
+                                        </label>
                                         <input
                                             name="email"
                                             onChange={handelInputChange}
@@ -162,6 +180,42 @@ const AdministratorSettings = () => {
                                         <small className='validation-error'>
                                             {
                                                 formData?.errors?.email ? formData?.errors?.email : null
+                                            }
+                                        </small>
+                                    </div>
+                                    <div className='my-4'>
+                                        <label className='fw-bold my-2'>
+                                            <span>Organization Youtube</span>
+                                            <AiFillStar className='required' />
+                                        </label>
+                                        <input
+                                            name="youtube"
+                                            onChange={handelInputChange}
+                                            defaultValue={data[0]?.youtube}
+                                            type="text"
+                                            placeholder='organization youtube'
+                                            className='form-control' />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.youtube ? formData?.errors?.youtube : null
+                                            }
+                                        </small>
+                                    </div>
+                                    <div className='my-4'>
+                                        <label className='fw-bold my-2'>
+                                            <span>Organization Facebook</span>
+                                            <AiFillStar className='required' />
+                                        </label>
+                                        <input
+                                            name="facebook"
+                                            onChange={handelInputChange}
+                                            defaultValue={data[0]?.youtube}
+                                            type="text"
+                                            placeholder='organization facebook'
+                                            className='form-control' />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.facebook ? formData?.errors?.facebook : null
                                             }
                                         </small>
                                     </div>
