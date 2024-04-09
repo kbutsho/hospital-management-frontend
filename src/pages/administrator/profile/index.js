@@ -71,7 +71,7 @@ const AdministratorProfile = () => {
         try {
             setLoading(true)
             const data = {
-                'name': formData.name,
+                'name': formData.name.toUpperCase(),
                 'email': formData.email,
                 'phone': formData.phone,
                 'address': formData.address,
@@ -507,7 +507,7 @@ const AdministratorProfile = () => {
                     ) : null
                 }
             </div>
-        </div >
+        </div>
     );
 };
 
