@@ -6,7 +6,7 @@ import styles from '@/styles/Home.module.css';
 const Doctor = () => {
     return (
         <div className="container py-4">
-            <h2 className="mb-5 fw-bold text-uppercase text-success">our Doctors</h2>
+            <h2 className="mb-4 fw-bold text-uppercase text-success">our Doctors</h2>
             <div className="row">
                 {doctorData.map((doctor, index) => (
                     <div key={index} className="col-md-3">
