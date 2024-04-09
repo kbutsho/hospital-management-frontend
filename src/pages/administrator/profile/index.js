@@ -27,6 +27,9 @@ const AdministratorProfile = () => {
         phone: '',
         age: '',
         gender: '',
+        old_password: '',
+        new_password: '',
+        confirm_password: '',
         photo: null,
         errors: []
     })
@@ -136,7 +139,7 @@ const AdministratorProfile = () => {
             console.log(error)
             if (error.response.data.error) {
                 setFormData(prevState => ({
-                    ...prevState, // here i need not revState i need data . in data i have all field without errors
+                    ...prevState,
                     errors: error.response.data.error
                 }));
             }
@@ -165,6 +168,51 @@ const AdministratorProfile = () => {
             console.log(error)
             setAddLoading(false)
             return errorHandler({ error, toast })
+        }
+    }
+
+    // change password
+    const [changePasswordModal, setChangePasswordModal] = useState(false)
+    const toggleChangePasswordModal = () => {
+        setChangePasswordModal(!changePasswordModal)
+        setAddLoading(false)
+        setFormData(prevState => ({
+            ...prevState,
+            errors: []
+        }));
+    }
+
+    const handlePasswordUpdateChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name]: event.target.value,
+            errors: {
+                ...formData.errors,
+                [event.target.name]: null
+            }
+        });
+    }
+
+    const submitPasswordChange = async () => {
+        try {
+            setAddLoading(true)
+            const data = {
+                'old_password': formData.old_password,
+                'new_password': formData.new_password,
+                'confirm_password': formData.confirm_password
+            }
+            const res = await axios.post(`${config.api}/administrator/profile/change-password`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setAddLoading(false)
+            toast.success(res.data.message)
+            setChangePasswordModal(!changePasswordModal)
+        } catch (error) {
+            console.log(error)
+            setAddLoading(false);
+            return errorHandler({ error, toast, setFormData, formData })
         }
     }
     return (
@@ -315,10 +363,9 @@ const AdministratorProfile = () => {
                                     </div>
                                 </div>
                                 <div className='d-flex justify-content-end'>
-                                    <button className='btn btn-success btn-sm me-2 fw-bold'>change password</button>
+                                    <button onClick={toggleChangePasswordModal} className='btn btn-success btn-sm me-2 fw-bold'>change password</button>
                                     <button className='btn btn-primary px-4 fw-bold' onClick={formSubmit}>update</button>
                                 </div>
-
                             </div> :
                             <div className={styles.notFound}>
                                 <h6 className='fw-bold'>something went wrong!</h6>
@@ -382,8 +429,85 @@ const AdministratorProfile = () => {
                         </div>
                     ) : null
                 }
+                {
+                    changePasswordModal ? (
+                        <div>
+                            <Modal isOpen={changePasswordModal} className="modal-md">
+                                <ModalBody>
+                                    <div className='p-3'>
+                                        <div className='d-flex justify-content-between'>
+                                            <h4 className='text-uppercase fw-bold mb-4'>change password</h4>
+                                            <ImCross size="24px"
+                                                className='pt-2'
+                                                style={{ cursor: "pointer", color: "red" }}
+                                                onClick={toggleChangePasswordModal} />
+                                        </div>
+                                        <div className='mb-3'>
+                                            <label className='mb-2'>
+                                                <span className='fw-bold'>old password</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                type="password"
+                                                name="old_password"
+                                                className={`form-control ${formData?.errors?.old_password ? 'is-invalid' : null}`}
+                                                placeholder='enter your old password'
+                                                onChange={handlePasswordUpdateChange} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.old_password ? formData.errors?.old_password : null
+                                                }
+                                            </small>
+                                        </div>
+
+                                        <div className='mb-3'>
+                                            <label className='mb-2'>
+                                                <span className='fw-bold'>new password</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                type="password"
+                                                name="new_password"
+                                                className={`form-control ${formData?.errors?.new_password ? 'is-invalid' : null}`}
+                                                placeholder='enter your new password'
+                                                onChange={handlePasswordUpdateChange} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.new_password ? formData.errors?.new_password : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='mb-3'>
+                                            <label className='mb-2'>
+                                                <span className='fw-bold'>confirm password</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                type="password"
+                                                name="confirm_password"
+                                                placeholder='enter your confirm password'
+                                                className={`form-control ${formData?.errors?.confirm_password ? 'is-invalid' : null}`}
+                                                onChange={handlePasswordUpdateChange} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.confirm_password ? formData.errors?.confirm_password : null
+                                                }
+                                            </small>
+                                        </div>
+
+                                        {
+                                            addLoading ?
+                                                <button disabled className='mt-4 fw-bold w-100 btn btn-primary'>submitting...</button> :
+                                                <button onClick={submitPasswordChange} className='mt-4 fw-bold w-100 btn btn-primary'>submit</button>
+                                        }
+                                    </div>
+                                </ModalBody>
+                            </Modal>
+                        </div>
+                    ) : null
+                }
             </div>
-        </div>
+        </div >
     );
 };
 
