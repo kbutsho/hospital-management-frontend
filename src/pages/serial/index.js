@@ -13,6 +13,7 @@ import { Table } from 'react-bootstrap';
 import ReactToPrint from 'react-to-print';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
 
 
 const PatientSerial = ({ data, errorMessage }) => {
@@ -193,6 +194,7 @@ const PatientSerial = ({ data, errorMessage }) => {
         }
         return 'unavailable-date';
     };
+    const info = useSelector(state => state.site_info.data);
     return (
         <div>
             <Head>
@@ -215,69 +217,74 @@ const PatientSerial = ({ data, errorMessage }) => {
                         </div>
                     </div>
                     <div ref={ref} className='p-3'>
-                        <Table striped hover bordered responsive size="sm" >
-                            <tbody>
-                                <tr>
-
-                                    <td className='text-uppercase p-2 fw-bold'>serial id</td>
-                                    <td className='p-2'>{serialData ? String(serialData?.id).padStart(5, '0') : null}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>serial no</td>
-                                    <td className='p-2 text-uppercase fw-bold'
-                                        style={{ color: "red" }}>
-                                        pending
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>patient name</td>
-                                    <td className='p-2'>{serialData?.name}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>patient phone</td>
-                                    <td className='p-2'>{serialData?.phone}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>patient address</td>
-                                    <td className='p-2'>{serialData?.address}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>patient age</td>
-                                    <td className='p-2'>{serialData?.age} {serialData ? 'YEARS' : null}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>department name</td>
-                                    <td className='p-2 text-uppercase'>{serialData?.departmentName}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>doctor name</td>
-                                    <td className='p-2'>{serialData?.doctorName}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>appointment date</td>
-                                    <td className='p-2'>
-                                        {serialData?.date?.split("-").reverse().join("/")}
-                                        <span className='text-uppercase mx-2'>{serialData?.day}</span>
-                                        {convertTime(serialData?.openingTime)}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>room number</td>
-                                    <td className='p-2'>{serialData?.roomNumber}</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>consultation fee</td>
-                                    <td className='p-2'>{serialData?.fees} BDT</td>
-                                </tr>
-                                <tr>
-                                    <td className='text-uppercase p-2 fw-bold'>payment status</td>
-                                    <td className='p-2 text-uppercase fw-bold'
-                                        style={{ color: serialData?.paymentStatus === 'unpaid' ? 'red' : 'black' }}>
-                                        {serialData?.paymentStatus}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                        <div className='p-3 m-3'>
+                            <div>
+                                <h4 className='text-center fw-bold text-success text-uppercase mb-3'>{info?.organization_name}</h4>
+                                <h6 className='text-center fw-bold mb-3'>{info?.address}</h6>
+                            </div>
+                            <Table striped hover bordered responsive size="sm" >
+                                <tbody>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>serial id</td>
+                                        <td className='p-2'>{serialData ? String(serialData?.id).padStart(5, '0') : null}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>serial no</td>
+                                        <td className='p-2 text-uppercase fw-bold'
+                                            style={{ color: "red" }}>
+                                            pending
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>patient name</td>
+                                        <td className='p-2'>{serialData?.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>patient phone</td>
+                                        <td className='p-2'>{serialData?.phone}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>patient address</td>
+                                        <td className='p-2'>{serialData?.address}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>patient age</td>
+                                        <td className='p-2'>{serialData?.age} {serialData ? 'YEARS' : null}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>department name</td>
+                                        <td className='p-2 text-uppercase'>{serialData?.departmentName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>doctor name</td>
+                                        <td className='p-2'>{serialData?.doctorName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>appointment date</td>
+                                        <td className='p-2'>
+                                            {serialData?.date?.split("-").reverse().join("/")}
+                                            <span className='text-uppercase mx-2'>{serialData?.day}</span>
+                                            {convertTime(serialData?.openingTime)}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>room number</td>
+                                        <td className='p-2'>{serialData?.roomNumber}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>consultation fee</td>
+                                        <td className='p-2'>{serialData?.fees} BDT</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='text-uppercase p-2 fw-bold'>payment status</td>
+                                        <td className='p-2 text-uppercase fw-bold'
+                                            style={{ color: serialData?.paymentStatus === 'unpaid' ? 'red' : 'black' }}>
+                                            {serialData?.paymentStatus}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                        </div>
                     </div>
                     <div className='d-flex justify-content-end'>
 

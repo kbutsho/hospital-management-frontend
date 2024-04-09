@@ -1,18 +1,11 @@
-import store from '@/redux/store';
+import store, { persistor } from '@/redux/store';
 import '@/styles/globals.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-// import { Poppins } from 'next/font/google'
-// const poppins = Poppins({
-//   weight: ['400', '700', '900'],
-//   style: ['normal', 'italic'],
-//   subsets: ['latin'],
-//   display: 'swap',
-// })
+import { PersistGate } from 'redux-persist/integration/react';
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
@@ -21,10 +14,12 @@ export default function App({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => page);
   return (
     <Provider store={store}>
-      <main>
-        <ToastContainer position="bottom-right" autoClose={4000} />
-        {getLayout(<Component {...pageProps} />)}
-      </main>
+      <PersistGate loading={null} persistor={persistor}>
+        <main>
+          <ToastContainer position="bottom-right" autoClose={4000} />
+          {getLayout(<Component {...pageProps} />)}
+        </main>
+      </PersistGate>
     </Provider>
   )
 }

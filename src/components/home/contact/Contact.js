@@ -1,7 +1,9 @@
 import { MdEmail } from "react-icons/md";
 import { IoCall } from "react-icons/io5";
+import { useSelector } from 'react-redux';
 
 const Contact = () => {
+    const info = useSelector(state => state.site_info.data);
     return (
         <div className='container pt-5'>
             <h2 className="text-center mb-5 fw-bold text-uppercase text-success">Contact us</h2>
@@ -16,7 +18,7 @@ const Contact = () => {
                         </div>
                         <div>
                             <div className="fw-bold">mail us at</div>
-                            <div className="fw-bold">kbutsho@gmail.com</div>
+                            <div className="fw-bold">{info?.email}</div>
                         </div>
                     </div>
 
@@ -26,7 +28,7 @@ const Contact = () => {
                         </div>
                         <div>
                             <div className="fw-bold">or call us</div>
-                            <div className="fw-bold">+8801749555864</div>
+                            <div className="fw-bold">{info?.phone}</div>
                         </div>
                     </div>
                 </div>

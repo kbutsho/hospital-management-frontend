@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 const Invoice = ({ data, date, serialNumber, patientId }) => {
     const convertTime = (time24) => {
@@ -13,9 +14,9 @@ const Invoice = ({ data, date, serialNumber, patientId }) => {
         formattedTime = `${hours12}:${minutes} ${suffix} `;
         return formattedTime;
     };
+    const info = useSelector(state => state.site_info.data);
     return (
         <div className='p-3 m-3' style={{ width: "816px" }}>
-            {/* height: "1056px"  */}
             <div className='py-3'>
                 <h4 className='text-center'> CHRISTIAN MEDICAL COLLEGE</h4>
                 <h6 className='text-center'>VELLORE - 632 004, TAMIL NADU, INDIA.</h6>

@@ -1,12 +1,13 @@
 import Link from 'next/link';
-import React from 'react';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
+    const info = useSelector(state => state.site_info.data);
     return (
-        <div className=''>
+        <div>
             <nav className=" navbar navbar-expand-lg bg-info px-3 py-3">
                 <div className="container">
-                    <Link className="navbar-brand fw-bold text-white" href="/">ABC HOSPITAL</Link>
+                    <Link className="navbar-brand fw-bold text-white text-uppercase" href="/">{info?.organization_name}</Link>
                     <button
                         className="navbar-toggler"
                         type="button"
