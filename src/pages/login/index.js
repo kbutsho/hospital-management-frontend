@@ -157,11 +157,13 @@ const Login = () => {
                                     showPassword ?
                                         <BiShow
                                             size="25"
+                                            color="black"
                                             className={styles.passwordBtn}
                                             onClick={() => showPasswordBtn()}
                                         /> :
                                         <BiHide
                                             size="25"
+                                            color="black"
                                             className={styles.passwordBtn}
                                             onClick={() => showPasswordBtn()}
                                         />
