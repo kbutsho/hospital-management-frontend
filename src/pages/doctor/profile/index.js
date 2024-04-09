@@ -15,11 +15,17 @@ import demoUser from '../../../assets/user.png'
 import { MdDelete, MdModeEdit } from 'react-icons/md';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { ImCross } from 'react-icons/im';
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css';
+import { RiLockPasswordLine } from "react-icons/ri";
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const DoctorProfile = () => {
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(null);
+    const [bioData, setBioData] = useState('')
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -59,6 +65,10 @@ const DoctorProfile = () => {
             setLoading(false)
             setData(res.data.data)
             setFormData(res.data.data)
+            const startIndex = res.data.data.bio.indexOf('{"bioData":"') + '{"bioData":"'.length;
+            const endIndex = res.data.data.bio.lastIndexOf('"}');
+            const extractedContent = res.data.data.bio.substring(startIndex, endIndex);
+            setBioData(extractedContent)
             console.log(res)
         } catch (error) {
             setLoading(false)
@@ -71,6 +81,7 @@ const DoctorProfile = () => {
         fetchDepartment()
     }, [])
 
+    // update profile
     const handelInputChange = (event) => {
         setFormData({
             ...formData,
@@ -82,6 +93,10 @@ const DoctorProfile = () => {
         });
     };
 
+    // handel bio data
+    const handelBioChange = (value) => {
+        setBioData(value)
+    }
     const formSubmit = async () => {
         try {
             setLoading(true)
@@ -94,7 +109,7 @@ const DoctorProfile = () => {
                 'gender': formData.gender,
                 'bmdc_id': formData.gender,
                 'department_id': formData.department_id,
-                'bio': formData.bio,
+                'bio': JSON.stringify({ bioData }),
                 'designation': formData.designation,
             }
             const res = await axios.post(`${config.api}/doctor/profile/update`, data, {
@@ -130,7 +145,6 @@ const DoctorProfile = () => {
     const togglePhotoAddModal = () => {
         setPhotoAddModal(!photoAddModal);
     }
-
     const handlePhotoChange = (e) => {
         const { name, value, files } = e.target;
         setFormData(prevState => ({
@@ -200,7 +214,6 @@ const DoctorProfile = () => {
             errors: []
         }));
     }
-
     const handlePasswordUpdateChange = (event) => {
         setFormData({
             ...formData,
@@ -211,7 +224,6 @@ const DoctorProfile = () => {
             }
         });
     }
-
     const submitPasswordChange = async () => {
         try {
             setAddLoading(true)
@@ -250,18 +262,20 @@ const DoctorProfile = () => {
                         data ?
                             <div>
                                 <div className='row'>
-                                    {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
                                     <div className="col-md-6">
                                         <div className='d-flex align-items-end'>
                                             {
                                                 data.photo ?
-                                                    <Image src={`${config.backend_api}/uploads/doctorProfile/${data.photo}`} height={165} width={165} alt="profile" /> :
-                                                    <Image src={demoUser} height={165} width={165} alt="profile" />
+                                                    <Image src={`${config.backend_api}/uploads/doctorProfile/${data.photo}`} height={186} width={186} alt="profile" /> :
+                                                    <Image src={demoUser} height={186} width={186} alt="profile" />
                                             }
-                                            <button onClick={togglePhotoAddModal} className='ms-3 me-2 btn btn-primary btn-sm'><MdModeEdit /></button>
-                                            {
-                                                data.photo ? <button onClick={togglePhotoDeleteModal} className='btn btn-danger btn-sm'><MdDelete /></button> : null
-                                            }
+                                            <div style={{ marginBottom: "8px" }}>
+                                                <button onClick={togglePhotoAddModal} className='mx-2 btn btn-primary btn-sm'><MdModeEdit /></button>
+                                                {
+                                                    data.photo ? <button onClick={togglePhotoDeleteModal} className='btn btn-danger btn-sm'><MdDelete /></button> : null
+                                                }
+                                                <button onClick={toggleChangePasswordModal} className='ms-2 btn btn-success btn-sm'><RiLockPasswordLine /></button>
+                                            </div>
 
                                         </div>
                                         <div className='my-3'>
@@ -323,6 +337,8 @@ const DoctorProfile = () => {
                                             </small>
                                         </div>
 
+                                    </div>
+                                    <div className="col-md-6">
                                         <div className='my-3'>
                                             <label className='fw-bold my-2'>
                                                 <span>Designation</span>
@@ -338,28 +354,6 @@ const DoctorProfile = () => {
                                             <small className='validation-error'>
                                                 {
                                                     formData?.errors?.designation ? formData?.errors?.designation : null
-                                                }
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className='my-3'>
-                                            <label className='fw-bold my-2'>
-                                                <span>Bio Data</span>
-                                                <AiFillStar className='required' />
-                                            </label>
-                                            <textarea
-                                                name="bio"
-                                                onChange={handelInputChange}
-                                                defaultValue={data?.bio}
-                                                type="text"
-                                                placeholder='your bio data'
-                                                className='form-control'
-                                                rows={4}
-                                            />
-                                            <small className='validation-error'>
-                                                {
-                                                    formData?.errors?.bio ? formData?.errors?.bio : null
                                                 }
                                             </small>
                                         </div>
@@ -437,12 +431,27 @@ const DoctorProfile = () => {
                                                 {formData?.errors?.gender ? formData?.errors?.gender : null}
                                             </small>
                                         </div>
-
+                                    </div>
+                                    <div className="col-md-12" style={{ height: "600px" }}>
+                                        <div>
+                                            <label className='fw-bold my-2'>
+                                                <span>Bio Data</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            {typeof window !== 'undefined' && (
+                                                <ReactQuill
+                                                    theme="snow"
+                                                    value={bioData}
+                                                    onChange={handelBioChange}
+                                                    style={{ height: '510px' }}
+                                                />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className='d-flex justify-content-end'>
-                                    <button onClick={toggleChangePasswordModal} className='btn btn-success btn-sm me-2 fw-bold'>change password</button>
-                                    <button className='btn btn-primary px-4 fw-bold' onClick={formSubmit}>update</button>
+
+                                <div className='d-flex justify-content-end my-3'>
+                                    <button className='btn btn-primary w-100 fw-bold' onClick={formSubmit}>update</button>
                                 </div>
                             </div> :
                             <div className={styles.notFound}>
@@ -457,7 +466,7 @@ const DoctorProfile = () => {
                                 <ModalBody>
                                     <div className='p-3'>
                                         <div className='d-flex justify-content-between'>
-                                            <h4 className='text-uppercase fw-bold mb-4'>profile photo</h4>
+                                            <h4 className='text-uppercase fw-bold mb-4'>change profile photo</h4>
                                             <ImCross size="24px"
                                                 className='pt-2'
                                                 style={{ cursor: "pointer", color: "red" }}
