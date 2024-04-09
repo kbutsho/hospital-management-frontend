@@ -23,6 +23,7 @@ const AdministratorSettings = () => {
         phone: '',
         facebook: '',
         youtube: '',
+        about: '',
         errors: []
     })
     const fetchSiteInfo = async () => {
@@ -63,6 +64,7 @@ const AdministratorSettings = () => {
             const data = {
                 organization_name: formData.organization_name,
                 address: formData.address,
+                about: formData.about,
                 email: formData.email,
                 phone: formData.phone,
                 youtube: formData.youtube,
@@ -219,11 +221,33 @@ const AdministratorSettings = () => {
                                             }
                                         </small>
                                     </div>
-                                    <div className='d-flex justify-content-end'>
-                                        <button onClick={formSubmit} className='px-4 btn btn-primary fw-bold'>save</button>
-                                    </div>
-                                </div>
 
+                                </div>
+                                <div className="col-md-12">
+                                    <div className='mb-4'>
+                                        <label className='fw-bold my-2'>
+                                            <span>About Organization</span>
+                                            <AiFillStar className='required' />
+                                        </label>
+                                        <textarea
+                                            name="about"
+                                            onChange={handelInputChange}
+                                            defaultValue={data[0]?.about}
+                                            placeholder='Organization about'
+                                            className='form-control'
+                                            rows={6}
+                                        />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.about ? formData?.errors?.about : null
+                                            }
+                                        </small>
+                                    </div>
+
+                                </div>
+                                <div className='d-flex justify-content-end'>
+                                    <button onClick={formSubmit} className='px-4 btn btn-primary fw-bold'>save</button>
+                                </div>
 
                             </div>
                             : <div className={styles.notFound}>
