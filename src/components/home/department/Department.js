@@ -27,8 +27,8 @@ const Department = () => {
 
     ];
     return (
-        <div className="container pt-5">
-            <h2 className="text-center mb-5 fw-bold text-uppercase text-success">Departments</h2>
+        <div className="container py-4">
+            <h2 className=" mb-5 fw-bold text-uppercase text-success">Departments</h2>
             <div className="row">
                 {deptData.map((dept, index) => (
                     <div key={index} className="col-md-4">

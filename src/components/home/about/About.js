@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 const About = () => {
     const info = useSelector(state => state.site_info.data);
     return (
-        <div className="container pt-5">
+        <div className="container py-4">
             <div className="row">
                 <div className="col-md-6 py-2">
                     <h3 className="fw-bold text-success text-uppercase">About {info?.organization_name}</h3>

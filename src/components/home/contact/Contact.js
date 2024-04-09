@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 const Contact = () => {
     const info = useSelector(state => state.site_info.data);
     return (
-        <div className='container pt-5'>
+        <div className='container py-4'>
             <h2 className="text-center mb-5 fw-bold text-uppercase text-success">Contact us</h2>
             <div className="row">
                 <div className="col-md-6">

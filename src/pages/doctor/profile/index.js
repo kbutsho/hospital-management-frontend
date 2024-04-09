@@ -7,7 +7,7 @@ const DoctorProfile = () => {
     return (
         <div >
             <Head>
-                <title>assistants list</title>
+                <title>profile</title>
             </Head>
             <Breadcrumb />
             <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "70vh" }}>

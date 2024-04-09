@@ -24,6 +24,7 @@ const AdministratorSettings = () => {
         facebook: '',
         youtube: '',
         about: '',
+        footer_text: '',
         errors: []
     })
     const fetchSiteInfo = async () => {
@@ -69,6 +70,7 @@ const AdministratorSettings = () => {
                 phone: formData.phone,
                 youtube: formData.youtube,
                 facebook: formData.facebook,
+                footer_text: formData.footer_text,
             }
             const res = await axios.post(`${config.api}/administrator/setting/info/update`, data, {
                 headers: {
@@ -223,7 +225,7 @@ const AdministratorSettings = () => {
                                     </div>
 
                                 </div>
-                                <div className="col-md-12">
+                                <div className="col-md-6">
                                     <div className='mb-4'>
                                         <label className='fw-bold my-2'>
                                             <span>About Organization</span>
@@ -235,7 +237,7 @@ const AdministratorSettings = () => {
                                             defaultValue={data[0]?.about}
                                             placeholder='Organization about'
                                             className='form-control'
-                                            rows={6}
+                                            rows={4}
                                         />
                                         <small className='validation-error'>
                                             {
@@ -244,6 +246,27 @@ const AdministratorSettings = () => {
                                         </small>
                                     </div>
 
+                                </div>
+                                <div className="col-md-6">
+                                    <div className='mb-4'>
+                                        <label className='fw-bold my-2'>
+                                            <span>Footer Text</span>
+                                            <AiFillStar className='required' />
+                                        </label>
+                                        <textarea
+                                            name="footer_text"
+                                            onChange={handelInputChange}
+                                            defaultValue={data[0]?.footer_text}
+                                            placeholder='footer text'
+                                            className='form-control'
+                                            rows={4}
+                                        />
+                                        <small className='validation-error'>
+                                            {
+                                                formData?.errors?.footer_text ? formData?.errors?.footer_text : null
+                                            }
+                                        </small>
+                                    </div>
                                 </div>
                                 <div className='d-flex justify-content-end'>
                                     <button onClick={formSubmit} className='px-4 btn btn-primary fw-bold'>save</button>
