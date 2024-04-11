@@ -17,8 +17,8 @@ const About = () => {
                         </p>
                     </div>
                     <div className="d-flex mt-4">
-                        <Link className="btn btn-success me-3 fw-bold px-3" href="/">Learn more</Link>
-                        <Link className="btn btn-outline-success fw-bold px-3" href="/">About our service</Link>
+                        <Link style={{ borderRadius: "2px" }} className="btn btn-success me-3 fw-bold px-3" href="/">Learn more</Link>
+                        <Link style={{ borderRadius: "2px" }} className="btn btn-outline-success fw-bold px-3" href="/">About our service</Link>
                     </div>
                 </div>
                 <div className="col-md-6 py-2">
