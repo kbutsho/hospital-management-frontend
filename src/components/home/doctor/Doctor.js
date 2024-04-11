@@ -1,4 +1,3 @@
-import { doctorData } from './doctorData';
 // import Image from 'next/image';
 import Image from 'next/legacy/image'
 import styles from '@/styles/Home.module.css';
@@ -9,6 +8,8 @@ import axios from 'axios';
 import { config } from '@/config';
 import demoUser from '../../../assets/user.png'
 import { useRouter } from 'next/router';
+import Link from "next/link"
+
 
 const Doctor = () => {
     const [doctor, setDoctor] = useState(null);
@@ -17,14 +18,15 @@ const Doctor = () => {
         try {
             const response = await axios.get(`${config.api}/doctor/all`)
             setDoctor(response.data.data)
+            console.log(response)
         } catch (error) {
+            console.log(error)
             errorHandler({ error, toast })
         }
     }
     useEffect(() => {
         fetchDoctor()
     }, [])
-
     const doctorDetails = (id) => {
         router.push(`our-doctors/${id}`)
     }
@@ -33,18 +35,26 @@ const Doctor = () => {
             <div className='mb-4 d-flex justify-content-between'>
                 <h2 className="fw-bold text-uppercase text-success">our Doctors</h2>
                 <div>
-                    <button className='btn btn-primary fw-bold btn-sm'>show all</button>
+                    <Link
+                        href="/our-doctors"
+                        style={{ borderRadius: "2px" }}
+                        className='btn btn-primary fw-bold btn-sm px-3'>
+                        show all
+                    </Link>
                 </div>
             </div>
             <div className="row">
+                {/* <pre>{JSON.stringify(department, null, 2)}</pre> */}
                 {doctor?.slice(1, 9).map((doctor, index) => (
                     <div key={index} className="col-md-3">
                         <div className={`mb-4 ${styles.doctorCard}`}>
-                            <div className="card-body" onClick={() => doctorDetails(doctor.id)}>
+                            <div className="card-body" >
                                 <div className='p-4'>
                                     {
                                         doctor.photo ?
-                                            <Image style={{ borderRadius: "6px" }}
+                                            <Image
+                                                onClick={() => doctorDetails(doctor.id)}
+                                                style={{ borderRadius: "6px" }}
                                                 height={80} width={80}
                                                 layout='responsive'
                                                 src={`${config.backend_api}/uploads/doctorProfile/${doctor.photo}`}
@@ -56,9 +66,19 @@ const Doctor = () => {
                                                 alt={doctor.doctorName} />
                                     }
                                 </div>
-                                <div className='px-3 p-3'>
-                                    <h5 style={{ minHeight: "50px" }}
-                                        className="card-title fw-bold text-success mt-4 text-uppercase">{doctor.doctorName}</h5>
+                                <div className='p-4'>
+                                    <h5
+                                        onClick={() => doctorDetails(doctor.id)}
+                                        style={{ minHeight: "50px" }}
+                                        className="card-title fw-bold text-success text-uppercase">
+                                        {doctor.doctorName}
+                                    </h5>
+                                    <button
+                                        onClick={() => doctorDetails(doctor.id)}
+                                        style={{ borderRadius: "2px" }}
+                                        className='text-uppercase fw-bold btn btn-success w-100 mt-3'>
+                                        Get Appointment
+                                    </button>
                                 </div>
                             </div>
                         </div>
