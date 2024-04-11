@@ -42,9 +42,12 @@ const Department = () => {
                             <div className="card-body">
                                 <Image height={80} width={80} src={dept.imageUrl} alt={dept.name} />
                                 <h5 className="card-title fw-bold text-success mt-4 text-uppercase">{dept.name}</h5>
-                                <div className='mb-3'>
-                                    <small className="card-text" >{dept.description}</small>
+                                <div className='mb-3' style={{ minHeight: "80px" }}>
+                                    <small className="card-text">
+                                        {dept.description.length > 160 ? `${dept.description.substring(0, 160)}...` : dept.description}
+                                    </small>
                                 </div>
+
                                 <Link href="/" className="btn btn-success px-3 btn-block btn-sm fw-bold" style={{ borderRadius: "2px" }}>Learn More</Link>
                             </div>
                         </div>

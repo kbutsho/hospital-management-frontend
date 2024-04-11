@@ -53,7 +53,7 @@ const DoctorDetails = () => {
         <div className='container py-5' style={{ minHeight: "100vh" }}>
             {details && (
                 <div className='row'>
-                    <div className="col-md-4" data-aos="fade-up">
+                    <div className="col-md-4" data-aos="fade-right">
                         <div className='py-4 px-5'>
                             {
                                 details.photo ?
@@ -85,7 +85,7 @@ const DoctorDetails = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="col-md-8" style={{ maxHeight: "100vh", overflowY: "scroll", scrollbarWidth: "none" }}>
+                    <div className="col-md-8" data-aos="fade-left" style={{ maxHeight: "100vh", overflowY: "scroll", scrollbarWidth: "none" }}>
                         <div className='py-4 px-5'>
                             <div dangerouslySetInnerHTML={{ __html: bioData }} />
                         </div>
