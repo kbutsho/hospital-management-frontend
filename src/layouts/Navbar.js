@@ -21,10 +21,10 @@ const Navbar = () => {
                     <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <div className="navbar-nav ms-auto">
                             <Link className="nav-link fw-bold text-white" href="/">HOME</Link>
-                            <Link className="nav-link fw-bold text-white" href="/about">ABOUT US</Link>
                             <Link className="nav-link fw-bold text-white" href="/our-doctors">DOCTOR</Link>
                             <Link className="nav-link fw-bold text-white" href="/department">DEPARTMENT</Link>
                             <Link className="nav-link fw-bold text-white" href="/serial">SERIAL</Link>
+                            <Link className="nav-link fw-bold text-white" href="/about">ABOUT</Link>
                             <Link className="nav-link fw-bold text-white" href="/contact">CONTACT</Link>
                             <Link className="nav-link fw-bold text-white" href="/signup">SIGNUP</Link>
                             <Link className="nav-link fw-bold text-white" href="/login">LOGIN</Link>
