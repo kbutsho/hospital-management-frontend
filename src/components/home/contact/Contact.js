@@ -1,14 +1,19 @@
 import { MdEmail } from "react-icons/md";
 import { IoCall } from "react-icons/io5";
 import { useSelector } from 'react-redux';
+import Aos from "aos";
+import { useEffect } from "react";
 
 const Contact = () => {
     const info = useSelector(state => state.site_info.data);
+    useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
     return (
         <div className='container py-4'>
             <h2 className="text-center mb-5 fw-bold text-uppercase text-success">Contact us</h2>
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-6" data-aos="fade-right">
                     <h2 className='fw-bold text-dark'>Lets chat.</h2>
                     <h2 className='fw-bold text-dark'>Tell us about your health condition.</h2>
                     <h6>We look forward to hearing from you.</h6>
@@ -32,7 +37,7 @@ const Contact = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-6" data-aos="fade-left">
                     <h2 className="fw-bold">Send us a message!</h2>
                     <form>
                         <input required type="text" className="form-control my-3" placeholder="your full name*" />

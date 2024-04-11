@@ -6,6 +6,8 @@ import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PersistGate } from 'redux-persist/integration/react';
+import 'aos/dist/aos.css';
+import 'aos/dist/aos.js';
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {

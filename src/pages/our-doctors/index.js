@@ -9,6 +9,7 @@ import { config } from '@/config';
 import demoUser from '../../assets/user.png'
 import { useRouter } from 'next/router';
 import MainLayout from '@/layouts/MainLayout';
+import Aos from 'aos';
 
 
 const OurDoctor = () => {
@@ -52,7 +53,9 @@ const OurDoctor = () => {
     const doctorDetails = (id) => {
         router.push(`our-doctors/${id}`)
     }
-
+    useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
     return (
         <div className="container py-5" style={{ minHeight: '100vh' }}>
             <div className='mb-4 d-flex justify-content-between'>
@@ -82,7 +85,7 @@ const OurDoctor = () => {
 
             <div className="row mt-4">
                 {doctor?.map((doctor, index) => (
-                    <div key={index} className="col-md-3">
+                    <div key={index} className="col-md-3" data-aos="fade-up">
                         <div className={`mb-4 ${styles.doctorCard}`}>
                             <div className="card-body" >
                                 <div className='p-4'>

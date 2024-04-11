@@ -11,6 +11,8 @@ import orthopedics from '../../../assets/department/bone.png';
 import cardiology from '../../../assets/department/cardiology.png';
 // import Image from 'next/image';
 import Image from 'next/legacy/image'
+import Aos from "aos";
+import { useEffect } from 'react';
 
 const Department = () => {
 
@@ -26,13 +28,17 @@ const Department = () => {
         { name: "Cardiology", description: "The Orthopedics department focuses on the diagnosis and treatment of musculoskeletal disorders, including fractures, arthritis, sports injuries, and spinal conditions.", imageUrl: cardiology },
 
     ];
+
+    useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
     return (
         <div className="container py-4">
             <h2 className=" mb-5 fw-bold text-uppercase text-success">Departments</h2>
             <div className="row">
                 {deptData.map((dept, index) => (
-                    <div key={index} className="col-md-4">
-                        <div className={`card mb-4 ${styles.deptCard}`}>
+                    <div key={index} className="col-md-4" data-aos="fade-up">
+                        <div className={`p-3 card mb-4 ${styles.deptCard}`}>
                             <div className="card-body">
                                 <Image height={80} width={80} src={dept.imageUrl} alt={dept.name} />
                                 <h5 className="card-title fw-bold text-success mt-4 text-uppercase">{dept.name}</h5>

@@ -11,6 +11,7 @@ import { ImCross } from 'react-icons/im';
 import { Modal, ModalBody } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import Link from 'next/link'
+import Aos from 'aos';
 
 
 const DoctorDetails = () => {
@@ -44,11 +45,15 @@ const DoctorDetails = () => {
         setAppointmentModal(!appointmentModal)
     }
     const info = useSelector(state => state.site_info.data);
+    useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
+
     return (
         <div className='container py-5' style={{ minHeight: "100vh" }}>
             {details && (
                 <div className='row'>
-                    <div className="col-md-4">
+                    <div className="col-md-4" data-aos="fade-up">
                         <div className='py-4 px-5'>
                             {
                                 details.photo ?
