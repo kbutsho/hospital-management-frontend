@@ -17,6 +17,7 @@ import chamberLogo from '../../../assets/chamber.png'
 import appointmentLogo from '../../../assets/appointment.png'
 import patientLogo from '../../../assets/patient.png'
 import Link from 'next/link';
+import Aos from 'aos';
 
 
 const AdministratorDashboard = () => {
@@ -40,6 +41,9 @@ const AdministratorDashboard = () => {
         fetchDashboardInfo()
     }, [])
 
+    useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
     return (
         <div>
             <Head>
@@ -51,7 +55,7 @@ const AdministratorDashboard = () => {
                 {
                     info ?
                         <div className='row'>
-                            <div className="col-md-4 my-2">
+                            <div className="col-md-4 my-2" data-aos="fade-up">
                                 <Link href="/administrator/departments" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
                                     <div className="row">
                                         <div className="col-6">
@@ -78,7 +82,7 @@ const AdministratorDashboard = () => {
                                 </Link>
                             </div>
 
-                            <div className="col-md-4 my-2">
+                            <div className="col-md-4 my-2" data-aos="fade-up">
                                 <Link href="/administrator/doctors" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
                                     <div className="row">
                                         <div className="col-6">
@@ -105,7 +109,7 @@ const AdministratorDashboard = () => {
                                 </Link>
                             </div>
 
-                            <div className="col-md-4 my-2">
+                            <div className="col-md-4 my-2" data-aos="fade-up">
                                 <Link href="/administrator/assistants" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
                                     <div className="row">
                                         <div className="col-6">
@@ -132,7 +136,7 @@ const AdministratorDashboard = () => {
                                 </Link>
                             </div>
 
-                            <div className="col-md-4 my-2">
+                            <div className="col-md-4 my-2" data-aos="fade-up">
                                 <Link href="/administrator/chambers" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
                                     <div className="row">
                                         <div className="col-6">
@@ -159,7 +163,7 @@ const AdministratorDashboard = () => {
                                 </Link>
                             </div>
 
-                            <div className="col-md-4 my-2">
+                            <div className="col-md-4 my-2" data-aos="fade-up">
                                 <Link href="/administrator/appointments" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
                                     <div className="row">
                                         <div className="col-6">
@@ -186,7 +190,7 @@ const AdministratorDashboard = () => {
                                 </Link>
                             </div>
 
-                            <div className="col-md-4 my-2">
+                            <div className="col-md-4 my-2" data-aos="fade-up">
                                 <Link href="/administrator/patients" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
                                     <div className="row">
                                         <div className="col-6">

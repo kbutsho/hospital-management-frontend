@@ -289,6 +289,7 @@ const SerialList = () => {
     };
 
     // print invoice
+    const info = useSelector(state => state.site_info.data);
     const [serialLoading, setSerialLoading] = useState(false);
     const handleInvoiceDownload = async (data) => {
         const element = document.createElement('div');
@@ -304,6 +305,7 @@ const SerialList = () => {
             if (response.data) {
                 const date = String(new Date());
                 const invoiceContent = <Invoice
+                    info={info}
                     data={data}
                     date={date}
                     patientId={response.data.patientId}

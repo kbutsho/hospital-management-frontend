@@ -1,8 +1,8 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 
-const Invoice = ({ data, date, serialNumber, patientId }) => {
+
+const Invoice = ({ data, date, serialNumber, patientId, info }) => {
     const convertTime = (time24) => {
         const [hours, minutes] = time24.split(':');
         let formattedTime = '';
@@ -14,12 +14,12 @@ const Invoice = ({ data, date, serialNumber, patientId }) => {
         formattedTime = `${hours12}:${minutes} ${suffix} `;
         return formattedTime;
     };
-    const info = useSelector(state => state.site_info.data);
+
     return (
         <div className='p-3 m-3' style={{ width: "816px" }}>
             <div className='py-3'>
-                <h4 className='text-center'> CHRISTIAN MEDICAL COLLEGE</h4>
-                <h6 className='text-center'>VELLORE - 632 004, TAMIL NADU, INDIA.</h6>
+                <h4 className='text-center fw-bold'>{info?.organization_name}</h4>
+                <h6 className='text-center'>{info?.address}</h6>
             </div>
             <div className='alert alert-success h5 text-uppercase fw-bold text-center'>Appointment Invoice </div>
             <Table striped bordered size="sm" >
@@ -81,7 +81,7 @@ const Invoice = ({ data, date, serialNumber, patientId }) => {
                 </tbody>
             </Table>
             <div>
-                <h6 className='fw-bold'>  General Instructions</h6>
+                <h6 className='fw-bold'>General Instructions</h6>
                 <ol>
                     <li>Appointment booked online will not be refunded.</li>
                     <li>Change of Department /Unit not allowed.</li>
