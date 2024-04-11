@@ -39,7 +39,7 @@ const Department = () => {
                                 <div className='mb-3'>
                                     <small className="card-text" >{dept.description}</small>
                                 </div>
-                                <Link href="/" className="btn btn-primary btn-block btn-sm fw-bold" style={{ borderRadius: "2px" }}>Learn More</Link>
+                                <Link href="/" className="btn btn-success px-3 btn-block btn-sm fw-bold" style={{ borderRadius: "2px" }}>Learn More</Link>
                             </div>
                         </div>
                     </div>
