@@ -29,7 +29,7 @@ const Doctor = () => {
         fetchDoctor()
     }, [])
     const doctorDetails = (id) => {
-        router.push(`our-doctors/${id}`)
+        router.push(`doctors/${id}`)
     }
     useEffect(() => {
         Aos.init({ duration: 1000 });
@@ -40,7 +40,7 @@ const Doctor = () => {
                 <h2 className="fw-bold text-uppercase text-success">our Doctors</h2>
                 <div>
                     <Link
-                        href="/our-doctors"
+                        href="/doctors"
                         style={{ borderRadius: "2px" }}
                         className='btn btn-primary fw-bold px-3'>
                         Show All

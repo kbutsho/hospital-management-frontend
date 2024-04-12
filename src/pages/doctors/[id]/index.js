@@ -5,12 +5,8 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import { config } from '@/config';
-import demoUser from '../../assets/user.png'
+import demoUser from '../../../assets/user.png'
 import Image from 'next/legacy/image'
-import { ImCross } from 'react-icons/im';
-import { Modal, ModalBody } from 'reactstrap';
-import { useSelector } from 'react-redux';
-import Link from 'next/link'
 import Aos from 'aos';
 
 
@@ -44,7 +40,9 @@ const DoctorDetails = () => {
     const toggleAppointmentModal = () => {
         setAppointmentModal(!appointmentModal)
     }
-    const info = useSelector(state => state.site_info.data);
+    const getAppointment = (id) => {
+        router.push(`/doctors/${id}/appointment`)
+    }
     useEffect(() => {
         Aos.init({ duration: 1000 });
     }, []);
@@ -79,7 +77,7 @@ const DoctorDetails = () => {
                             </ul>
                             <button
                                 style={{ borderRadius: "2px" }}
-                                onClick={toggleAppointmentModal}
+                                onClick={() => getAppointment(details.id)}
                                 className='text-uppercase fw-bold btn btn-success w-100'>
                                 Get Appointment
                             </button>
@@ -92,7 +90,7 @@ const DoctorDetails = () => {
                     </div>
                 </div>
             )}
-            {
+            {/* {
                 appointmentModal ? (
                     <div>
                         <Modal isOpen={appointmentModal} className="modal-lg">
@@ -127,7 +125,7 @@ const DoctorDetails = () => {
                         </Modal>
                     </div>
                 ) : null
-            }
+            } */}
         </div>
     );
 };

@@ -51,7 +51,7 @@ const OurDoctor = () => {
         setFilterByDept(deptName)
     }
     const doctorDetails = (id) => {
-        router.push(`our-doctors/${id}`)
+        router.push(`doctors/${id}`)
     }
     useEffect(() => {
         Aos.init({ duration: 1000 });
@@ -130,10 +130,7 @@ const OurDoctor = () => {
                             ))}
                         </div>
                     </div>
-                ) :
-                    <div style={{ minHeight: "60vh" }} className='d-flex justify-content-center align-items-center'>
-                        <h3 className='fw-bold text-danger'>internal server error</h3>
-                    </div>
+                ) : null
             }
 
         </div>

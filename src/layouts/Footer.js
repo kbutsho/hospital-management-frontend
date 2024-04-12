@@ -45,7 +45,7 @@ const Footer = () => {
                         <div className='link-area d-flex flex-column'>
                             <Link className='link text-white' href="/about">about us</Link>
                             <Link className='link text-white' href="/contact">contact us</Link>
-                            <Link className='link text-white' href="/our-doctors">our doctors</Link>
+                            <Link className='link text-white' href="/doctors">our doctors</Link>
                             <Link className='link text-white' href="/department">departments</Link>
                             <Link className='link text-white' href="/serial">take a serial</Link>
                         </div>

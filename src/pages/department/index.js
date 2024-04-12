@@ -8,6 +8,7 @@ import axios from 'axios'
 import { config } from '@/config';
 import { errorHandler } from '@/helpers/errorHandler';
 import { toast } from 'react-toastify';
+import MainLayout from '@/layouts/MainLayout';
 import { useRouter } from 'next/router';
 
 const Department = () => {
@@ -32,17 +33,9 @@ const Department = () => {
         router.push(`department/${id}`)
     }
     return (
-        <div className="container py-4" style={{ minHeight: '100vh' }}>
+        <div className="container py-5" style={{ minHeight: '100vh' }}>
             <div className='mb-4 d-flex justify-content-between'>
                 <h2 className="fw-bold text-uppercase text-success">Departments</h2>
-                <div>
-                    <Link
-                        href="/department"
-                        style={{ borderRadius: "2px" }}
-                        className='btn btn-primary fw-bold px-3'>
-                        Show All
-                    </Link>
-                </div>
             </div>
             <div className="row">
                 {deptData?.slice(1, 10).map((dept, index) => (
@@ -60,7 +53,6 @@ const Department = () => {
                                         {dept?.description.length > 150 ? `${dept.description.substring(0, 150)}...` : dept.description}
                                     </small>
                                 </div>
-
                                 <button onClick={() => details(dept.id)} className="btn btn-success px-3 btn-block btn-sm fw-bold" style={{ borderRadius: "2px" }}>Learn More</button>
                             </div>
                         </div>
@@ -72,3 +64,6 @@ const Department = () => {
 };
 
 export default Department;
+Department.getLayout = function getLayout(page) {
+    return <MainLayout>{page}</MainLayout>;
+};
