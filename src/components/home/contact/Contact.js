@@ -10,7 +10,7 @@ const Contact = () => {
         Aos.init({ duration: 1000 });
     }, []);
     return (
-        <div className='container py-4'>
+        <div className='container pt-4 pb-5 bg-info'>
             <h2 className="text-center mb-5 fw-bold text-uppercase text-success">Contact us</h2>
             <div className="row">
                 <div className="col-md-6" data-aos="fade-right">

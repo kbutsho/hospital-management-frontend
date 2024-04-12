@@ -1,50 +1,58 @@
 import Link from 'next/link';
 import styles from '@/styles/Home.module.css';
-import ent from '../../../assets/department/ent.png';
-import urology from '../../../assets/department/urology.png';
-import geriatrics from '../../../assets/department/old-man.png';
-import ophthalmology from '../../../assets/department/ophthalmology.png';
-import dermatology from '../../../assets/department/skin.png';
-import pediatrics from '../../../assets/department/pediatrics.png';
-import neurology from '../../../assets/department/neurology.png';
-import orthopedics from '../../../assets/department/bone.png';
-import cardiology from '../../../assets/department/cardiology.png';
 // import Image from 'next/image';
 import Image from 'next/legacy/image'
 import Aos from "aos";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios'
+import { config } from '@/config';
+import { errorHandler } from '@/helpers/errorHandler';
+import { toast } from 'react-toastify';
 
 const Department = () => {
-
-    const deptData = [
-        { name: "ENT", description: "The Ear, Nose, and Throat (ENT) department specializes in the diagnosis and treatment of conditions affecting the ears, nose, throat, and related structures.", imageUrl: ent },
-        { name: "Urology", description: "The Urology department deals with the diagnosis and treatment of disorders of the urinary tract system in both males and females, as well as the male reproductive system.", imageUrl: urology },
-        { name: "Geriatrics", description: "The Geriatrics department provides specialized care for elderly patients, focusing on the unique health concerns and needs associated with aging.", imageUrl: geriatrics },
-        { name: "Ophthalmology", description: "The Ophthalmology department specializes in the diagnosis and treatment of eye diseases and disorders, including cataracts, glaucoma, and refractive errors.", imageUrl: ophthalmology },
-        { name: "Dermatology", description: "The Dermatology department focuses on the diagnosis and treatment of skin, hair, and nail conditions, including acne, eczema, psoriasis, and skin cancer.", imageUrl: dermatology },
-        { name: "Pediatrics", description: "The Pediatrics department provides medical care for infants, children, and adolescents, addressing a wide range of health issues from routine check-ups to complex medical conditions.", imageUrl: pediatrics },
-        { name: "Neurology", description: "The Neurology department specializes in the diagnosis and treatment of disorders of the nervous system, including conditions affecting the brain, spinal cord, and nerves.", imageUrl: neurology },
-        { name: "Orthopedics", description: "The Orthopedics department focuses on the diagnosis and treatment of musculoskeletal disorders, including fractures, arthritis, sports injuries, and spinal conditions.", imageUrl: orthopedics },
-        { name: "Cardiology", description: "The Orthopedics department focuses on the diagnosis and treatment of musculoskeletal disorders, including fractures, arthritis, sports injuries, and spinal conditions.", imageUrl: cardiology },
-
-    ];
-
+    const [deptData, setDeptData] = useState(null);
+    const fetchDoctor = async () => {
+        try {
+            const response = await axios.get(`${config.api}/department/all`)
+            setDeptData(response.data.data)
+        } catch (error) {
+            console.log(error)
+            errorHandler({ error, toast })
+        }
+    }
+    useEffect(() => {
+        fetchDoctor()
+    }, [])
     useEffect(() => {
         Aos.init({ duration: 1000 });
     }, []);
     return (
-        <div className="container py-4">
-            <h2 className=" mb-5 fw-bold text-uppercase text-success">Departments</h2>
+        <div className="container py-4" style={{ minHeight: '100vh' }}>
+            <div className='mb-4 d-flex justify-content-between'>
+                <h2 className="fw-bold text-uppercase text-success">Departments</h2>
+                <div>
+                    <Link
+                        href="/department"
+                        style={{ borderRadius: "2px" }}
+                        className='btn btn-primary fw-bold px-3'>
+                        Show All
+                    </Link>
+                </div>
+            </div>
             <div className="row">
-                {deptData.map((dept, index) => (
+                {deptData?.slice(1, 10).map((dept, index) => (
                     <div key={index} className="col-md-4" data-aos="fade-up">
                         <div className={`p-3 card mb-4 ${styles.deptCard}`}>
                             <div className="card-body">
-                                <Image height={80} width={80} src={dept.imageUrl} alt={dept.name} />
+                                <Image
+                                    height={80}
+                                    width={80}
+                                    src={`${config.backend_api}/uploads/department/${dept.photo}`}
+                                    alt={dept.name} />
                                 <h5 className="card-title fw-bold text-success mt-4 text-uppercase">{dept.name}</h5>
                                 <div className='mb-3' style={{ minHeight: "80px" }}>
                                     <small className="card-text">
-                                        {dept.description.length > 160 ? `${dept.description.substring(0, 160)}...` : dept.description}
+                                        {dept?.description.length > 150 ? `${dept.description.substring(0, 150)}...` : dept.description}
                                     </small>
                                 </div>
 

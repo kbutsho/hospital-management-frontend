@@ -42,7 +42,7 @@ const Doctor = () => {
                     <Link
                         href="/our-doctors"
                         style={{ borderRadius: "2px" }}
-                        className='btn btn-primary fw-bold btn-sm px-3'>
+                        className='btn btn-primary fw-bold px-3'>
                         Show All
                     </Link>
                 </div>

@@ -60,70 +60,82 @@ const OurDoctor = () => {
         <div className="container py-5" style={{ minHeight: '100vh' }}>
             <div className='mb-4 d-flex justify-content-between'>
                 <h2 className="fw-bold text-uppercase text-success">our Doctors</h2>
-                <pre>{JSON.stringify(filterByDept, null, 2)}</pre>
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '100%' }}>
-                <ul style={{ display: 'flex', flexWrap: 'wrap', padding: 0, listStyleType: 'none', margin: 0 }}>
-                    <li
-                        key="all"
-                        onClick={() => handelFilterByDept('')}
-                        className={`btn btn-outline-success px-4 me-3 mb-3 fw-bold ${filterByDept === '' ? 'active' : ''}`}
-                        style={{ borderRadius: "2px", maxWidth: 'calc(50% - 16px)' }}>
-                        All Departments
-                    </li>
-                    {department?.map(dept =>
-                        <li
-                            key={dept.id}
-                            onClick={() => handelFilterByDept(dept.name)}
-                            className={`btn btn-outline-success px-4 me-3 mb-3 fw-bold ${dept.name === filterByDept ? 'active' : ''}`}
-                            style={{ borderRadius: "2px", maxWidth: 'calc(50% - 16px)' }}>
-                            {dept.name}
-                        </li>
-                    )}
-                </ul>
-            </div>
-
-            <div className="row mt-4">
-                {doctor?.map((doctor, index) => (
-                    <div key={index} className="col-md-3" data-aos="fade-up">
-                        <div className={`mb-4 ${styles.doctorCard}`}>
-                            <div className="card-body" >
-                                <div className='p-4'>
-                                    {
-                                        doctor.photo ?
-                                            <Image
-                                                onClick={() => doctorDetails(doctor.id)}
-                                                style={{ borderRadius: "6px" }}
-                                                height={80} width={80}
-                                                layout='responsive'
-                                                src={`${config.backend_api}/uploads/doctorProfile/${doctor.photo}`}
-                                                alt={doctor.doctorName} /> :
-                                            <Image style={{ borderRadius: "6px" }}
-                                                height={80} width={80}
-                                                layout='responsive'
-                                                src={demoUser}
-                                                alt={doctor.doctorName} />
-                                    }
+            {
+                doctor && department ? (
+                    <div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '100%' }} data-aos="fade-up">
+                            {/* Department List */}
+                            <ul style={{ display: 'flex', flexWrap: 'wrap', padding: 0, listStyleType: 'none', margin: 0 }}>
+                                <li
+                                    key="all"
+                                    onClick={() => handelFilterByDept('')}
+                                    className={`btn btn-outline-success px-4 me-3 mb-3 fw-bold ${filterByDept === '' ? 'active' : ''}`}
+                                    style={{ borderRadius: "2px", maxWidth: 'calc(50% - 16px)' }}>
+                                    All Departments
+                                </li>
+                                {/* Render Individual Departments */}
+                                {department.map(dept => (
+                                    <li
+                                        key={dept.id}
+                                        onClick={() => handelFilterByDept(dept.name)}
+                                        className={`btn btn-outline-success px-4 me-3 mb-3 fw-bold ${dept.name === filterByDept ? 'active' : ''}`}
+                                        style={{ borderRadius: "2px", maxWidth: 'calc(50% - 16px)' }}>
+                                        {dept.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        {/* Doctor Cards */}
+                        <div className="row mt-4">
+                            {doctor.map((doctor, index) => (
+                                <div key={index} className="col-md-3" data-aos="fade-up">
+                                    <div className={`mb-4 ${styles.doctorCard}`}>
+                                        <div className="card-body" >
+                                            <div className='p-4'>
+                                                {doctor.photo ? (
+                                                    <Image
+                                                        onClick={() => doctorDetails(doctor.id)}
+                                                        style={{ borderRadius: "6px" }}
+                                                        height={80} width={80}
+                                                        layout='responsive'
+                                                        src={`${config.backend_api}/uploads/doctorProfile/${doctor.photo}`}
+                                                        alt={doctor.doctorName} />
+                                                ) : (
+                                                    <Image
+                                                        style={{ borderRadius: "6px" }}
+                                                        height={80} width={80}
+                                                        layout='responsive'
+                                                        src={demoUser}
+                                                        alt={doctor.doctorName} />
+                                                )}
+                                            </div>
+                                            <div className='p-4'>
+                                                <h5
+                                                    onClick={() => doctorDetails(doctor.id)}
+                                                    style={{ minHeight: "50px" }}
+                                                    className="card-title fw-bold text-success text-uppercase">
+                                                    {doctor.doctorName}
+                                                </h5>
+                                                <button
+                                                    onClick={() => doctorDetails(doctor.id)}
+                                                    style={{ borderRadius: "2px" }}
+                                                    className='text-uppercase fw-bold btn btn-success w-100 mt-3'>
+                                                    Get Appointment
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className='p-4'>
-                                    <h5
-                                        onClick={() => doctorDetails(doctor.id)}
-                                        style={{ minHeight: "50px" }}
-                                        className="card-title fw-bold text-success text-uppercase">
-                                        {doctor.doctorName}
-                                    </h5>
-                                    <button
-                                        onClick={() => doctorDetails(doctor.id)}
-                                        style={{ borderRadius: "2px" }}
-                                        className='text-uppercase fw-bold btn btn-success w-100 mt-3'>
-                                        Get Appointment
-                                    </button>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
-                ))}
-            </div>
+                ) :
+                    <div style={{ minHeight: "60vh" }} className='d-flex justify-content-center align-items-center'>
+                        <h3 className='fw-bold text-danger'>internal server error</h3>
+                    </div>
+            }
+
         </div>
     );
 };
