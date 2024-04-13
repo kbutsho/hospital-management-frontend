@@ -29,26 +29,28 @@ const appointment = () => {
         fetchDoctorDetails()
     }, [id])
     return (
-        <div className='container py-5' style={{ minHeight: "80vh" }}>
-            <div className={`p-5 ${styles.deptCard} mt-5`}>
-                <h4 className='text-uppercase fw-bold mb-4'>take appointment</h4>
-                <div>
-                    <h6 className='fw-bold text-uppercase'>Address</h6>
-                    <p>{info?.address}</p>
+        <div className='container py-5' style={{ minHeight: "70vh" }}>
+            {
+                details ? <div className={`p-5 ${styles.deptCard}`}>
+                    <h4 className='text-uppercase fw-bold mb-4'>take appointment</h4>
+                    <div>
+                        <h6 className='fw-bold text-uppercase'>Address</h6>
+                        <p>{info?.address}</p>
 
-                    <h6 className='fw-bold text-uppercase'>phone</h6>
-                    <p>{info?.phone}, {details?.phone}</p>
+                        <h6 className='fw-bold text-uppercase'>phone</h6>
+                        <p>{info?.phone}, {details?.phone}</p>
 
-                    <h6 className='fw-bold text-uppercase'>Email</h6>
-                    <p>{info?.email}, {details?.email}</p>
-                    <Link
-                        href="/serial"
-                        style={{ borderRadius: "2px" }}
-                        className='text-uppercase fw-bold btn btn-success mt-3 px-4'>
-                        take self appointment
-                    </Link>
-                </div>
-            </div>
+                        <h6 className='fw-bold text-uppercase'>Email</h6>
+                        <p>{info?.email}, {details?.email}</p>
+                        <Link
+                            href="/serial"
+                            style={{ borderRadius: "2px" }}
+                            className='text-uppercase fw-bold btn btn-success mt-3 px-4'>
+                            take self appointment
+                        </Link>
+                    </div>
+                </div> : null
+            }
         </div>
     );
 };

@@ -25,6 +25,7 @@ import {
     removeDepartment
 } from '@/redux/slice/administrator/departmentSlice';
 import { VscDiffAdded } from 'react-icons/vsc';
+import Image from 'next/image';
 
 
 const DepartmentList = () => {
@@ -45,6 +46,8 @@ const DepartmentList = () => {
     })
     const [formData, setFormData] = useState({
         name: '',
+        description: '',
+        photo: null,
         errors: []
     })
     // pagination
@@ -76,6 +79,7 @@ const DepartmentList = () => {
             dispatch(fetchedItemsCount(response.data.fetchedItems))
             setFound(true)
         } catch (error) {
+            console.log(error)
             return errorHandler({ error, setErrorMessage })
         }
     };
@@ -197,6 +201,8 @@ const DepartmentList = () => {
         setAddModal(!addModal);
         setFormData({
             name: '',
+            photo: null,
+            description: '',
             errors: []
         })
     }
@@ -210,13 +216,30 @@ const DepartmentList = () => {
             }
         })
     };
+    const handelAddPhotoChange = (e) => {
+        const { name, value, files } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: name === 'photo' ? files[0] : value,
+            errors: {
+                ...formData.errors,
+                [e.target.name]: null
+            }
+        }));
+    };
     const departmentFormSubmit = async (e) => {
         e.preventDefault();
         try {
             setAddLoading(true)
-            const data = {
-                name: formData.name
-            }
+            const data = new FormData();
+            data.append('photo', formData.photo);
+            data.append('name', formData.name);
+            data.append('description', formData.description);
+            // const data = {
+            //     name: formData.name,
+            //     photo: formData.photo,
+            //     description: formData.description
+            // }
             const response = await axios.post(`${config.api}/administrator/department/create`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -277,6 +300,7 @@ const DepartmentList = () => {
                     ) : null
                 )
             }
+
             <div className="row">
                 <div className="col-md-3">
                     <div className={`${styles.filterHeader}`}>
@@ -391,6 +415,7 @@ const DepartmentList = () => {
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>PHOTO</th>
                                                 <th className='text-center'>
                                                     <SortingArrow
                                                         level={`STATUS`}
@@ -399,7 +424,8 @@ const DepartmentList = () => {
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
-                                                <th className='text-center'>ACTION</th>
+                                                <th className='text-center' style={{ paddingBottom: "8px" }}>ACTION</th>
+
                                             </tr>
                                         </thead>
                                         <tbody className='p-3'>
@@ -448,6 +474,9 @@ const DepartmentList = () => {
                                                                     }}>
                                                                     {data.disableDoctor === null ? "0" : data.disableDoctor}
                                                                 </div>
+                                                            </td>
+                                                            <td className='text-center'>
+                                                                <Image src={`${config.backend_api}/uploads/department/${data.photo}`} height={30} width={30} alt="profile" />
                                                             </td>
                                                             <td className='text-center'>
                                                                 <select
@@ -535,9 +564,10 @@ const DepartmentList = () => {
             {
                 addModal ? (
                     <div>
-                        <Modal isOpen={addModal} className="modal-md">
+                        <Modal isOpen={addModal} className="modal-lg">
                             <ModalBody>
                                 <div className='p-3'>
+                                    <pre>{JSON.stringify(formData, null, 2)}</pre>
                                     <div className='d-flex justify-content-between'>
                                         <h4 className='text-uppercase fw-bold mb-4'>Add Department</h4>
                                         <ImCross size="24px"
@@ -545,23 +575,60 @@ const DepartmentList = () => {
                                             style={{ cursor: "pointer", color: "red" }}
                                             onClick={toggleAddModal} />
                                     </div>
-                                    <form onSubmit={departmentFormSubmit}>
-                                        <label className='mb-3'>
-                                            <span className='fw-bold'>DEPARTMENT NAME</span>
-                                            <AiFillStar className='required' />
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handelInputChange}
-                                            placeholder='write department name'
-                                            className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`} />
-                                        <small className='validation-error'>
-                                            {
-                                                formData.errors?.name ? formData.errors?.name : null
-                                            }
-                                        </small>
+                                    <form onSubmit={departmentFormSubmit} encType='multiple/form-data'>
+                                        <div className='mb-4'>
+                                            <label className='mb-3'>
+                                                <span className='fw-bold'>DEPARTMENT NAME</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handelInputChange}
+                                                placeholder='write department name'
+                                                className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.name ? formData.errors?.name : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='mb-4'>
+                                            <label className='mb-3'>
+                                                <span className='fw-bold'>PHOTO</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                type="file"
+                                                name="photo"
+                                                onChange={handelAddPhotoChange}
+                                                className={`form-control ${formData.errors?.photo ? 'is-invalid' : null}`} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.photo ? formData.errors?.photo : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='mb-4'>
+                                            <label className='mb-3'>
+                                                <span className='fw-bold'>DESCRIPTION</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <textarea
+                                                rows="4"
+                                                type="text"
+                                                name="description"
+                                                value={formData.description}
+                                                onChange={handelInputChange}
+                                                placeholder='write department description'
+                                                className={`form-control ${formData.errors?.description ? 'is-invalid' : null}`} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.description ? formData.errors?.description : null
+                                                }
+                                            </small>
+                                        </div>
                                         {
                                             addLoading ?
                                                 <button disabled className='mt-3 fw-bold w-100 btn btn-primary'>submitting...</button> :
