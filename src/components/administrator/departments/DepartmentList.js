@@ -12,7 +12,7 @@ import Pagination from '@/helpers/pagination';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { errorHandler } from '@/helpers/errorHandler';
 import SortingArrow from '@/helpers/sorting/SortingArrow';
-import { CiSearch } from "react-icons/ci";
+import { CiGlass, CiSearch } from "react-icons/ci";
 import { MdOutlineRefresh } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +27,7 @@ import {
 import { VscDiffAdded } from 'react-icons/vsc';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import demoUser from '../../../assets/user.png'
 
 
 const DepartmentList = () => {
@@ -46,6 +47,7 @@ const DepartmentList = () => {
         name: ''
     })
     const [formData, setFormData] = useState({
+        id: '',
         name: '',
         description: '',
         photo: null,
@@ -201,6 +203,7 @@ const DepartmentList = () => {
     const toggleAddModal = () => {
         setAddModal(!addModal);
         setFormData({
+            id: '',
             name: '',
             photo: null,
             description: '',
@@ -248,6 +251,9 @@ const DepartmentList = () => {
             });
             if (response.data.status) {
                 setFormData({
+                    id: '',
+                    description: '',
+                    photo: null,
                     name: '',
                     errors: []
                 });
@@ -262,6 +268,85 @@ const DepartmentList = () => {
             setAddLoading(false);
         }
     }
+
+
+
+    // update dept
+
+    const [updateModal, setUpdateModal] = useState(false);
+    const [updatePhoto, setUpdatePhoto] = useState(null);
+    const toggleUpdateModal = (dept) => {
+        setUpdateModal(!updateModal);
+        setUpdatePhoto(null)
+        setFormData({
+            id: '',
+            name: '',
+            description: '',
+            photo: null,
+            errors: []
+        });
+        if (dept) {
+            const { id, name, description, photo } = dept;
+            setUpdatePhoto(photo)
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                id: id,
+                name: name || '',
+                description: description || '',
+                photo: photo || null
+            }));
+        }
+    };
+
+
+    const departmentUpdateFormSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            setAddLoading(true)
+            const data = new FormData();
+            data.append('photo', formData.photo);
+            data.append('name', formData.name);
+            data.append('description', formData.description);
+            console.log(data)
+            const response = await axios.post(`${config.api}/administrator/department/update/${formData.id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log(response)
+            if (response.data.status) {
+                setUpdateModal(!updateModal);
+                setFormData({
+                    id: '',
+                    name: '',
+                    description: '',
+                    photo: null,
+                    errors: []
+                });
+                await fetchData()
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            console.log(error)
+            return errorHandler({ error, toast, setFormData, formData })
+        }
+        finally {
+            setAddLoading(false);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     const customStyles = {
         control: (provided) => ({
@@ -506,7 +591,7 @@ const DepartmentList = () => {
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
                                                                     <button style={{ border: "0" }} onClick={() => deptDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                    <button style={{ border: "0" }} onClick={() => toggleUpdateModal(data)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
@@ -570,7 +655,6 @@ const DepartmentList = () => {
                         <Modal isOpen={addModal} className="modal-lg">
                             <ModalBody>
                                 <div className='p-3'>
-                                    <pre>{JSON.stringify(formData, null, 2)}</pre>
                                     <div className='d-flex justify-content-between'>
                                         <h4 className='text-uppercase fw-bold mb-4'>Add Department</h4>
                                         <ImCross size="24px"
@@ -578,7 +662,7 @@ const DepartmentList = () => {
                                             style={{ cursor: "pointer", color: "red" }}
                                             onClick={toggleAddModal} />
                                     </div>
-                                    <form onSubmit={departmentFormSubmit} encType='multiple/form-data'>
+                                    <form className='mt-4' onSubmit={departmentFormSubmit} encType='multiple/form-data'>
                                         <div className='mb-4'>
                                             <label className='mb-3'>
                                                 <span className='fw-bold'>DEPARTMENT NAME</span>
@@ -620,6 +704,112 @@ const DepartmentList = () => {
                                             </label>
                                             <textarea
                                                 rows="4"
+                                                type="text"
+                                                name="description"
+                                                value={formData.description}
+                                                onChange={handelInputChange}
+                                                placeholder='write department description'
+                                                className={`form-control ${formData.errors?.description ? 'is-invalid' : null}`} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.description ? formData.errors?.description : null
+                                                }
+                                            </small>
+                                        </div>
+                                        {
+                                            addLoading ?
+                                                <button disabled className='mt-3 fw-bold w-100 btn btn-primary'>submitting...</button> :
+                                                <input type="submit" value="submit" className='mt-3 fw-bold w-100 btn btn-primary' />
+                                        }
+                                    </form>
+                                </div>
+                            </ModalBody>
+                        </Modal>
+                    </div>
+                ) : null
+            }
+            {
+                updateModal ? (
+                    <div>
+                        <Modal isOpen={updateModal} className="modal-lg">
+                            <ModalBody>
+                                <div className='p-3'>
+                                    {/* <pre>{JSON.stringify(type(formData.photo), null, 2)}</pre> */}
+                                    {/* <pre>{typeof formData.photo}</pre> */}
+                                    <div className='d-flex justify-content-between'>
+                                        <h4 className='text-uppercase fw-bold mb-4'>update Department</h4>
+                                        <ImCross size="24px"
+                                            className='pt-2'
+                                            style={{ cursor: "pointer", color: "red" }}
+                                            onClick={toggleUpdateModal} />
+                                    </div>
+                                    <form className='mt-4' onSubmit={departmentUpdateFormSubmit} encType='multiple/form-data'>
+                                        <div className='mb-4'>
+                                            <label className='mb-3'>
+                                                <span className='fw-bold'>UPDATE PHOTO</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <div>
+                                                {
+                                                    formData.photo ?
+                                                        <div>
+                                                            {typeof formData.photo === 'object' ?
+                                                                <Image
+                                                                    style={{ borderRadius: "6px" }}
+                                                                    src={formData.photo ? URL.createObjectURL(formData.photo) : null}
+                                                                    alt={formData.name}
+                                                                    width={150}
+                                                                    height={150}
+                                                                /> : <Image
+                                                                    style={{ borderRadius: "6px" }}
+                                                                    height={150} width={150}
+                                                                    src={`${config.backend_api}/uploads/department/${formData.photo}`}
+                                                                    alt={formData.name} />
+
+                                                            }
+                                                        </div> :
+                                                        <Image style={{ borderRadius: "6px" }}
+                                                            height={150} width={150}
+                                                            src={demoUser}
+                                                            alt={formData.name} />
+                                                }
+                                            </div>
+                                            <input
+                                                type="file"
+                                                name="photo"
+                                                onChange={handelAddPhotoChange}
+                                                className={`mt-3 form-control ${formData.errors?.photo ? 'is-invalid' : null}`} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.photo ? formData.errors?.photo : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='mb-4'>
+                                            <label className='mb-3'>
+                                                <span className='fw-bold'>UPDATE DEPARTMENT NAME</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handelInputChange}
+                                                placeholder='write department name'
+                                                className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`} />
+                                            <small className='validation-error'>
+                                                {
+                                                    formData.errors?.name ? formData.errors?.name : null
+                                                }
+                                            </small>
+                                        </div>
+                                        <div className='mb-4'>
+                                            <label className='mb-3'>
+                                                <span className='fw-bold'>UPDATE DESCRIPTION</span>
+                                                <AiFillStar className='required' />
+                                            </label>
+                                            <textarea
+                                                rows="16"
                                                 type="text"
                                                 name="description"
                                                 value={formData.description}
