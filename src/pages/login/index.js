@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import Link from 'next/link';
 import styles from '@/styles/login/login.module.css';
@@ -12,6 +12,7 @@ import Cookies from 'js-cookie';
 import { ROLE } from '@/constant';
 import { ImCross } from "react-icons/im"
 import { errorHandler } from '@/helpers/errorHandler';
+import Aos from 'aos';
 
 const Login = () => {
     const router = useRouter();
@@ -104,10 +105,13 @@ const Login = () => {
             password: user.password
         });
     };
+    useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
     return (
         <div className={styles.body}>
             <div className={styles.main}>
-                <div className={styles.box}>
+                <div className={styles.box} data-aos="zoom-in">
                     <h4 className={styles.heading}>Login</h4>
                     {
                         errorMessage ?
