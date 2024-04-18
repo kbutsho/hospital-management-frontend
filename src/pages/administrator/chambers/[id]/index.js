@@ -9,6 +9,7 @@ import { config } from '@/config';
 import { errorHandler } from '@/helpers/errorHandler';
 import { ImCross } from 'react-icons/im';
 import { Table } from 'react-bootstrap';
+import Image from 'next/image';
 
 const ChamberDetails = () => {
     const router = useRouter();
@@ -68,14 +69,37 @@ const ChamberDetails = () => {
 
         return Object.entries(doctorSchedules).map(([doctorId, schedules]) => (
             <div key={doctorId} className="col-md-6">
-                <div className="card">
+                <div className="card p-2">
                     <div className="card-body">
-                        <h5 className="card-title fw-bold btn btn-primary w-100 text-white">{schedules[Object.keys(schedules)[0]][0].doctor.name}</h5>
+                        <div className="col-6">
+                            {
+                                schedules[Object.keys(schedules)[0]][0].doctor.photo ?
+                                    <Image
+                                        style={{ borderRadius: "2px" }}
+                                        height={80} width={80}
+                                        layout='responsive'
+                                        src={`${config.backend_api}/uploads/doctorProfile/${schedules[Object.keys(schedules)[0]][0].doctor.photo}`}
+                                        alt="image" /> :
+                                    <Image style={{ borderRadius: "6px" }}
+                                        height={80} width={80}
+                                        layout='responsive'
+                                        src={demoUser}
+                                        alt="image" />
+                            }
+                        </div>
+                        <h5 className="card-title fw-bold btn btn-primary w-100 mt-3 mb-3 text-white" style={{ borderRadius: "2px" }}>
+                            {schedules[Object.keys(schedules)[0]][0].doctor.name}</h5>
                         <Table bordered striped>
                             <tbody>
                                 {Object.entries(schedules).map(([day, timings]) => (
                                     <tr key={day}>
                                         <td><strong className='text-capitalize'>{day}</strong> </td>
+                                        {/* <td>{timings?.map((time, index) => (
+                                            <div key={index}>
+                                                {`${convertTime(time.opening_time)} - ${convertTime(time.closing_time)}`}
+                                                {index !== timings.length - 1 && '\n'}
+                                            </div>
+                                        ))}</td> */}
                                         <td>{timings.map((time) => `${convertTime(time.opening_time)} - ${convertTime(time.closing_time)}`).join(', ')}</td>
                                     </tr>
                                 ))}
@@ -98,7 +122,7 @@ const ChamberDetails = () => {
             <Head>
                 <title>chambers details</title>
             </Head>
-            <Breadcrumb name={data?.room} />
+            {data ? <Breadcrumb name={data?.room} /> : null}
             <div className='px-2 py-2' style={{ minHeight: "70vh" }}>
                 {
                     loading ? null : (
@@ -115,9 +139,14 @@ const ChamberDetails = () => {
                         ) : null
                     )
                 }
-                <div className='row'>
-                    {renderDoctorSchedules()}
-                </div>
+                {
+                    data ? <div>
+                        {/* <h4 className='fw-bold mb-3 text-uppercase'>Doctors Schedule</h4> */}
+                        <div className='row'>
+                            {renderDoctorSchedules()}
+                        </div>
+                    </div> : null
+                }
             </div>
 
         </div>

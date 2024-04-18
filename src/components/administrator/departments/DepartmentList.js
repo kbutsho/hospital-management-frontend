@@ -26,6 +26,7 @@ import {
 } from '@/redux/slice/administrator/departmentSlice';
 import { VscDiffAdded } from 'react-icons/vsc';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 
 const DepartmentList = () => {
@@ -281,8 +282,10 @@ const DepartmentList = () => {
         [STATUS.PENDING]: 'red',
         [STATUS.DISABLE]: 'grey'
     };
-
-
+    const router = useRouter()
+    const deptDetails = (id) => {
+        router.push(`/administrator/departments/${id}`);
+    }
     return (
         <div className={`py-3 ${styles.listArea}`}>
             {
@@ -502,7 +505,7 @@ const DepartmentList = () => {
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
-                                                                    <button style={{ border: "0" }} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button style={{ border: "0" }} onClick={() => deptDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>

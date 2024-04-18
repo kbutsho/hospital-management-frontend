@@ -24,3 +24,16 @@
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 5px 1px;
 }
+
+.loadingArea {
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 2px 1px;
+    margin-top: 16px;
+    border-radius: 4px;
+    color: red;
+    font-weight: bold;
+
+}

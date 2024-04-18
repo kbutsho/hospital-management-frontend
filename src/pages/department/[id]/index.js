@@ -50,9 +50,9 @@ const Details = () => {
             {
                 doctor && details ? (
                     <div>
-                        <div>
+                        <div data-aos="fade-up">
                             <h2 className='fw-bold text-uppercase text-success mb-3'>{details?.name}</h2>
-                            <p>{details?.description}</p>
+                            <p style={{ textAlign: "justify" }}>{details?.description}</p>
                             <h4 className='fw-bold text-uppercase mt-5'>our {details?.name} SPECIALIST</h4>
                         </div>
                         <div className="row mt-4">
