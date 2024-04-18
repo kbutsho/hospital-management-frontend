@@ -57,7 +57,7 @@ const Department = () => {
                                 <h5 className="card-title fw-bold text-success mt-4 text-uppercase">{dept.name}</h5>
                                 <div className='mb-3' style={{ minHeight: "80px" }}>
                                     <small className="card-text">
-                                        {dept?.description.length > 150 ? `${dept.description.substring(0, 150)}...` : dept.description}
+                                        {dept?.description.length > 155 ? `${dept.description.substring(0, 155)}...` : dept.description}
                                     </small>
                                 </div>
 

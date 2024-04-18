@@ -14,6 +14,7 @@ import ReactToPrint from 'react-to-print';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
+import Aos from 'aos';
 
 
 const PatientSerial = ({ data, errorMessage }) => {
@@ -195,6 +196,9 @@ const PatientSerial = ({ data, errorMessage }) => {
         return 'unavailable-date';
     };
     const info = useSelector(state => state.site_info.data);
+    useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
     return (
         <div>
             <Head>
@@ -293,7 +297,7 @@ const PatientSerial = ({ data, errorMessage }) => {
                 :
                 <div className={styles.body}>
                     <div className={styles.main}>
-                        <div className={styles.box}>
+                        <div className={styles.box} data-aos="zoom-in">
                             <div className='d-flex justify-content-between'>
                                 <h4 className={styles.heading}>take a patient serial</h4>
                             </div>
