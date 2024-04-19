@@ -515,8 +515,7 @@ const ChamberList = () => {
                                                             <td >
                                                                 <div className='d-flex justify-content-center'>
                                                                     <button onClick={() => chamberDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <Link href="/"><AiFillEdit className='mb-1' /></Link>
-                                                                    <button className='btn btn-success btn-sm mx-1'></button>
+                                                                    <Link className='btn btn-success btn-sm mx-1' href="/"><AiFillEdit className='mb-1' /></Link>
                                                                     <button onClick={() => toggleDeleteModal(data.id, data.room)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>

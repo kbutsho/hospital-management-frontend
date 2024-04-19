@@ -239,9 +239,20 @@ const AdministratorProfile = () => {
                                                     <Image src={`${config.backend_api}/uploads/adminProfile/${data.photo}`} height={186} width={186} alt="profile" /> :
                                                     <Image src={demoUser} height={186} width={186} alt="profile" />
                                             }
-                                            <button onClick={togglePhotoAddModal} className='ms-3 me-2 btn btn-primary btn-sm'><MdModeEdit /></button>
+                                            <button
+                                                style={{ borderRadius: "2px" }}
+                                                onClick={togglePhotoAddModal}
+                                                className='ms-3 me-2 btn btn-primary btn-sm'>
+                                                <MdModeEdit />
+                                            </button>
                                             {
-                                                data.photo ? <button onClick={togglePhotoDeleteModal} className='btn btn-danger btn-sm'><MdDelete /></button> : null
+                                                data.photo ?
+                                                    <button
+                                                        style={{ borderRadius: "2px" }}
+                                                        onClick={togglePhotoDeleteModal}
+                                                        className='btn btn-danger btn-sm'>
+                                                        <MdDelete />
+                                                    </button> : null
                                             }
 
                                         </div>
@@ -252,6 +263,7 @@ const AdministratorProfile = () => {
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
+                                                style={{ borderRadius: "2px" }}
                                                 name="name"
                                                 onChange={handelInputChange}
                                                 defaultValue={data?.name}
@@ -270,6 +282,7 @@ const AdministratorProfile = () => {
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
+                                                style={{ borderRadius: "2px" }}
                                                 name="phone"
                                                 onChange={handelInputChange}
                                                 defaultValue={data?.phone}
@@ -291,6 +304,7 @@ const AdministratorProfile = () => {
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
+                                                style={{ borderRadius: "2px" }}
                                                 name="email"
                                                 onChange={handelInputChange}
                                                 defaultValue={data?.email}
@@ -309,6 +323,7 @@ const AdministratorProfile = () => {
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
+                                                style={{ borderRadius: "2px" }}
                                                 name="address"
                                                 onChange={handelInputChange}
                                                 defaultValue={data?.address}
@@ -327,6 +342,7 @@ const AdministratorProfile = () => {
                                                 <AiFillStar className='required' />
                                             </label>
                                             <input
+                                                style={{ borderRadius: "2px" }}
                                                 name="age"
                                                 onChange={handelInputChange}
                                                 defaultValue={data?.age}
@@ -345,6 +361,7 @@ const AdministratorProfile = () => {
                                                 <AiFillStar className='required' />
                                             </label>
                                             <select
+                                                style={{ borderRadius: "2px" }}
                                                 name="gender"
                                                 onChange={handelInputChange}
                                                 value={formData.gender}
@@ -363,8 +380,18 @@ const AdministratorProfile = () => {
                                     </div>
                                 </div>
                                 <div className='d-flex justify-content-end'>
-                                    <button onClick={toggleChangePasswordModal} className='btn btn-success btn-sm me-2 fw-bold'>change password</button>
-                                    <button className='btn btn-primary px-4 fw-bold' onClick={formSubmit}>update</button>
+                                    <button
+                                        style={{ borderRadius: "2px" }}
+                                        onClick={toggleChangePasswordModal}
+                                        className='btn btn-success btn-sm me-2 fw-bold'>
+                                        change password
+                                    </button>
+                                    <button
+                                        style={{ borderRadius: "2px" }}
+                                        className='btn btn-primary px-4 fw-bold'
+                                        onClick={formSubmit}>
+                                        update
+                                    </button>
                                 </div>
                             </div> :
                             <div className={styles.notFound}>
@@ -391,7 +418,12 @@ const AdministratorProfile = () => {
                                                     <span className='fw-bold'>upload photo</span>
                                                     <AiFillStar className='required' />
                                                 </label>
-                                                <input type="file" name="photo" className='form-control' onChange={handlePhotoChange} />
+                                                <input
+                                                    type="file"
+                                                    name="photo"
+                                                    className='form-control'
+                                                    style={{ borderRadius: "2px" }}
+                                                    onChange={handlePhotoChange} />
                                             </div>
                                             <small className='validation-error'>
                                                 {
@@ -400,8 +432,17 @@ const AdministratorProfile = () => {
                                             </small>
                                             {
                                                 addLoading ?
-                                                    <button disabled className='mt-4 fw-bold w-100 btn btn-primary'>submitting...</button> :
-                                                    <input type="submit" value="submit" className='mt-4 fw-bold w-100 btn btn-primary' />
+                                                    <button
+                                                        disabled
+                                                        style={{ borderRadius: "2px" }}
+                                                        className='mt-4 fw-bold w-100 btn btn-primary'>
+                                                        submitting...
+                                                    </button> :
+                                                    <input
+                                                        type="submit"
+                                                        value="submit"
+                                                        style={{ borderRadius: "2px" }}
+                                                        className='mt-4 fw-bold w-100 btn btn-primary' />
                                             }
                                         </form>
                                     </div>
@@ -421,8 +462,18 @@ const AdministratorProfile = () => {
                                 </ModalBody>
                                 <ModalFooter>
                                     <div className='d-flex'>
-                                        <button onClick={togglePhotoDeleteModal} className='btn btn-primary btn-sm fw-bold me-2'>close</button>
-                                        <button onClick={handelDeletePhoto} className='btn btn-danger btn-sm fw-bold'>delete</button>
+                                        <button
+                                            style={{ borderRadius: "2px" }}
+                                            onClick={togglePhotoDeleteModal}
+                                            className='btn btn-primary btn-sm fw-bold me-2'>
+                                            close
+                                        </button>
+                                        <button
+                                            style={{ borderRadius: "2px" }}
+                                            onClick={handelDeletePhoto}
+                                            className='btn btn-danger btn-sm fw-bold'>
+                                            delete
+                                        </button>
                                     </div>
                                 </ModalFooter>
                             </Modal>
