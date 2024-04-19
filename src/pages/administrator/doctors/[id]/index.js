@@ -1,31 +1,35 @@
-import Breadcrumb from '@/components/breadcrumb';
-import DoctorLayout from '@/layouts/doctor/DoctorLayout';
-import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
+import Breadcrumb from "@/components/breadcrumb";
+import { errorHandler } from "@/helpers/errorHandler";
+import AdministratorLayout from "@/layouts/administrator/AdministratorLayout";
 import styles from "@/styles/administrator/List.module.css"
-import { FadeLoader } from 'react-spinners';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { config } from '@/config';
-import { errorHandler } from '@/helpers/errorHandler';
-import { toast } from 'react-toastify';
-import { AiFillStar } from 'react-icons/ai';
-import Image from 'next/image';
-import demoUser from '../../../assets/user.png'
-import { MdDelete, MdModeEdit } from 'react-icons/md';
-import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { ImCross } from 'react-icons/im';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+import axios from "axios";
+import Cookies from "js-cookie";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { ImCross } from "react-icons/im";
+import { toast } from "react-toastify";
+import { config } from "@/config";
+import { FadeLoader } from "react-spinners";
+import Image from "next/image";
+import demoUser from '../../../../assets/user.png'
+import { MdDelete, MdModeEdit } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
+import { AiFillStar } from "react-icons/ai";
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-
-const DoctorProfile = () => {
+const DoctorDetails = () => {
+    const router = useRouter();
+    const { id } = router.query
     const token = Cookies.get('token');
-    const [loading, setLoading] = useState(true)
-    const [data, setData] = useState(null);
+
+    const [loading, setLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [data, setData] = useState(null)
     const [bioData, setBioData] = useState('')
+
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -37,7 +41,7 @@ const DoctorProfile = () => {
         department_id: '',
         bio: '',
         designation: '',
-        old_password: '',
+        // old_password: '',
         new_password: '',
         confirm_password: '',
         photo: null,
@@ -54,32 +58,38 @@ const DoctorProfile = () => {
             return errorHandler({ error, toast })
         }
     }
-    const fetchData = async () => {
+
+    const fetchData = async (id) => {
         try {
-            setLoading(true);
-            const res = await axios.get(`${config.api}/doctor/profile`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            setLoading(false)
-            setData(res.data.data)
-            setFormData(res.data.data)
-            const startIndex = res.data.data.bio.indexOf('{"bioData":"') + '{"bioData":"'.length;
-            const endIndex = res.data.data.bio.lastIndexOf('"}');
-            const extractedContent = res.data.data.bio.substring(startIndex, endIndex);
-            setBioData(extractedContent)
-            console.log(res)
+            if (id) {
+                setErrorMessage(null)
+                setLoading(true)
+                const res = await axios.get(`${config.api}/administrator/doctor/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                setLoading(false)
+                setData(res.data.data)
+                setFormData(res.data.data)
+                const startIndex = res.data.data.bio.indexOf('{"bioData":"') + '{"bioData":"'.length;
+                const endIndex = res.data.data.bio.lastIndexOf('"}');
+                const extractedContent = res.data.data.bio.substring(startIndex, endIndex);
+                setBioData(extractedContent)
+            }
         } catch (error) {
             setLoading(false)
-            console.log(error)
-            return errorHandler({ error, toast })
+            errorHandler({ error, toast, setErrorMessage })
         }
     }
     useEffect(() => {
-        fetchData()
         fetchDepartment()
-    }, [])
+        fetchData(id)
+    }, [id])
+
+    const handelErrorMessage = () => {
+        setErrorMessage(null)
+    }
 
     // update profile
     const handelInputChange = (event) => {
@@ -97,38 +107,36 @@ const DoctorProfile = () => {
     const handelBioChange = (value) => {
         setBioData(value)
     }
-    const formSubmit = async () => {
+    const formSubmit = async (id) => {
         try {
-            setLoading(true)
-            const data = {
-                'name': formData.name.toUpperCase(),
-                'email': formData.email,
-                'phone': formData.phone,
-                'address': formData.address,
-                'age': formData.age,
-                'gender': formData.gender,
-                'bmdc_id': formData.bmdc_id,
-                'department_id': formData.department_id,
-                'bio': JSON.stringify({ bioData }),
-                'designation': formData.designation,
-            }
-            const res = await axios.post(`${config.api}/doctor/profile/update`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            if (id) {
+                setLoading(true)
+                const data = {
+                    'name': formData.name.toUpperCase(),
+                    'email': formData.email,
+                    'phone': formData.phone,
+                    'address': formData.address,
+                    'age': formData.age,
+                    'gender': formData.gender,
+                    'bmdc_id': formData.bmdc_id,
+                    'department_id': formData.department_id,
+                    'bio': JSON.stringify({ bioData }),
+                    'designation': formData.designation,
                 }
-            });
-            setLoading(false)
-            fetchData();
-            toast.success(res.data.message)
+                const res = await axios.post(`${config.api}/administrator/doctor/profile/update/${id}`, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setLoading(false)
+                fetchData(id);
+                toast.success(res.data.message)
+            }
 
         } catch (error) {
             setLoading(false)
             console.log(error.response)
             if (error.response.data.error) {
-                // setFormData(prevState => ({
-                //     ...prevState,
-                //     errors: error.response.data.error
-                // }));
                 setFormData({
                     ...data,
                     errors: error.response.data.error
@@ -137,6 +145,10 @@ const DoctorProfile = () => {
             return errorHandler({ error, toast })
         }
     }
+
+
+
+
 
 
     // update photo
@@ -152,21 +164,24 @@ const DoctorProfile = () => {
             [name]: name === 'photo' ? files[0] : value
         }));
     };
+
     const handlePhotoSubmit = async (e) => {
         e.preventDefault();
         const formDataToSend = new FormData();
         formDataToSend.append('photo', formData.photo);
         try {
-            setAddLoading(true)
-            const res = await axios.post(`${config.api}/doctor/profile/photo/update`, formDataToSend, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            setAddLoading(false)
-            fetchData();
-            togglePhotoAddModal()
-            toast.success(res.data.message)
+            if (id) {
+                setAddLoading(true)
+                const res = await axios.post(`${config.api}/administrator/doctor/profile/photo/update/${id}`, formDataToSend, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                setAddLoading(false)
+                fetchData(id);
+                togglePhotoAddModal()
+                toast.success(res.data.message)
+            }
         } catch (error) {
             setAddLoading(false)
             console.log(error)
@@ -187,22 +202,25 @@ const DoctorProfile = () => {
     }
     const handelDeletePhoto = async () => {
         try {
-            setAddLoading(true);
-            const res = await axios.get(`${config.api}/doctor/profile/photo/delete`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            fetchData()
-            console.log(res)
-            setAddLoading(false)
-            toast.success(res.data.message)
+            if (id) {
+                setAddLoading(true);
+                const res = await axios.get(`${config.api}/administrator/doctor/profile/photo/delete/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                fetchData(id)
+                console.log(res)
+                setAddLoading(false)
+                toast.success(res.data.message)
+            }
         } catch (error) {
             console.log(error)
             setAddLoading(false)
             return errorHandler({ error, toast })
         }
     }
+
 
     // change password
     const [changePasswordModal, setChangePasswordModal] = useState(false)
@@ -226,41 +244,67 @@ const DoctorProfile = () => {
     }
     const submitPasswordChange = async () => {
         try {
-            setAddLoading(true)
-            const data = {
-                'old_password': formData.old_password,
-                'new_password': formData.new_password,
-                'confirm_password': formData.confirm_password
-            }
-            const res = await axios.post(`${config.api}/doctor/profile/change-password`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            if (id) {
+                setAddLoading(true)
+                const data = {
+                    'new_password': formData.new_password,
+                    'confirm_password': formData.confirm_password
                 }
-            })
-            setAddLoading(false)
-            toast.success(res.data.message)
-            setChangePasswordModal(!changePasswordModal)
+                const res = await axios.post(`${config.api}/administrator/doctor/profile/change-password/${id}`, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                setAddLoading(false)
+                toast.success(res.data.message)
+                setChangePasswordModal(!changePasswordModal)
+            }
         } catch (error) {
             console.log(error)
             setAddLoading(false);
             return errorHandler({ error, toast, setFormData, formData })
         }
     }
+
+
+
+
+
+
+
     return (
         <div>
             <Head>
-                <title>profile</title>
+                <title>doctor details</title>
             </Head>
-            <Breadcrumb />
-            <div className={`row py-3 px-2 ${styles.listArea}`}>
+            {
+                data ? <Breadcrumb name={data?.name} /> : <span className="fw-bold"></span>
+            }
+            <div className={`py-3 px-2 ${styles.listArea}`}>
+                {
+                    loading ? null : (
+                        errorMessage ? (
+                            <div className="alert alert-danger fw-bold">
+                                <div className='d-flex justify-content-between'>
+                                    {errorMessage}
+                                    <ImCross size="18px"
+                                        className='pt-1'
+                                        style={{ cursor: "pointer" }}
+                                        onClick={handelErrorMessage} />
+                                </div>
+                            </div>
+                        ) : null
+                    )
+                }
                 {
                     loading ? (
-                        <div className={styles.loadingArea}>
+                        <div className={styles.loadingArea} style={{ minHeight: "70vh", marginTop: "0px" }}>
                             <FadeLoader color='#d3d3d3' size="16" />
                         </div>
                     ) : (
                         data ?
                             <div>
+                                {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
                                 <div className='row'>
                                     <div className="col-md-6">
                                         <div className='d-flex align-items-end'>
@@ -270,11 +314,27 @@ const DoctorProfile = () => {
                                                     <Image src={demoUser} height={186} width={186} alt="profile" />
                                             }
                                             <div>
-                                                <button onClick={togglePhotoAddModal} className='mx-2 btn btn-primary btn-sm'><MdModeEdit /></button>
+                                                <button
+                                                    style={{ borderRadius: "2px" }}
+                                                    onClick={togglePhotoAddModal}
+                                                    className='mx-2 btn btn-primary btn-sm'>
+                                                    <MdModeEdit />
+                                                </button>
                                                 {
-                                                    data.photo ? <button onClick={togglePhotoDeleteModal} className='btn btn-danger btn-sm'><MdDelete /></button> : null
+                                                    data.photo ?
+                                                        <button
+                                                            style={{ borderRadius: "2px" }}
+                                                            onClick={togglePhotoDeleteModal}
+                                                            className='btn btn-danger btn-sm'>
+                                                            <MdDelete />
+                                                        </button> : null
                                                 }
-                                                <button onClick={toggleChangePasswordModal} className='ms-2 btn btn-success btn-sm'><RiLockPasswordLine /></button>
+                                                <button
+                                                    style={{ borderRadius: "2px" }}
+                                                    onClick={toggleChangePasswordModal}
+                                                    className='ms-2 btn btn-success btn-sm'>
+                                                    <RiLockPasswordLine />
+                                                </button>
                                             </div>
 
                                         </div>
@@ -314,7 +374,6 @@ const DoctorProfile = () => {
                                                 }
                                             </small>
                                         </div>
-                                        {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
                                         <div className='my-3'>
                                             <label className='fw-bold my-2'>
                                                 <span>Department</span>
@@ -452,12 +511,15 @@ const DoctorProfile = () => {
                                 </div>
 
                                 <div className='d-flex justify-content-end my-3'>
-                                    <button className='btn btn-primary w-100 fw-bold' onClick={formSubmit}>update</button>
+                                    <button
+                                        style={{ borderRadius: "2px" }}
+                                        className='btn btn-primary w-100 fw-bold'
+                                        onClick={() => formSubmit(id)}>
+                                        update
+                                    </button>
                                 </div>
-                            </div> :
-                            <div className={styles.notFound}>
-                                <h6 className='fw-bold'>something went wrong!</h6>
                             </div>
+                            : null
                     )
                 }
                 {
@@ -532,24 +594,6 @@ const DoctorProfile = () => {
                                         </div>
                                         <div className='mb-3'>
                                             <label className='mb-2'>
-                                                <span className='fw-bold'>old password</span>
-                                                <AiFillStar className='required' />
-                                            </label>
-                                            <input
-                                                type="password"
-                                                name="old_password"
-                                                className={`form-control ${formData?.errors?.old_password ? 'is-invalid' : null}`}
-                                                placeholder='enter your old password'
-                                                onChange={handlePasswordUpdateChange} />
-                                            <small className='validation-error'>
-                                                {
-                                                    formData.errors?.old_password ? formData.errors?.old_password : null
-                                                }
-                                            </small>
-                                        </div>
-
-                                        <div className='mb-3'>
-                                            <label className='mb-2'>
                                                 <span className='fw-bold'>new password</span>
                                                 <AiFillStar className='required' />
                                             </label>
@@ -557,7 +601,7 @@ const DoctorProfile = () => {
                                                 type="password"
                                                 name="new_password"
                                                 className={`form-control ${formData?.errors?.new_password ? 'is-invalid' : null}`}
-                                                placeholder='enter your new password'
+                                                placeholder='enter new password'
                                                 onChange={handlePasswordUpdateChange} />
                                             <small className='validation-error'>
                                                 {
@@ -573,7 +617,7 @@ const DoctorProfile = () => {
                                             <input
                                                 type="password"
                                                 name="confirm_password"
-                                                placeholder='enter your confirm password'
+                                                placeholder='enter confirm password'
                                                 className={`form-control ${formData?.errors?.confirm_password ? 'is-invalid' : null}`}
                                                 onChange={handlePasswordUpdateChange} />
                                             <small className='validation-error'>
@@ -599,7 +643,7 @@ const DoctorProfile = () => {
     );
 };
 
-export default DoctorProfile;
-DoctorProfile.getLayout = function getLayout(page) {
-    return <DoctorLayout>{page}</DoctorLayout>;
+export default DoctorDetails;
+DoctorDetails.getLayout = function getLayout(page) {
+    return <AdministratorLayout>{page}</AdministratorLayout>;
 };

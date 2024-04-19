@@ -20,6 +20,7 @@ import { fetchedItemsCount, removeChamber, storeChamber, totalItemsCount, update
 import Select from 'react-select';
 import { VscDiffAdded } from "react-icons/vsc";
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const ChamberList = () => {
     const router = useRouter();

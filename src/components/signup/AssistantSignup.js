@@ -12,7 +12,6 @@ import { BeatLoader } from 'react-spinners';
 import { ImCross } from "react-icons/im"
 import { errorHandler } from '@/helpers/errorHandler';
 import Select from 'react-select';
-import Aos from 'aos';
 
 
 const AssistantSignup = ({ activeComponent, handleTabClick }) => {
@@ -117,13 +116,10 @@ const AssistantSignup = ({ activeComponent, handleTabClick }) => {
             "textTransform": "uppercase"
         }),
     };
-    useEffect(() => {
-        Aos.init({ duration: 1000 });
-    }, []);
     return (
         <div className={styles.body}>
             <div className={styles.main}>
-                <div className={styles.box} data-aos="zoom-in">
+                <div className={styles.box}>
                     <Tabs activeComponent={activeComponent} handleTabClick={handleTabClick} />
                     <h4 className={styles.heading}>assistant signup</h4>
                     {
