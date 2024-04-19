@@ -224,12 +224,14 @@ const ChamberList = () => {
     const [addModal, setAddModal] = useState(false);
     const [addLoading, setAddLoading] = useState(false);
     const [formData, setFormData] = useState({
+        id: '',
         room: '',
         errors: []
     })
     const toggleAddModal = () => {
         setAddModal(!addModal);
         setFormData({
+            id: '',
             room: '',
             errors: []
         })
@@ -258,6 +260,7 @@ const ChamberList = () => {
             });
             if (response.data.status) {
                 setFormData({
+                    id: '',
                     room: '',
                     errors: []
                 });
@@ -275,6 +278,60 @@ const ChamberList = () => {
     const chamberDetails = (id) => {
         router.push(`/administrator/chambers/${id}`);
     }
+
+
+
+
+
+
+
+
+    const [updateModal, setUpdateModal] = useState(false)
+    const toggleUpdateModal = (chamber) => {
+        setUpdateModal(!updateModal)
+        setFormData({
+            id: '',
+            room: '',
+            errors: []
+        });
+        if (chamber) {
+            const { id, room } = chamber
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                id: id,
+                room: room
+            }));
+        }
+    }
+
+    const chamberUpdateFormSubmit = async () => {
+        try {
+            setAddLoading(true);
+            const data = {
+                room: formData.room
+            }
+            const response = await axios.post(`${config.api}/administrator/chamber/update/${formData.id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setAddLoading(false)
+            console.log(response)
+            setUpdateModal(!updateModal);
+            setFormData({
+                id: '',
+                room: '',
+                errors: []
+            });
+            await fetchData()
+            toast.success(response.data.message)
+        } catch (error) {
+            setAddLoading(false)
+            console.log(error)
+            errorHandler({ error, toast, setFormData, formData })
+        }
+    }
+
 
     const customStyles = {
         control: (provided) => ({
@@ -295,6 +352,8 @@ const ChamberList = () => {
         [STATUS.PENDING]: 'red',
         [STATUS.DISABLE]: 'grey'
     };
+
+
 
 
     return (
@@ -515,7 +574,7 @@ const ChamberList = () => {
                                                             <td >
                                                                 <div className='d-flex justify-content-center'>
                                                                     <button onClick={() => chamberDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <Link className='btn btn-success btn-sm mx-1' href="/"><AiFillEdit className='mb-1' /></Link>
+                                                                    <button onClick={() => toggleUpdateModal(data)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button onClick={() => toggleDeleteModal(data.id, data.room)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
@@ -607,6 +666,50 @@ const ChamberList = () => {
                                                 <input type="submit" value="submit" className='mt-3 fw-bold w-100 btn btn-primary' />
                                         }
                                     </form>
+                                </div>
+                            </ModalBody>
+                        </Modal>
+                    </div>
+                ) : null
+            }
+            {
+                updateModal ? (
+                    <div>
+                        <Modal isOpen={updateModal} className="modal-md">
+                            <ModalBody>
+                                <div className='p-3'>
+                                    <div className='d-flex justify-content-between'>
+                                        <h4 className='text-uppercase fw-bold mb-4'>update chamber</h4>
+                                        <ImCross size="24px"
+                                            className='pt-2'
+                                            style={{ cursor: "pointer", color: "red" }}
+                                            onClick={toggleUpdateModal} />
+                                    </div>
+                                    <div>
+                                        <label className='mb-3'>
+                                            <span className='fw-bold'>ROOM NUMBER</span>
+                                            <AiFillStar className='required' />
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="room"
+                                            value={formData.room}
+                                            onChange={handelInputChange}
+                                            placeholder='write room number'
+                                            className={`form-control ${formData.errors?.room ? 'is-invalid' : null}`} />
+                                        <small className='validation-error'>
+                                            {
+                                                formData.errors?.room ? formData.errors?.room : null
+                                            }
+                                        </small>
+                                        {
+                                            addLoading ?
+                                                <button disabled className='mt-3 fw-bold w-100 btn btn-primary'>submitting...</button> :
+                                                <button
+                                                    onClick={chamberUpdateFormSubmit}
+                                                    className='mt-3 fw-bold w-100 btn btn-primary'>submit</button>
+                                        }
+                                    </div>
                                 </div>
                             </ModalBody>
                         </Modal>
