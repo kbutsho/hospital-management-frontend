@@ -33,7 +33,7 @@ const Department = () => {
         router.push(`department/${id}`)
     }
     return (
-        <div className="container py-5" style={{ minHeight: '100vh' }}>
+        <div className="container py-4" style={{ minHeight: '100vh', marginTop: "100px" }}>
             <div className='mb-4 d-flex justify-content-between'>
                 <h2 className="fw-bold text-uppercase text-success">Departments</h2>
             </div>

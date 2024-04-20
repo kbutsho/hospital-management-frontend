@@ -4,7 +4,7 @@ import React from 'react';
 
 const ContactPage = () => {
     return (
-        <div>
+        <div style={{ marginTop: "100px" }}>
             <Contact />
         </div>
     );

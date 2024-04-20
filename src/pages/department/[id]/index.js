@@ -46,7 +46,7 @@ const Details = () => {
         router.push(`/doctors/${id}`)
     }
     return (
-        <div className='container py-5' style={{ minHeight: "100vh" }}>
+        <div className='container py-5' style={{ minHeight: "100vh", marginTop: "80px" }}>
             {
                 doctor && details ? (
                     <div>

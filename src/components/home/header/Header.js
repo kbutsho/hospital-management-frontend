@@ -9,7 +9,7 @@ import Carousel from 'react-bootstrap/Carousel';
 const Header = () => {
     return (
         // pb-4
-        <div className="container py-4" style={{ marginTop: "65px" }}>
+        <div className="container pb-4" style={{ marginTop: "100px" }}>
             <Carousel controls={false} indicators interval={2500} pause={false}>
                 <Carousel.Item>
                     <Image

@@ -29,7 +29,7 @@ const appointment = () => {
         fetchDoctorDetails()
     }, [id])
     return (
-        <div className='container py-5' style={{ minHeight: "70vh" }}>
+        <div className='container py-5' style={{ minHeight: "70vh", marginTop: "90px" }}>
             {
                 details ? <div className={`p-5 ${styles.deptCard}`}>
                     <h4 className='text-uppercase fw-bold mb-4'>take appointment</h4>

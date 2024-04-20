@@ -48,7 +48,7 @@ const DoctorDetails = () => {
     }, []);
 
     return (
-        <div className='container py-5' style={{ minHeight: "100vh" }}>
+        <div className='container py-4' style={{ minHeight: "100vh", marginTop: "80px" }}>
             {details && (
                 <div className='row'>
                     <div className="col-md-4" data-aos="fade-right">
