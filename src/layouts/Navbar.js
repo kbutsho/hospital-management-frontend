@@ -31,7 +31,7 @@ const Navbar = () => {
                     style={{ padding: "8px 14px", borderRadius: "2px", background: "white" }}>
                     <Image src={icon} height={60} width={60} alt="icon" />
                     <Link
-                        className="navbar-brand fw-bold text-black text-uppercase"
+                        className="navbar-brand fw-bold text-success text-uppercase"
                         href="/">{info?.organization_name}</Link>
                     <button
                         style={{ border: "none", boxShadow: "none", outline: "none" }}
