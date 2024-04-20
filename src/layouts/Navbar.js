@@ -1,8 +1,12 @@
+import { ROLE } from '@/constant';
+import Cookies from 'js-cookie';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 
 const Navbar = () => {
     const info = useSelector(state => state.site_info.data);
+    const token = Cookies.get('token');
+    const role = Cookies.get('role');
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light px-3 py-3">
@@ -26,8 +30,27 @@ const Navbar = () => {
                             <Link className="nav-link fw-bold text-dark" href="/serial">SERIAL</Link>
                             <Link className="nav-link fw-bold text-dark" href="/about">ABOUT</Link>
                             <Link className="nav-link fw-bold text-dark" href="/contact">CONTACT</Link>
-                            <Link className="nav-link fw-bold text-dark" href="/signup">SIGNUP</Link>
-                            <Link className="nav-link fw-bold text-dark" href="/login">LOGIN</Link>
+                            {
+                                token && role ? (
+                                    <>
+                                        {role === ROLE.ADMINISTRATOR && (
+                                            <Link className="nav-link fw-bold text-dark" href="/administrator/dashboard">DASHBOARD</Link>
+                                        )}
+                                        {role === ROLE.DOCTOR && (
+                                            <Link className="nav-link fw-bold text-dark" href="/doctor/profile">DASHBOARD</Link>
+                                        )}
+                                        {role === ROLE.ASSISTANT && (
+                                            <Link className="nav-link fw-bold text-dark" href="/assistant/profile">DASHBOARD</Link>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link className="nav-link fw-bold text-dark" href="/signup">SIGNUP</Link>
+                                        <Link className="nav-link fw-bold text-dark" href="/login">LOGIN</Link>
+                                    </>
+                                )
+                            }
+
                         </div>
                     </div>
                 </div>

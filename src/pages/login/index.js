@@ -23,6 +23,23 @@ const Login = () => {
         password: '',
         errors: []
     })
+    const token = Cookies.get('token');
+    const role = Cookies.get('role');
+
+    useEffect(() => {
+        if (token && role) {
+            if (role === ROLE.ADMINISTRATOR) {
+                router.push('/administrator/dashboard')
+            }
+            if (role === ROLE.ASSISTANT) {
+                router.push('/assistant/profile')
+            }
+            if (role === ROLE.DOCTOR) {
+                router.push('/doctor/profile')
+            }
+        }
+    }, [])
+
     const showPasswordBtn = () => {
         setShowPassword(!showPassword);
     }
@@ -84,6 +101,9 @@ const Login = () => {
     const handelCrossBtn = () => {
         setErrorMessage(null)
     }
+
+
+
     const demoUser = {
         administrator: {
             credential: process.env.NEXT_PUBLIC_ADMINISTRATOR_EMAIL,
