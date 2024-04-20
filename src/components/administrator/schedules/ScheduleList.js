@@ -306,6 +306,18 @@ const ScheduleList = () => {
         return formattedTime;
     };
 
+
+
+    const handelEdit = () => {
+        toast.info("under maintenance")
+    }
+    const handelDetails = () => {
+        toast.info("under maintenance")
+    }
+
+
+
+
     const customStyles = {
         control: (provided) => ({
             ...provided,
@@ -557,9 +569,8 @@ const ScheduleList = () => {
                                                             </td>
                                                             <td >
                                                                 <div className='d-flex justify-content-center'>
-                                                                    <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' />
-                                                                    </button>
+                                                                    <button onClick={handelDetails} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button onClick={handelEdit} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button onClick={() => toggleDeleteModal(data.scheduleId, data.scheduleId)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
