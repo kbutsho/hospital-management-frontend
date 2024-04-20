@@ -8,8 +8,8 @@ import Carousel from 'react-bootstrap/Carousel';
 
 const Header = () => {
     return (
-        // container py-4 mt-4
-        <div className="pb-4">
+        // pb-4
+        <div className="container py-4" style={{ marginTop: "65px" }}>
             <Carousel controls={false} indicators interval={2500} pause={false}>
                 <Carousel.Item>
                     <Image
@@ -54,7 +54,6 @@ const Header = () => {
                         src={header4}
                         alt="First slide"
                         style={{
-                            borderRadius: "5px",
                             height: "110vh",
                             objectFit: "cover"
                         }}
