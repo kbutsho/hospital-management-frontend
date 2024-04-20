@@ -18,6 +18,7 @@ import { ImCross } from "react-icons/im";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchedItemsCount, removeAssistant, storeAssistant, totalItemsCount, updateAssistantStatus } from '@/redux/slice/administrator/assistantSlice';
 import Select from 'react-select';
+import { useRouter } from 'next/router';
 
 
 const AssistantList = () => {
@@ -236,7 +237,10 @@ const AssistantList = () => {
         [STATUS.PENDING]: 'red',
         [STATUS.DISABLE]: 'grey'
     };
-
+    const router = useRouter()
+    const handelDetails = (id) => {
+        router.push(`/administrator/assistants/${id}`)
+    }
     return (
         <div className={`py-3 ${styles.listArea}`}>
             {
@@ -425,8 +429,7 @@ const AssistantList = () => {
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center'>
-                                                                    <button className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <button className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                    <button onClick={handelDetails} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button onClick={() => toggleDeleteModal(data.assistantId, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
