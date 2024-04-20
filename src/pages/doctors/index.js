@@ -85,7 +85,14 @@ const OurDoctor = () => {
                                     </li>
                                 ))}
                             </ul>
+                            <div className='mt-4'>
+                                {filterByDept === '' ?
+                                    <h4 className='fw-bold text-uppercase'>All doctor</h4> :
+                                    <h4 className='fw-bold text-uppercase'>{filterByDept} SPECIALIST</h4>
+                                }
+                            </div>
                         </div>
+
                         {/* Doctor Cards */}
                         <div className="row mt-4">
                             {doctor.map((doctor, index) => (
@@ -132,7 +139,6 @@ const OurDoctor = () => {
                     </div>
                 ) : null
             }
-
         </div>
     );
 };
