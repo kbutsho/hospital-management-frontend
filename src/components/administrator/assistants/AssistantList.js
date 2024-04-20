@@ -429,7 +429,7 @@ const AssistantList = () => {
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center'>
-                                                                    <button onClick={handelDetails} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button onClick={() => handelDetails(data.assistantId)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button onClick={() => toggleDeleteModal(data.assistantId, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
