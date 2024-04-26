@@ -39,7 +39,7 @@ const DoctorLayout = ({ children }) => {
                     <div className="row">
                         <div className="col-sm-5 col-md-4 col-lg-3 col-12 mb-4">
                             <div className='bg-light shadow-sm p-3 rounded-1'>
-                                <Link href="/doctor/dashboard"
+                                {/* <Link href="/doctor/dashboard"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/doctor/dashboard') ? styles.activeMenu : ''}`}>
                                     <div className={styles.sidebarMenuIcon}>
@@ -48,7 +48,7 @@ const DoctorLayout = ({ children }) => {
                                     <div className={styles.sidebarMenuLink}>
                                         <span>Dashboard</span>
                                     </div>
-                                </Link>
+                                </Link> */}
 
                                 <Link href="/doctor/profile"
                                     className={`${styles.sidebarMenu} 
@@ -83,7 +83,7 @@ const DoctorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
-                                <Link href="/doctor/chambers"
+                                {/* <Link href="/doctor/chambers"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/doctor/chambers') ? styles.activeMenu : ''}`}>
                                     <div className={styles.sidebarMenuIcon}>
@@ -92,9 +92,9 @@ const DoctorLayout = ({ children }) => {
                                     <div className={styles.sidebarMenuLink}>
                                         <span>Chambers</span>
                                     </div>
-                                </Link>
+                                </Link> */}
 
-                                <Link href="/doctor/assistants"
+                                {/* <Link href="/doctor/assistants"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/doctor/assistants') ? styles.activeMenu : ''}`}>
                                     <div className={styles.sidebarMenuIcon}>
@@ -103,7 +103,7 @@ const DoctorLayout = ({ children }) => {
                                     <div className={styles.sidebarMenuLink}>
                                         <span>Assistants</span>
                                     </div>
-                                </Link>
+                                </Link> */}
 
                                 <Link href="/doctor/patients"
                                     className={`${styles.sidebarMenu} 

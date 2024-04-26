@@ -6,7 +6,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { config } from '@/config';
 import styles from "@/styles/administrator/List.module.css"
-import { FadeLoader } from 'react-spinners';
+import { SyncLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 import { errorHandler } from '@/helpers/errorHandler';
 import { AiFillStar } from 'react-icons/ai';
@@ -105,7 +105,7 @@ const AdministratorSettings = () => {
                 {
                     loading ? (
                         <div className={styles.loadingArea}>
-                            <FadeLoader color='#d3d3d3' size="16" />
+                            <SyncLoader color='#36D7B7' size="12" />
                         </div>
                     ) : (
                         data ?

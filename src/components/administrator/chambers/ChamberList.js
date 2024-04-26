@@ -448,7 +448,7 @@ const ChamberList = () => {
             {
                 loading ?
                     <div className={styles.loadingArea}>
-                        <SyncLoader color='#d3d3d3' size="12" />
+                        <SyncLoader color='#36D7B7' size="12" />
                     </div> :
                     <div className="list-area">
                         {

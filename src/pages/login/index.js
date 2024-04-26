@@ -81,11 +81,11 @@ const Login = () => {
                 }
                 else if (response.data.role === ROLE.DOCTOR) {
                     toast.success(response.data.message);
-                    router.push('/doctor/dashboard')
+                    router.push('/doctor/profile')
                 }
                 else if (response.data.role === ROLE.ASSISTANT) {
                     toast.success(response.data.message);
-                    router.push('/assistant/dashboard')
+                    router.push('/assistant/profile')
                 }
                 else {
                     toast.error("invalid credential!");
