@@ -5,12 +5,12 @@ import React, { useEffect } from 'react';
 const Doctor = () => {
     const router = useRouter();
     useEffect(() => {
-        router.replace('/doctor/dashboard');
+        router.replace('/doctor/profile');
     }, []);
     return (
         <div>
             <Head>
-                <title>dashboard</title>
+                <title>profile</title>
             </Head>
         </div>
     )

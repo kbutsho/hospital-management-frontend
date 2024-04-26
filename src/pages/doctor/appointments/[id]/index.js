@@ -7,9 +7,11 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import styles from "@/styles/administrator/List.module.css"
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { config } from "@/config";
 import { ImCross } from "react-icons/im";
+import { toast } from "react-toastify";
+import { SyncLoader } from "react-spinners";
 
 const AppointmentDetails = () => {
     const router = useRouter();
@@ -17,6 +19,30 @@ const AppointmentDetails = () => {
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [data, setData] = useState(null)
+
+    const fetchData = async () => {
+        try {
+            if (id) {
+                setLoading(true)
+                const res = await axios.get(`${config.api}/doctor/appointment/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                console.log(res.data)
+                setLoading(false)
+                setData(res.data.data)
+            }
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+            errorHandler({ error, toast, setErrorMessage })
+        }
+    }
+    useEffect(() => {
+        fetchData()
+    }, [id])
 
     const handelPrescribe = async () => {
         try {
@@ -68,8 +94,26 @@ const AppointmentDetails = () => {
                             ) : null
                         )
                     }
-                    <h2>patient details coming soon...</h2>
-                    <button onClick={handelPrescribe} className="btn btn-primary text-uppercase fw-bold">prescribe</button>
+                    {loading ?
+                        <div className={styles.loadingArea}>
+                            <SyncLoader
+                                color='#36D7B7' size="12" />
+                        </div> :
+                        <div className={styles.loadingArea} style={{ color: "black" }}>
+                            <div>
+                                <h4>PATIENT NAME: {data?.name}</h4>
+                                <h5>AGE: {data?.phone}</h5>
+                                <h5>GENDER: {data?.age}</h5>
+                                <h5>ADDRESS: {data?.address}</h5>
+                                <h5>PAYMENT_STATUS: {data?.payment_status}</h5>
+                                <button
+                                    onClick={handelPrescribe}
+                                    style={{ borderRadius: "2px" }}
+                                    className="btn btn-primary text-uppercase fw-bold mt-3">
+                                    prescribe
+                                </button>
+                            </div>
+                        </div>}
                 </div>
             </div>
         </div>

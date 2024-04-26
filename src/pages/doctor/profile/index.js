@@ -3,7 +3,7 @@ import DoctorLayout from '@/layouts/doctor/DoctorLayout';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
-import { FadeLoader } from 'react-spinners';
+import { SyncLoader } from 'react-spinners';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { config } from '@/config';
@@ -256,7 +256,7 @@ const DoctorProfile = () => {
                 {
                     loading ? (
                         <div className={styles.loadingArea}>
-                            <FadeLoader color='#d3d3d3' size="16" />
+                            <SyncLoader color='#36D7B7' size="12" />
                         </div>
                     ) : (
                         data ?

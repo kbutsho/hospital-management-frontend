@@ -237,7 +237,32 @@ const AppointmentList = () => {
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
-    const handelPatientPrescribe = (id) => {
+    const handelPatientPrescribe = async (aptId) => {
+        try {
+            setLoading(true)
+            const data = {
+                id: aptId,
+                status: APPOINTMENT_STATUS.IN_PROGRESS
+            }
+            const response = await axios.post(`${config.api}/doctor/appointment/update/status`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log(response)
+            if (response.data.status) {
+                router.push(`/doctor/prescriptions/${aptId}`);
+            }
+
+        } catch (error) {
+            console.log(error)
+            errorHandler({ error, setErrorMessage })
+        } finally {
+            setLoading(false)
+        }
+        // router.push(`/doctor/appointments/${id}`);
+    }
+    const handelDetails = (id) => {
         router.push(`/doctor/appointments/${id}`);
     }
     const convertTime = (time24) => {
@@ -483,8 +508,8 @@ const AppointmentList = () => {
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
-                                                                    <button style={{ border: "0" }} onClick={() => handelPatientPrescribe(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    {/* <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button> */}
+                                                                    <button style={{ border: "0" }} onClick={() => handelDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
+                                                                    <button style={{ border: "0" }} onClick={() => handelPatientPrescribe(data.id)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
