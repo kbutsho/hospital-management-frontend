@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { errorHandler } from "@/helpers/errorHandler";
 import { SyncLoader } from "react-spinners";
 import ReactToPrint from "react-to-print";
+import { toast } from "react-toastify";
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 const Prescribe = () => {
@@ -60,11 +61,25 @@ const Prescribe = () => {
 
     const handleSave = async () => {
         try {
+            setLoading(true)
             const data = {
-                content: JSON.stringify({ content })
+                patient_id: patientData?.patient?.id,
+                appointment_id: id,
+                history: JSON.stringify({ dxHistoryContent }),
+                medication: JSON.stringify({ medicationContent })
             };
+            const res = await axios.post(`${config.api}/doctor/prescription/save`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setLoading(false)
+            toast.success(res.data.message)
+
         } catch (error) {
             console.log(error);
+            setLoading(false)
+            errorHandler({ error, toast })
         }
     };
 
@@ -105,7 +120,7 @@ const Prescribe = () => {
                         <SyncLoader color='#36D7B7' size="12" />
                     </div> :
                         <div style={{ minHeight: "260vh" }}>
-                            {/* <pre>{JSON.stringify(patientData, null, 2)}</pre> */}
+                            <pre>{JSON.stringify(patientData, null, 2)}</pre>
                             <div className="p-3 mb-4" style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", }}>
                                 <div className="d-flex justify-content-between">
                                     <h6 className="fw-bold">NAME: {patientData?.patient?.name}</h6>
@@ -134,9 +149,13 @@ const Prescribe = () => {
                                 </div>
                                 <div className="d-flex justify-content-end mb-3" style={{ marginTop: "70px" }}>
                                     <ReactToPrint trigger={() =>
-                                        <button className='fw-bold btn btn-primary me-2' style={{ borderRadius: "2px" }}>save and print</button>}
+                                        <button
+
+                                            className='fw-bold btn btn-primary me-2'
+                                            style={{ borderRadius: "2px" }}>
+                                            save and print</button>}
                                         content={() => ref.current} />
-                                    <button className="fw-bold btn btn-primary" style={{ borderRadius: "2px" }}>save</button>
+                                    <button onClick={handleSave} className="fw-bold btn btn-primary" style={{ borderRadius: "2px" }}>save</button>
                                 </div>
                             </div>
 
