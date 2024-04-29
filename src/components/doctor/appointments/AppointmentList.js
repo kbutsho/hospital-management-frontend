@@ -239,7 +239,7 @@ const AppointmentList = () => {
     }
     const handelPatientPrescribe = async (aptId) => {
         try {
-            setLoading(true)
+            // setLoading(true)
             const data = {
                 id: aptId,
                 status: APPOINTMENT_STATUS.IN_PROGRESS
@@ -257,13 +257,10 @@ const AppointmentList = () => {
         } catch (error) {
             console.log(error)
             errorHandler({ error, setErrorMessage })
-        } finally {
-            setLoading(false)
         }
-        // router.push(`/doctor/appointments/${id}`);
     }
-    const handelDetails = (id) => {
-        router.push(`/doctor/appointments/${id}`);
+    const handelPatientDetails = (patientId) => {
+        router.push(`/doctor/patients/${patientId}`)
     }
     const convertTime = (time24) => {
         const [hours, minutes] = time24.split(':');
@@ -405,6 +402,7 @@ const AppointmentList = () => {
                             color='#36D7B7' size="12" />
                     </div> :
                     <div className="list-area">
+                        {/* <pre>{JSON.stringify(reduxStoreAppointment, null, 2)}</pre> */}
                         {
                             reduxStoreAppointment.length > 0 ?
                                 <div className='p-3 mt-3 table-area'>
@@ -508,8 +506,17 @@ const AppointmentList = () => {
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
-                                                                    <button style={{ border: "0" }} onClick={() => handelDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    <button style={{ border: "0" }} onClick={() => handelPatientPrescribe(data.id)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                    <button
+                                                                        style={{ background: data.status === APPOINTMENT_STATUS.CLOSED ? "#61A1FE" : "#0069D9", border: "0", cursor: data.status === APPOINTMENT_STATUS.CLOSED ? 'not-allowed' : 'pointer' }}
+                                                                        onClick={() => {
+                                                                            if (data.status !== APPOINTMENT_STATUS.CLOSED) {
+                                                                                handelPatientPrescribe(data.id);
+                                                                            }
+                                                                        }}
+                                                                        className='fw-bold btn btn-primary btn-sm mx-1'>
+                                                                        prescribe
+                                                                    </button>
+                                                                    <button style={{ border: "0" }} onClick={() => handelPatientDetails(data.patientId)} className='btn btn-success btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>

@@ -72,7 +72,7 @@ const DoctorLayout = ({ children }) => {
                                     </div>
                                 </Link>
 
-                                <Link href="/doctor/prescriptions"
+                                {/* <Link href="/doctor/prescriptions"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/doctor/prescriptions') ? styles.activeMenu : ''}`}>
                                     <div className={styles.sidebarMenuIcon}>
@@ -81,7 +81,7 @@ const DoctorLayout = ({ children }) => {
                                     <div className={styles.sidebarMenuLink}>
                                         <span>Prescriptions</span>
                                     </div>
-                                </Link>
+                                </Link> */}
 
                                 {/* <Link href="/doctor/chambers"
                                     className={`${styles.sidebarMenu} 

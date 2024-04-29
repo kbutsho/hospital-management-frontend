@@ -13,9 +13,16 @@ import { errorHandler } from "@/helpers/errorHandler";
 import { SyncLoader } from "react-spinners";
 import ReactToPrint from "react-to-print";
 import { toast } from "react-toastify";
+import { APPOINTMENT_STATUS } from "@/constant";
+import Link from "next/link";
+import Image from "next/image";
+import icon from "../../../../assets/icon.png"
+import { useSelector } from 'react-redux';
+
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 const Prescribe = () => {
+    const info = useSelector(state => state.site_info.data);
     const router = useRouter();
     const ref = useRef()
     const { id } = router.query;
@@ -25,7 +32,17 @@ const Prescribe = () => {
     const [patientData, setPatientData] = useState(null);
     const [dxHistoryContent, setDxHistoryContent] = useState('');
     const [medicationContent, setMedicationContent] = useState('');
+    const [print, setPrint] = useState(false)
 
+
+    const role = Cookies.get('role');
+    const handelLogout = () => {
+        Cookies.remove('name')
+        Cookies.remove('token')
+        Cookies.remove('role')
+        router.push('/')
+        toast.success("logout successfully!")
+    }
     useEffect(() => {
         const fetchPatientWithAppointments = async () => {
             try {
@@ -73,6 +90,7 @@ const Prescribe = () => {
                     Authorization: `Bearer ${token}`
                 }
             })
+            setPrint(true)
             setLoading(false)
             toast.success(res.data.message)
 
@@ -83,23 +101,66 @@ const Prescribe = () => {
         }
     };
 
-
-
-
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
 
+    const togglePrint = () => {
+        setPrint(false)
+    }
 
-
+    const handelClose = async () => {
+        try {
+            setLoading(true)
+            const data = {
+                id: id,
+                status: APPOINTMENT_STATUS.CLOSED
+            }
+            const response = await axios.post(`${config.api}/doctor/appointment/update/status`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log(response)
+            if (response.data.status) {
+                router.push(`/doctor/appointments`);
+            }
+        } catch (error) {
+            console.log(error)
+            errorHandler({ error, setErrorMessage })
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
-        <div>
+        <div className="container py-5">
             <Head>
                 <title>prescription</title>
             </Head>
+            <nav className="navbar navbar-expand-lg alert alert-success py-1" style={{ borderRadius: "2px" }}>
+
+                <Image src={icon} height={50} width={50} alt="icon" />
+                <Link
+                    className="ms-2 navbar-brand fw-bold text-success text-uppercase"
+                    href="/">{info?.organization_name}</Link>
+
+
+                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div className="navbar-nav ms-auto">
+                        <Link className="nav-item nav-link fw-bold text-black" href="/doctor/profile">DASHBOARD</Link>
+                        <Link className="nav-item nav-link fw-bold text-black" href="/doctor/appointments">APPOINTMENT</Link>
+                        <Link className="nav-item nav-link fw-bold text-black" href="/doctor/patients">PATIENT</Link>
+                        <button className="nav-item nav-link fw-bold text-danger" onClick={handelLogout}>LOGOUT</button>
+                    </div>
+                </div>
+            </nav>
             <Breadcrumb />
-            <div className={`px-2 py-3 ${styles.listArea}`}>
+
+            <div className={`py-3 ${styles.listArea}`}>
                 {
                     loading ? null : (
                         errorMessage ? (
@@ -119,48 +180,86 @@ const Prescribe = () => {
                     loading ? <div className={styles.loadingArea}>
                         <SyncLoader color='#36D7B7' size="12" />
                     </div> :
-                        <div style={{ minHeight: "260vh" }}>
-                            <pre>{JSON.stringify(patientData, null, 2)}</pre>
-                            <div className="p-3 mb-4" style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", }}>
-                                <div className="d-flex justify-content-between">
-                                    <h6 className="fw-bold">NAME: {patientData?.patient?.name}</h6>
-                                    <h6 className="fw-bold">AGE: {patientData?.patient?.age}</h6>
-                                </div>
-                                <div className="row mt-4">
-                                    <div className="col-md-5">
-                                        <h6 className='mb-3 text-uppercase alert alert-success' style={{ borderRadius: "2px" }}><strong>DX and Patient Medical History</strong></h6>
-                                        <ReactQuill
-                                            theme="snow"
-                                            value={dxHistoryContent}
-                                            onChange={handleDXHistoryChange}
-                                            style={{ height: '420px' }}
-                                        />
-                                    </div>
+                        <div style={{ minHeight: "240vh" }}>
+                            {
+                                print ? null :
+                                    <div
+                                        className="p-3"
+                                        style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", marginBottom: "50px" }}>
+                                        <div className="d-flex justify-content-between">
+                                            <h6 className="fw-bold">NAME: {patientData?.patient?.name}</h6>
+                                            <h6 className="fw-bold">AGE: {patientData?.patient?.age}</h6>
+                                        </div>
+                                        <div className="row mt-4">
+                                            <div className="col-md-5">
+                                                <h6
+                                                    className='mb-3 text-uppercase alert alert-success'
+                                                    style={{ borderRadius: "2px" }}>
+                                                    <strong>DX and Patient Medical History</strong>
+                                                </h6>
+                                                <ReactQuill
+                                                    theme="snow"
+                                                    value={dxHistoryContent}
+                                                    onChange={handleDXHistoryChange}
+                                                    style={{ height: '420px' }}
+                                                />
+                                            </div>
 
-                                    <div className="col-md-7">
-                                        <h6 className='mb-3 text-uppercase alert alert-success' style={{ borderRadius: "2px" }}><strong>Medication</strong></h6>
-                                        <ReactQuill
-                                            theme="snow"
-                                            value={medicationContent}
-                                            onChange={handleMedicationChange}
-                                            style={{ height: '420px' }}
-                                        />
+                                            <div className="col-md-7">
+                                                <h6
+                                                    className='mb-3 text-uppercase alert alert-success'
+                                                    style={{ borderRadius: "2px" }}>
+                                                    <strong>Medication</strong>
+                                                </h6>
+                                                <ReactQuill
+                                                    theme="snow"
+                                                    value={medicationContent}
+                                                    onChange={handleMedicationChange}
+                                                    style={{ height: '420px' }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="d-flex justify-content-end mb-3" style={{ marginTop: "70px" }}>
+                                            {
+                                                print ? null :
+                                                    <button
+                                                        onClick={handleSave}
+                                                        className="fw-bold btn btn-primary px-4"
+                                                        style={{ borderRadius: "2px" }}>
+                                                        save
+                                                    </button>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="d-flex justify-content-end mb-3" style={{ marginTop: "70px" }}>
+                            }
+                            {
+                                print ? <div className="d-flex justify-content-end mb-3">
+                                    <button
+                                        onClick={togglePrint}
+                                        style={{ borderRadius: "2px" }}
+                                        className='fw-bold btn btn-success px-4'>
+                                        Edit
+                                    </button>
                                     <ReactToPrint trigger={() =>
                                         <button
-
-                                            className='fw-bold btn btn-primary me-2'
+                                            className='fw-bold btn btn-primary mx-2 px-4'
                                             style={{ borderRadius: "2px" }}>
-                                            save and print</button>}
+                                            print
+                                        </button>}
                                         content={() => ref.current} />
-                                    <button onClick={handleSave} className="fw-bold btn btn-primary" style={{ borderRadius: "2px" }}>save</button>
-                                </div>
-                            </div>
-
+                                    <button
+                                        onClick={handelClose}
+                                        style={{ borderRadius: "2px" }}
+                                        className='fw-bold btn btn-danger px-4'>
+                                        close
+                                    </button>
+                                </div> : null
+                            }
                             <div style={{ background: "#D1E7DD" }}>
-                                <div className="me-auto" ref={ref} style={{ width: "816px", height: "1056px", background: "#D1E7DD" }}>
+                                <div
+                                    className="me-auto"
+                                    ref={ref}
+                                    style={{ width: "816px", height: "1056px", background: "#D1E7DD" }}>
                                     <div className="p-4" >
                                         <div className="d-flex justify-content-between">
                                             <div className="d-flex">
@@ -188,19 +287,7 @@ const Prescribe = () => {
 };
 
 export default Prescribe;
-Prescribe.getLayout = function getLayout(page) {
-    return <DoctorLayout>{page}</DoctorLayout>;
-};
+// Prescribe.getLayout = function getLayout(page) {
+//     return <DoctorLayout>{page}</DoctorLayout>;
+// };
 
-//  <div dangerouslySetInnerHTML={{ __html: content }} />
-
-// {typeof window !== 'undefined' && (
-//     <ReactQuill
-//         theme="snow"
-//         value={content}
-//         onChange={handleChange}
-//         style={{ height: '350px' }}
-//     />
-// )}
-
-// <button className='btn btn-primary fw-bold px-3 mt-2' onClick={handleSave}>Save</button>

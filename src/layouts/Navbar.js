@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BiUserCircle } from 'react-icons/bi';
-import icon from "../assets/icon.jpg"
+import icon from "../assets/icon.png"
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
