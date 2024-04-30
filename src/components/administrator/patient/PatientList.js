@@ -21,11 +21,13 @@ import {
     fetchedItemsCount,
     removePatient
 } from '@/redux/slice/administrator/patientSlice';
+import { useRouter } from 'next/router';
 
 
 const PatientList = () => {
     const dispatch = useDispatch();
     const token = Cookies.get('token');
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [found, setFound] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null);
@@ -144,6 +146,10 @@ const PatientList = () => {
     }
     const handelErrorMessage = () => {
         setErrorMessage(null)
+    }
+
+    const handelDetails = (patientId) => {
+        router.push(`/administrator/patients/${patientId}`)
     }
 
     return (
@@ -290,8 +296,8 @@ const PatientList = () => {
                                                             <td className='table-element'>{data.address}</td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
-                                                                    <button style={{ border: "0" }} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
+                                                                    <button style={{ border: "0" }} onClick={() => handelDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>

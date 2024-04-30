@@ -1,4 +1,3 @@
-import DoctorLayout from '@/layouts/doctor/DoctorLayout';
 import { useRouter } from 'next/router';
 import styles from "@/styles/administrator/List.module.css"
 import Breadcrumb from '@/components/breadcrumb';
@@ -10,6 +9,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { config } from '@/config';
 import { ImCross } from 'react-icons/im';
+import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 
 
 const PatientDetails = () => {
@@ -26,7 +26,7 @@ const PatientDetails = () => {
         try {
             if (id) {
                 setLoading(true)
-                const res = await axios.get(`${config.api}/doctor/patient/${id}`, {
+                const res = await axios.get(`${config.api}/administrator/patient/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -63,7 +63,6 @@ const PatientDetails = () => {
             return '';
         }
     };
-
     return (
         <div>
             <Head>
@@ -92,7 +91,6 @@ const PatientDetails = () => {
                             <SyncLoader color='#36D7B7' size="12" />
                         </div> :
                         <div className='list-area'>
-                            {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
                             <table className='table table-hover table-bordered table-striped'>
                                 <thead>
                                     <tr>
@@ -157,12 +155,12 @@ const PatientDetails = () => {
                             </div>
                         </div>
                 }
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
 export default PatientDetails;
 PatientDetails.getLayout = function getLayout(page) {
-    return <DoctorLayout>{page}</DoctorLayout>;
+    return <AdministratorLayout>{page}</AdministratorLayout>;
 };
