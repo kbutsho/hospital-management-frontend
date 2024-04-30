@@ -68,7 +68,9 @@ const PatientDetails = () => {
             <Head>
                 <title>patient details</title>
             </Head>
-            <Breadcrumb />
+            {
+                data ? <Breadcrumb name={data?.patient?.name} /> : null
+            }
             <div className={`px-2 py-3 ${styles.listArea}`}>
                 {
                     loading ? null : (
@@ -104,16 +106,24 @@ const PatientDetails = () => {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td className='fw-bold text-uppercase'>Patient ID: {String(data?.patient.id).padStart(5, '0')}</td>
-                                        <td className='fw-bold text-uppercase'>age: {data?.patient.age}</td>
+                                        <td className='fw-bold text-uppercase'>Patient ID: {String(data?.patient?.id).padStart(5, '0')}</td>
+                                        <td className='fw-bold text-uppercase'>age: {data?.patient?.age}</td>
                                     </tr>
                                     <tr>
                                         <td className='fw-bold text-uppercase'>Name: {data?.patient.name}</td>
-                                        <td className='fw-bold text-uppercase'>Phone: {data?.patient.phone}</td>
+                                        <td className='fw-bold text-uppercase'>Phone: {data?.patient?.phone}</td>
                                     </tr>
                                     <tr>
                                         <td className='fw-bold text-uppercase'>Address: {data?.patient.address}</td>
-                                        <td className='fw-bold text-uppercase'>Gender: {data?.patient.gender ?? '--'}</td>
+                                        <td className='fw-bold text-uppercase'>Gender: {data?.patient?.gender ?? <span style={{ color: "red" }}>NONE</span>}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='fw-bold text-uppercase'>BLOOD GROUP: {data?.patient?.blood_group ?? <span style={{ color: "red" }}>NONE</span>}</td>
+                                        <td className='fw-bold text-uppercase'>emergency contact number: {data?.patient?.emergency_contact_number ?? <span style={{ color: "red" }}>NONE</span>}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='fw-bold text-uppercase'>emergency contact name: {data?.patient?.emergency_contact_name ?? <span style={{ color: "red" }}>NONE</span>}</td>
+                                        <td className='fw-bold text-uppercase'>emergency contact relation: {data?.patient?.emergency_contact_relation ?? <span style={{ color: "red" }}>NONE</span>}</td>
                                     </tr>
                                 </tbody>
                             </table>
