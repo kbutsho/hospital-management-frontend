@@ -155,7 +155,7 @@ const PatientDetails = () => {
                                         <div
                                             className='d-flex justify-content-center align-items-center'
                                             style={{ height: "33vh" }}>
-                                            <h5 className='fw-bold text-danger'>no medical history found!</h5>
+                                            <h5 className='fw-bold text-danger'>---no medical history found---</h5>
                                         </div>
                                 }
                             </div>
