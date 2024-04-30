@@ -38,7 +38,7 @@ const AssistantLayout = ({ children }) => {
                     <div className="row">
                         <div className="col-sm-5 col-md-4 col-lg-3 col-12 mb-4">
                             <div className='bg-light shadow-sm p-3 rounded-1'>
-                                <Link href="/assistant/dashboard"
+                                {/* <Link href="/assistant/dashboard"
                                     className={`${styles.sidebarMenu} 
                                     ${isActive('/assistant/dashboard') ? styles.activeMenu : ''}`}>
                                     <div className={styles.sidebarMenuIcon}>
@@ -47,7 +47,7 @@ const AssistantLayout = ({ children }) => {
                                     <div className={styles.sidebarMenuLink}>
                                         <span>Dashboard</span>
                                     </div>
-                                </Link>
+                                </Link> */}
 
                                 <Link href="/assistant/profile"
                                     className={`${styles.sidebarMenu} 
@@ -70,15 +70,36 @@ const AssistantLayout = ({ children }) => {
                                         <span>Doctors</span>
                                     </div>
                                 </Link> */}
-
-                                <Link href="/assistant/chambers"
+                                <Link href="/assistant/serials"
                                     className={`${styles.sidebarMenu} 
-                                    ${isActive('/assistant/chambers') ? styles.activeMenu : ''}`}>
+                                    ${isActive('/assistant/serials') ? styles.activeMenu : ''}`}>
                                     <div className={styles.sidebarMenuIcon}>
                                         <BiSolidDashboard />
                                     </div>
                                     <div className={styles.sidebarMenuLink}>
-                                        <span>Chambers</span>
+                                        <span>serials</span>
+                                    </div>
+                                </Link>
+
+                                <Link href="/assistant/patients"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/assistant/patients') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>patients</span>
+                                    </div>
+                                </Link>
+
+                                <Link href="/assistant/appointments"
+                                    className={`${styles.sidebarMenu} 
+                                    ${isActive('/assistant/appointments') ? styles.activeMenu : ''}`}>
+                                    <div className={styles.sidebarMenuIcon}>
+                                        <BiSolidDashboard />
+                                    </div>
+                                    <div className={styles.sidebarMenuLink}>
+                                        <span>appointments</span>
                                     </div>
                                 </Link>
 
