@@ -93,13 +93,13 @@ const PatientDetails = () => {
                         </div> :
                         <div className='list-area'>
                             {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-                            <table className='table table-hover table-bordered table-striped'>
+                            <table className='table table-hover table-bordered'>
                                 <thead>
                                     <tr>
                                         <th
-                                            className='w-100'
+                                            className='text-success'
                                             colSpan='2'
-                                            style={{ fontSize: '24px', background: "#D1E7DD" }}>
+                                            style={{ fontSize: '24px' }}>
                                             <span className='text-uppercase'>Patient information</span>
                                         </th>
                                     </tr>
@@ -121,11 +121,7 @@ const PatientDetails = () => {
                             </table>
 
                             <div className='mt-5'>
-                                <div
-                                    className='alert alert-success h4 fw-bold text-uppercase'
-                                    style={{ borderRadius: "2px", padding: "12px 10px" }}>
-                                    medical history
-                                </div>
+                                <h4 className='fw-bold text-uppercase text-success mb-4'>medical history</h4>
                                 {
                                     data?.prescriptions?.length > 0 ?
                                         data?.prescriptions?.map((pres, index) => (
@@ -139,10 +135,10 @@ const PatientDetails = () => {
                                                     {pres.doctor_name}
                                                 </div>
                                                 <div className="row py-2">
-                                                    <div className="col-4">
+                                                    <div className="col-md-5">
                                                         <div dangerouslySetInnerHTML={{ __html: extractHistoryHTML(pres.history) }} />
                                                     </div>
-                                                    <div className="col-8">
+                                                    <div className="col-md-7">
                                                         <div dangerouslySetInnerHTML={{ __html: extractMedicationHTML(pres.medication) }} />
                                                     </div>
                                                 </div>
