@@ -111,7 +111,7 @@ const AppointmentList = () => {
     // load serial data
     const fetchData = async () => {
         try {
-            setLoading(true)
+            // setLoading(true)
             const data = {
                 perPage: dataPerPage,
                 page: currentPage,
@@ -129,7 +129,7 @@ const AppointmentList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setLoading(false)
+            // setLoading(false)
             setErrorMessage(null)
             dispatch(storeAppointment(response.data.data))
             dispatch(totalItemsCount(response.data.totalItems))
@@ -137,7 +137,7 @@ const AppointmentList = () => {
             setFound(true)
         } catch (error) {
             console.log(error)
-            setLoading(false)
+            // setLoading(false)
             return errorHandler({ error, setErrorMessage })
         }
     };
