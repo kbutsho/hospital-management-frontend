@@ -139,12 +139,10 @@ const Prescribe = () => {
                 <title>prescription</title>
             </Head>
             <nav className="navbar navbar-expand-lg alert alert-success py-1" style={{ borderRadius: "2px" }}>
-
                 <Image src={icon} height={50} width={50} alt="icon" />
                 <Link
                     className="ms-2 navbar-brand fw-bold text-success text-uppercase"
                     href="/">{info?.organization_name}</Link>
-
 
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
@@ -185,7 +183,7 @@ const Prescribe = () => {
                                 print ? null :
                                     <div
                                         className="p-3"
-                                        style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", marginBottom: "50px" }}>
+                                        style={{ background: "#fff", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", marginBottom: "50px" }}>
                                         <div className="d-flex justify-content-between">
                                             <h6 className="fw-bold">NAME: {patientData?.patient?.name}</h6>
                                             <h6 className="fw-bold">AGE: {patientData?.patient?.age}</h6>
@@ -255,11 +253,11 @@ const Prescribe = () => {
                                     </button>
                                 </div> : null
                             }
-                            <div style={{ background: "#D1E7DD" }}>
+                            <div style={{ background: "#E9E9E9" }}>
                                 <div
                                     className="me-auto"
                                     ref={ref}
-                                    style={{ width: "816px", height: "1056px", background: "#D1E7DD" }}>
+                                    style={{ width: "816px", height: "1056px", background: "#E9E9E9" }}>
                                     <div className="p-4" >
                                         <div className="d-flex justify-content-between">
                                             <div className="d-flex">
