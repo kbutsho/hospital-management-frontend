@@ -119,6 +119,9 @@ const DoctorProfile = () => {
             });
             setLoading(false)
             fetchData();
+            if (res.data.data.name !== Cookies.get('name')) {
+                Cookies.set('name', res.data.data.name, { expires: 7 });
+            }
             toast.success(res.data.message)
 
         } catch (error) {
@@ -166,6 +169,7 @@ const DoctorProfile = () => {
             setAddLoading(false)
             fetchData();
             togglePhotoAddModal()
+            Cookies.set('profile_photo', res.data.data.photo, { expires: 7 });
             toast.success(res.data.message)
         } catch (error) {
             setAddLoading(false)
@@ -196,6 +200,7 @@ const DoctorProfile = () => {
             fetchData()
             console.log(res)
             setAddLoading(false)
+            Cookies.remove('profile_photo')
             toast.success(res.data.message)
         } catch (error) {
             console.log(error)

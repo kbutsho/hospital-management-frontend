@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { SyncLoader } from 'react-spinners';
-import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
+import { AiFillDelete, AiFillEdit, AiFillEye, AiFillStar } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -20,7 +20,7 @@ import {
     totalItemsCount,
     fetchedItemsCount,
     removePatient
-} from '@/redux/slice/administrator/patientSlice';
+} from '@/redux/slice/doctor/patientSlice';
 import { useRouter } from 'next/router';
 
 
@@ -74,9 +74,9 @@ const PatientList = () => {
         fetchData()
     }, [currentPage, dataPerPage, sortOrder, sortBy])
 
-    const reduxStorePatient = useSelector(state => state.administrator_patients.data);
-    const totalItems = useSelector(state => state.administrator_patients.totalItems);
-    const fetchedItems = useSelector(state => state.administrator_patients.fetchedItems);
+    const reduxStorePatient = useSelector(state => state.doctor_patients.data);
+    const totalItems = useSelector(state => state.doctor_patients.totalItems);
+    const fetchedItems = useSelector(state => state.doctor_patients.fetchedItems);
 
     // sort order
     const handleSortOrderChange = (order, sortField) => {
@@ -147,10 +147,103 @@ const PatientList = () => {
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
-
     const handelDetails = (patientId) => {
         router.push(`/doctor/patients/${patientId}`)
     }
+
+
+    // update patient information
+    const [updateModal, setUpdateModal] = useState(false)
+    const [addLoading, setAddLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        id: '',
+        name: '',
+        phone: '',
+        email: '',
+        address: '',
+        age: '',
+        gender: '',
+        blood_group: '',
+        emergency_contact_name: '',
+        emergency_contact_number: '',
+        emergency_contact_relation: '',
+        errors: []
+
+    })
+    const toggleUpdateModal = (patient) => {
+        setUpdateModal(!updateModal)
+        setFormData({
+            id: '',
+            name: '',
+            phone: '',
+            email: '',
+            address: '',
+            age: '',
+            gender: '',
+            blood_group: '',
+            emergency_contact_name: '',
+            emergency_contact_number: '',
+            emergency_contact_relation: '',
+            errors: []
+        });
+        if (patient) {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                id: patient.id,
+                name: patient.name,
+                phone: patient.phone,
+                email: patient.email ?? '',
+                address: patient.address,
+                age: patient.age,
+                gender: patient.gender ?? '',
+                blood_group: patient.blood_group ?? '',
+                emergency_contact_name: patient.emergency_contact_name ?? '',
+                emergency_contact_number: patient.emergency_contact_number ?? '',
+                emergency_contact_relation: patient.emergency_contact_relation ?? '',
+            }));
+        }
+    }
+    const handelInputChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name]: event.target.value,
+            errors: {
+                ...formData.errors,
+                [event.target.name]: null
+            }
+        })
+    };
+    const patientUpdateFormSubmit = async () => {
+        try {
+            const data = {
+                name: formData.name,
+                address: formData.address,
+                age: parseInt(formData.age),
+                gender: formData.gender,
+                phone: formData.phone,
+                email: formData.email,
+                blood_group: formData.blood_group,
+                emergency_contact_name: formData.emergency_contact_name,
+                emergency_contact_number: formData.emergency_contact_number,
+                emergency_contact_relation: formData.emergency_contact_relation,
+            }
+            setAddLoading(true)
+            const res = await axios.post(`${config.api}/doctor/patient/update/${formData.id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setAddLoading(false)
+            toast(res.data.message)
+            setUpdateModal(!updateModal)
+            fetchData()
+        } catch (error) {
+            console.log(error)
+            setAddLoading(false)
+            errorHandler({ error, toast, formData, setFormData })
+        }
+    }
+
 
     return (
         <div className={`py-3 ${styles.listArea}`}>
@@ -273,6 +366,14 @@ const PatientList = () => {
                                                 </th>
                                                 <th className='text-center'>
                                                     <SortingArrow
+                                                        level={`BLOOD GROUP`}
+                                                        sortBy={`patients.blood_group`}
+                                                        sortOrder={sortOrder}
+                                                        activeSortBy={activeSortBy}
+                                                        handleSortOrderChange={handleSortOrderChange} />
+                                                </th>
+                                                <th className='text-center'>
+                                                    <SortingArrow
                                                         level={`ADDRESS`}
                                                         sortBy={`patients.address`}
                                                         sortOrder={sortOrder}
@@ -291,13 +392,18 @@ const PatientList = () => {
                                                             <td className='table-element'>{data.name}</td>
                                                             <td className='table-element'>{data.phone}</td>
                                                             <td className='table-element'>{data.age}</td>
-                                                            <td className='table-element text-center'>{data.email ?? <span className='fw-bold'>--</span>}</td>
+                                                            {
+                                                                data.email ?
+                                                                    <td className='table-element'>{data.email}</td> :
+                                                                    <td className='table-element text-center fw-bold'>--</td>
+                                                            }
                                                             <td className='table-element text-center'>{data.gender ?? <span className='fw-bold'>--</span>}</td>
+                                                            <td className='table-element text-center'>{data.blood_group ?? <span className='fw-bold'>--</span>}</td>
                                                             <td className='table-element'>{data.address}</td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
+                                                                    <button style={{ border: "0" }} onClick={() => toggleUpdateModal(data)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>
                                                                     <button style={{ border: "0" }} onClick={() => handelDetails(data.id)} className='btn btn-primary btn-sm mx-1'><AiFillEye className='mb-1' /></button>
-                                                                    {/* <button style={{ border: "0" }} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button> */}
                                                                     <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button>
                                                                 </div>
                                                             </td>
@@ -351,6 +457,238 @@ const PatientList = () => {
                                     <button onClick={handelDelete} className='btn btn-danger btn-sm fw-bold'>delete</button>
                                 </div>
                             </ModalFooter>
+                        </Modal>
+                    </div>
+                ) : null
+            }
+            {
+                updateModal ? (
+                    <div>
+                        <Modal isOpen={updateModal} className="modal-xl">
+                            <ModalBody>
+                                <div className='p-3'>
+                                    <div
+                                        className='d-flex justify-content-between alert alert-success w-100 mb-4'
+                                        style={{ padding: "14px 14px 8px", borderRadius: "2px" }}>
+                                        <h4 className='text-uppercase fw-bold'>update patient information</h4>
+                                        <ImCross size="24px"
+                                            style={{ cursor: "pointer", color: "red", paddingTop: "4px" }}
+                                            onClick={toggleUpdateModal} />
+                                    </div>
+                                    {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
+                                    <div>
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>NAME</span>
+                                                        <AiFillStar className='required' />
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        value={formData.name}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient name'
+                                                        className={`form-control ${formData.errors?.name ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.name ? formData.errors?.name : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>PHONE</span>
+                                                        <AiFillStar className='required' />
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="phone"
+                                                        value={formData.phone}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient phone'
+                                                        className={`form-control ${formData.errors?.phone ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.phone ? formData.errors?.phone : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>AGE</span>
+                                                        <AiFillStar className='required' />
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="age"
+                                                        value={formData.age}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient age'
+                                                        className={`form-control ${formData.errors?.age ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.age ? formData.errors?.age : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>BLOOD GROUP</span>
+                                                        {/* <AiFillStar className='required' /> */}
+                                                    </label>
+                                                    <select
+                                                        name="blood_group"
+                                                        value={formData.blood_group}
+                                                        onChange={handelInputChange}
+                                                        className={`form-control ${formData.errors?.blood_group ? 'is-invalid' : null}`}>
+                                                        <option value="">select blood group</option>
+                                                        <option value="A+">A+</option>
+                                                        <option value="A-">A-</option>
+                                                        <option value="B+">B+</option>
+                                                        <option value="B-">B-</option>
+                                                        <option value="AB+">AB+</option>
+                                                        <option value="AB-">AB-</option>
+                                                        <option value="O+">O+</option>
+                                                        <option value="O-">O-</option>
+                                                    </select>
+                                                    <small className='validation-error'>
+                                                        {formData.errors?.blood_group ? formData.errors?.blood_group : null}
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>EMERGENCY CONTACT NAME</span>
+                                                        {/* <AiFillStar className='required' /> */}
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="emergency_contact_name"
+                                                        value={formData.emergency_contact_name}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient emergency contact name'
+                                                        className={`form-control ${formData.errors?.emergency_contact_name ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.emergency_contact_name ? formData.errors?.emergency_contact_name : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>ADDRESS</span>
+                                                        <AiFillStar className='required' />
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="address"
+                                                        value={formData.address}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient address'
+                                                        className={`form-control ${formData.errors?.address ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.address ? formData.errors?.address : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>EMAIL</span>
+                                                        {/* <AiFillStar className='required' /> */}
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="email"
+                                                        value={formData.email}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient email'
+                                                        className={`form-control ${formData.errors?.email ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.email ? formData.errors?.email : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>GENDER</span>
+                                                        <AiFillStar className='required' />
+                                                    </label>
+                                                    <select
+                                                        name="gender"
+                                                        value={formData.gender}
+                                                        onChange={handelInputChange}
+                                                        className={`form-control ${formData.errors?.gender ? 'is-invalid' : null}`}
+                                                    >
+                                                        <option value="">select gender</option>
+                                                        <option value="male">Male</option>
+                                                        <option value="female">Female</option>
+                                                        <option value="other">Other</option>
+                                                    </select>
+                                                    <small className='validation-error'>
+                                                        {formData.errors?.gender ? formData.errors?.gender : null}
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>EMERGENCY CONTACT NUMBER</span>
+                                                        {/* <AiFillStar className='required' /> */}
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="emergency_contact_number"
+                                                        value={formData.emergency_contact_number}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient emergency contact number'
+                                                        className={`form-control ${formData.errors?.emergency_contact_number ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.emergency_contact_number ? formData.errors?.emergency_contact_number : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div className='mb-3'>
+                                                    <label className='mb-2'>
+                                                        <span className='fw-bold'>EMERGENCY CONTACT RELATION</span>
+                                                        {/* <AiFillStar className='required' /> */}
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="emergency_contact_relation"
+                                                        value={formData.emergency_contact_relation}
+                                                        onChange={handelInputChange}
+                                                        placeholder='patient emergency contact relation'
+                                                        className={`form-control ${formData.errors?.emergency_contact_relation ? 'is-invalid' : null}`} />
+                                                    <small className='validation-error'>
+                                                        {
+                                                            formData.errors?.emergency_contact_relation ? formData.errors?.emergency_contact_relation : null
+                                                        }
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            {
+                                                addLoading ?
+                                                    <button
+                                                        disabled
+                                                        style={{ borderRadius: "2px" }}
+                                                        className='mt-3 fw-bold w-100 btn btn-primary'>
+                                                        submitting...
+                                                    </button> :
+                                                    <button
+                                                        style={{ borderRadius: "2px" }}
+                                                        onClick={patientUpdateFormSubmit}
+                                                        className='mt-3 fw-bold w-100 btn btn-primary'>
+                                                        submit
+                                                    </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </ModalBody>
                         </Modal>
                     </div>
                 ) : null

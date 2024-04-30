@@ -75,6 +75,7 @@ const Login = () => {
                 Cookies.set('token', response.data.token, { expires: 7 });
                 Cookies.set('role', response.data.role, { expires: 7 });
                 Cookies.set('name', response.data.name, { expires: 7 });
+                Cookies.set('profile_photo', response.data.photo, { expires: 7 });
                 if (response.data.role === ROLE.ADMINISTRATOR) {
                     toast.success(response.data.message);
                     router.push('/administrator/dashboard')
