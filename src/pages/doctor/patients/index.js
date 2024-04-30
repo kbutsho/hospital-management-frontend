@@ -1,17 +1,18 @@
 import Breadcrumb from '@/components/breadcrumb';
+import PatientList from '@/components/doctor/patient/PatientList';
 import DoctorLayout from '@/layouts/doctor/DoctorLayout';
 import Head from 'next/head';
 import React from 'react';
 
 const DoctorPatients = () => {
     return (
-        <div >
+        <div>
             <Head>
                 <title>patients list</title>
             </Head>
             <Breadcrumb />
-            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "70vh" }}>
-                <h5 className="fw-bold text-danger">patients list</h5>
+            <div className='px-2'>
+                <PatientList />
             </div>
         </div>
     );
