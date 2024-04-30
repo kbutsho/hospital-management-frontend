@@ -138,7 +138,7 @@ const PatientDetails = () => {
                                             <div
                                                 key={index}
                                                 className='p-3 mb-4'
-                                                style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
+                                                style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", background: "white" }}>
                                                 <div
                                                     style={{ border: "1px solid lightGray", padding: "12px 10px" }}
                                                     className='h5 fw-bold'>
@@ -156,7 +156,7 @@ const PatientDetails = () => {
                                         )) :
                                         <div
                                             className='d-flex justify-content-center align-items-center'
-                                            style={{ height: "33vh" }}>
+                                            style={{ height: "33vh", border: "1px solid lightGray", padding: "12px 10px", background: "white" }}>
                                             <h6 className='fw-bold text-uppercase' style={{ color: "red" }}>no medical history found</h6>
                                         </div>
                                 }
