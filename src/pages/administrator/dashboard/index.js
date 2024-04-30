@@ -65,8 +65,8 @@ const AdministratorDashboard = () => {
                     (
                         info ?
                             <div className='row'>
-                                <div className="col-md-4 my-2" data-aos="fade-up">
-                                    <Link href="/administrator/departments" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
+                                <div className="col-md-6 my-2" data-aos="fade-down">
+                                    <Link href="/administrator/departments" className="card p-5" style={{ minHeight: "80px", textDecoration: "none" }}>
                                         <div className="row">
                                             <div className="col-6">
                                                 <Image src={departmentLogo} height={60} width={60} alt="img" />
@@ -92,8 +92,8 @@ const AdministratorDashboard = () => {
                                     </Link>
                                 </div>
 
-                                <div className="col-md-4 my-2" data-aos="fade-up">
-                                    <Link href="/administrator/doctors" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
+                                <div className="col-md-6 my-2" data-aos="fade-down">
+                                    <Link href="/administrator/doctors" className="card p-5" style={{ minHeight: "80px", textDecoration: "none" }}>
                                         <div className="row">
                                             <div className="col-6">
                                                 <Image src={doctorLogo} height={60} width={60} alt="img" />
@@ -119,8 +119,8 @@ const AdministratorDashboard = () => {
                                     </Link>
                                 </div>
 
-                                <div className="col-md-4 my-2" data-aos="fade-up">
-                                    <Link href="/administrator/assistants" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
+                                <div className="col-md-6 my-2" data-aos="fade-down">
+                                    <Link href="/administrator/assistants" className="card p-5" style={{ minHeight: "80px", textDecoration: "none" }}>
                                         <div className="row">
                                             <div className="col-6">
                                                 <Image src={assistantLogo} height={60} width={60} alt="img" />
@@ -146,8 +146,8 @@ const AdministratorDashboard = () => {
                                     </Link>
                                 </div>
 
-                                <div className="col-md-4 my-2" data-aos="fade-up">
-                                    <Link href="/administrator/chambers" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
+                                <div className="col-md-6 my-2" data-aos="fade-down">
+                                    <Link href="/administrator/chambers" className="card p-5" style={{ minHeight: "80px", textDecoration: "none" }}>
                                         <div className="row">
                                             <div className="col-6">
                                                 <Image src={chamberLogo} height={60} width={60} alt="img" />
@@ -173,8 +173,8 @@ const AdministratorDashboard = () => {
                                     </Link>
                                 </div>
 
-                                <div className="col-md-4 my-2" data-aos="fade-up">
-                                    <Link href="/administrator/appointments" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
+                                <div className="col-md-6 my-2" data-aos="fade-down">
+                                    <Link href="/administrator/appointments" className="card p-5" style={{ minHeight: "80px", textDecoration: "none" }}>
                                         <div className="row">
                                             <div className="col-6">
                                                 <Image src={appointmentLogo} height={60} width={60} alt="img" />
@@ -200,8 +200,8 @@ const AdministratorDashboard = () => {
                                     </Link>
                                 </div>
 
-                                <div className="col-md-4 my-2" data-aos="fade-up">
-                                    <Link href="/administrator/patients" className="card p-3" style={{ minHeight: "80px", textDecoration: "none" }}>
+                                <div className="col-md-6 my-2" data-aos="fade-down">
+                                    <Link href="/administrator/patients" className="card p-5" style={{ minHeight: "80px", textDecoration: "none" }}>
                                         <div className="row">
                                             <div className="col-6">
                                                 <Image src={patientLogo} height={60} width={60} alt="img" />

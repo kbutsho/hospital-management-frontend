@@ -524,7 +524,9 @@ const DepartmentList = () => {
                                                             <td className='text-center table-element'>{String(data.id).padStart(5, '0')}</td>
                                                             <td className='table-element'>{data.name}</td>
                                                             <td>
-                                                                <div className='d-flex justify-content-around align-items-center'
+                                                                <div
+                                                                    onClick={() => deptDetails(data.id)}
+                                                                    className='d-flex justify-content-around align-items-center'
                                                                     style={{
                                                                         margin: "3px",
                                                                         padding: "3px",

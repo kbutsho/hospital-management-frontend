@@ -63,7 +63,7 @@ const DepartmentDetails = () => {
                                 </div>
                                 <div className="row mt-4">
                                     {doctor.map((doctor, index) => (
-                                        <div key={index} className="col-md-4" data-aos="fade-down">
+                                        <div key={index} className="col-md-4" data-aos="zoom-in">
                                             <div className={`mb-4 ${styles.doctorCard}`}>
                                                 <div className="card-body" >
                                                     <div className='p-4'>
