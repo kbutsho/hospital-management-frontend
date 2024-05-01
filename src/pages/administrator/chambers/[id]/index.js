@@ -10,6 +10,7 @@ import { errorHandler } from '@/helpers/errorHandler';
 import { ImCross } from 'react-icons/im';
 import { Table } from 'react-bootstrap';
 import Image from 'next/image';
+import demoUser from "../../../../assets/user.png"
 
 const ChamberDetails = () => {
     const router = useRouter();

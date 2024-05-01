@@ -48,6 +48,7 @@ import chamberSlice from '../slice/administrator/chamberSlice';
 import departmentSlice from '../slice/administrator/departmentSlice';
 import scheduleSlice from '../slice/administrator/scheduleSlice';
 import serialSlice from '../slice/administrator/serialSlice';
+import assistantSerialSlice from '../slice/assistant/serialSlice';
 import patientSlice from '../slice/administrator/patientSlice';
 import appointmentSlice from '../slice/administrator/appointmentSlice';
 import doctorAppointmentSlice from '../slice/doctor/appointmentSlice';
@@ -72,6 +73,8 @@ const rootReducer = combineReducers({
     // doctor
     doctor_appointments: doctorAppointmentSlice,
     doctor_patients: doctorPatientSlice,
+    // assistant
+    assistant_serials: assistantSerialSlice,
     // public info
     site_info: siteInfoSlice
 });

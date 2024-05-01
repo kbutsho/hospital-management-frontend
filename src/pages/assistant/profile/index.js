@@ -1,5 +1,4 @@
 import Breadcrumb from '@/components/breadcrumb';
-import AdministratorLayout from '@/layouts/administrator/AdministratorLayout';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import styles from "@/styles/administrator/List.module.css"
@@ -15,8 +14,9 @@ import demoUser from '../../../assets/user.png'
 import { MdDelete, MdModeEdit } from 'react-icons/md';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { ImCross } from 'react-icons/im';
+import AssistantLayout from '@/layouts/assistant/AssistantLayout';
 
-const AdministratorProfile = () => {
+const AssistantProfile = () => {
     const token = Cookies.get('token');
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(null);
@@ -37,7 +37,7 @@ const AdministratorProfile = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`${config.api}/administrator/profile`, {
+            const res = await axios.get(`${config.api}/assistant/profile`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -78,7 +78,7 @@ const AdministratorProfile = () => {
                 'age': formData.age,
                 'gender': formData.gender
             }
-            const res = await axios.post(`${config.api}/administrator/profile/update`, data, {
+            const res = await axios.post(`${config.api}/assistant/profile/update`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -128,7 +128,7 @@ const AdministratorProfile = () => {
         formDataToSend.append('photo', formData.photo);
         try {
             setAddLoading(true)
-            const res = await axios.post(`${config.api}/administrator/profile/photo/update`, formDataToSend, {
+            const res = await axios.post(`${config.api}/assistant/profile/photo/update`, formDataToSend, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -159,7 +159,7 @@ const AdministratorProfile = () => {
     const handelDeletePhoto = async () => {
         try {
             setAddLoading(true);
-            const res = await axios.get(`${config.api}/administrator/profile/photo/delete`, {
+            const res = await axios.get(`${config.api}/assistant/profile/photo/delete`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -206,7 +206,7 @@ const AdministratorProfile = () => {
                 'new_password': formData.new_password,
                 'confirm_password': formData.confirm_password
             }
-            const res = await axios.post(`${config.api}/administrator/profile/change-password`, data, {
+            const res = await axios.post(`${config.api}/assistant/profile/change-password`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -241,7 +241,7 @@ const AdministratorProfile = () => {
                                         <div className='d-flex align-items-end'>
                                             {
                                                 data.photo ?
-                                                    <Image src={`${config.backend_api}/uploads/adminProfile/${data.photo}`} height={186} width={186} alt="profile" /> :
+                                                    <Image src={`${config.backend_api}/uploads/assistantProfile/${data.photo}`} height={186} width={186} alt="profile" /> :
                                                     <Image src={demoUser} height={186} width={186} alt="profile" />
                                             }
                                             <button
@@ -400,7 +400,7 @@ const AdministratorProfile = () => {
                                 </div>
                             </div> :
                             <div className={styles.notFound}>
-                                <h6 className='fw-bold text-uppercase'>something went wrong!</h6>
+                                <h6 className='fw-bold text-uppercase'>something went wrong</h6>
                             </div>
                     )
                 }
@@ -567,7 +567,7 @@ const AdministratorProfile = () => {
     );
 };
 
-export default AdministratorProfile;
-AdministratorProfile.getLayout = function getLayout(page) {
-    return <AdministratorLayout>{page}</AdministratorLayout>;
+export default AssistantProfile;
+AssistantProfile.getLayout = function getLayout(page) {
+    return <AssistantLayout>{page}</AssistantLayout>;
 };
