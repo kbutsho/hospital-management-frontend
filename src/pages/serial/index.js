@@ -821,7 +821,7 @@ const PatientSerial = ({ data, errorMessage }) => {
                                 </small>
                                 <small className='fw-bold'>
                                     <span className=''>already have a serial?</span>
-                                    <Link className='ms-1' style={{ textDecoration: "none" }} href="/">click here</Link>
+                                    <Link className='ms-1' style={{ textDecoration: "none" }} href="/serial/details">click here</Link>
                                 </small>
                             </div>
                         </div>
