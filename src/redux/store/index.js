@@ -52,6 +52,7 @@ import assistantSerialSlice from '../slice/assistant/serialSlice';
 import patientSlice from '../slice/administrator/patientSlice';
 import appointmentSlice from '../slice/administrator/appointmentSlice';
 import doctorAppointmentSlice from '../slice/doctor/appointmentSlice';
+import assistantAppointmentSlice from '../slice/assistant/appointmentSlice';
 import doctorPatientSlice from '../slice/doctor/patientSlice';
 import siteInfoSlice from '../slice/public/siteInfoSlice';
 
@@ -75,6 +76,7 @@ const rootReducer = combineReducers({
     doctor_patients: doctorPatientSlice,
     // assistant
     assistant_serials: assistantSerialSlice,
+    assistant_appointments: assistantAppointmentSlice,
     // public info
     site_info: siteInfoSlice
 });

@@ -6,10 +6,9 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { SyncLoader } from 'react-spinners';
-import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
+import { AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
-import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { errorHandler } from '@/helpers/errorHandler';
 import SortingArrow from '@/helpers/sorting/SortingArrow';
 import { CiSearch } from "react-icons/ci";
@@ -26,7 +25,7 @@ import {
     totalItemsCount,
     resetAppointment,
     updateAppointmentStatus
-} from '@/redux/slice/doctor/appointmentSlice';
+} from '@/redux/slice/assistant/appointmentSlice';
 import { useRouter } from 'next/router';
 
 
@@ -49,9 +48,6 @@ const AppointmentList = () => {
         setSortBy(sortField);
         setSortOrder(order);
     };
-
-    const [deleteModal, setDeleteModal] = useState(false)
-    const [deleteItem, setDeleteItem] = useState({ id: '', name: '' })
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -95,7 +91,7 @@ const AppointmentList = () => {
     useEffect(() => {
         const fetchDoctorDepartmentSchedule = async () => {
             try {
-                const response = await axios.get(`${config.api}/doctor/schedule/all`, {
+                const response = await axios.get(`${config.api}/assistant/schedule/all`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const times = response.data.data.schedule.map((time) => time.time)
@@ -123,7 +119,7 @@ const AppointmentList = () => {
                 status: filterByStatus === null ? '' : filterByStatus.value,
                 schedule: filterByTimeSlot === null ? '' : filterByTimeSlot.value,
             }
-            const response = await axios.get(`${config.api}/doctor/appointment/all`, {
+            const response = await axios.get(`${config.api}/assistant/appointment/all`, {
                 params: data,
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -145,9 +141,9 @@ const AppointmentList = () => {
         fetchData()
     }, [currentPage, dataPerPage, filterByStatus, filterByTimeSlot, selectedDate, sortOrder, sortBy])
 
-    const reduxStoreAppointment = useSelector(state => state.doctor_appointments.data);
-    const totalItems = useSelector(state => state.doctor_appointments.totalItems);
-    const fetchedItems = useSelector(state => state.doctor_appointments.fetchedItems);
+    const reduxStoreAppointment = useSelector(state => state.assistant_appointments.data);
+    const totalItems = useSelector(state => state.assistant_appointments.totalItems);
+    const fetchedItems = useSelector(state => state.assistant_appointments.fetchedItems);
 
     // search 
     const [searchTerm, setSearchTerm] = useState('');
@@ -160,49 +156,6 @@ const AppointmentList = () => {
             return errorHandler({ error, setErrorMessage })
         }
     }
-
-    // update status
-    const handleStatusChange = async (event, id) => {
-        try {
-            const status = event.target.value;
-            const data = {
-                'id': id,
-                'status': status
-            }
-            const response = await axios.post(`${config.api}/doctor/appointment/update/status`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            console.log(response.data.data)
-            setErrorMessage(null)
-            dispatch(updateAppointmentStatus({ id, status }))
-        } catch (error) {
-            console.log(error)
-            return errorHandler({ error, toast, setErrorMessage })
-        }
-    };
-
-    // delete
-    // const toggleDeleteModal = (id, name) => {
-    //     setDeleteModal(!deleteModal)
-    //     setDeleteItem({ name: name ?? '', id: id ?? '' });
-    // }
-    // const handelDelete = async () => {
-    //     try {
-    //         await axios.delete(`${config.api}/doctor/appointment/${deleteItem?.id} `, {
-    //             headers: {
-    //                 Authorization: `Bearer ${token} `
-    //             }
-    //         });
-    //         dispatch(removeSerial(deleteItem?.id));
-    //         toast.success("appointment deleted successfully!")
-    //         setErrorMessage(null)
-    //         await fetchData()
-    //     } catch (error) {
-    //         return errorHandler({ error, setErrorMessage })
-    //     }
-    // }
 
     // reset
     const handelReset = async () => {
@@ -218,7 +171,7 @@ const AppointmentList = () => {
             setDataPerPage(10)
             setCurrentPage(1)
             dispatch(resetAppointment());
-            const response = await axios.get(`${config.api}/doctor/appointment/all`, {
+            const response = await axios.get(`${config.api}/assistant/appointment/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -237,30 +190,8 @@ const AppointmentList = () => {
     const handelErrorMessage = () => {
         setErrorMessage(null)
     }
-    const handelPatientPrescribe = async (aptId) => {
-        try {
-            // setLoading(true)
-            const data = {
-                id: aptId,
-                status: APPOINTMENT_STATUS.IN_PROGRESS
-            }
-            const response = await axios.post(`${config.api}/doctor/appointment/update/status`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            console.log(response)
-            if (response.data.status) {
-                router.push(`/doctor/prescriptions/${aptId}`);
-            }
-
-        } catch (error) {
-            console.log(error)
-            errorHandler({ error, setErrorMessage })
-        }
-    }
     const handelPatientDetails = (patientId) => {
-        router.push(`/doctor/patients/${patientId}`)
+        router.push(`/assistant/patients/${patientId}`)
     }
     const convertTime = (time24) => {
         const [hours, minutes] = time24.split(':');
@@ -481,41 +412,11 @@ const AppointmentList = () => {
                                                             <td className='table-element text-center'>{data.age}</td>
                                                             <td className='table-element text-center'>{data.gender ?? <span className='fw-bold '>--</span>}</td>
                                                             <td className='table-element'>{data.date.split('-').reverse().join('/')} {convertTime(data.opening_time)}</td>
-                                                            <td className='text-center'>
-                                                                <select
-                                                                    className="status-select form-select fw-bold"
-                                                                    value={data.status}
-                                                                    onChange={(event) => handleStatusChange(event, data.id)}
-                                                                    style={{
-                                                                        color: statusColors[data.status] || 'inherit'
-                                                                    }}>
-                                                                    {Object.entries(APPOINTMENT_STATUS)
-                                                                        .filter(([key, value]) => value !== APPOINTMENT_STATUS.SHOW_ALL)
-                                                                        .map(([key, value]) => (
-                                                                            <option key={key}
-                                                                                value={value}
-                                                                                className='fw-bold'
-                                                                                style={{
-                                                                                    color: statusColors[value] || 'inherit'
-                                                                                }}>
-                                                                                {value}
-                                                                            </option>
-                                                                        ))}
-                                                                </select>
-
-                                                            </td>
+                                                            <td className='table-element text-center fw-bold' style={{
+                                                                color: statusColors[data.status] || 'inherit'
+                                                            }}>{data.status}</td>
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
-                                                                    <button
-                                                                        style={{ background: data.status === APPOINTMENT_STATUS.CLOSED ? "#61A1FE" : "#0069D9", border: "0", cursor: data.status === APPOINTMENT_STATUS.CLOSED ? 'not-allowed' : 'pointer' }}
-                                                                        onClick={() => {
-                                                                            if (data.status !== APPOINTMENT_STATUS.CLOSED) {
-                                                                                handelPatientPrescribe(data.id);
-                                                                            }
-                                                                        }}
-                                                                        className='fw-bold btn btn-primary btn-sm mx-1'>
-                                                                        prescribe
-                                                                    </button>
                                                                     <button style={{ border: "0" }} onClick={() => handelPatientDetails(data.patientId)} className='btn btn-success btn-sm mx-1'><AiFillEye className='mb-1' /></button>
                                                                     {/* <button style={{ border: "0" }} onClick={() => toggleDeleteModal(data.id, data.name)} className='btn btn-danger btn-sm mx-1'><AiFillDelete className='mb-1' /></button> */}
                                                                 </div>
