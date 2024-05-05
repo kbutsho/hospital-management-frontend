@@ -12,10 +12,12 @@ import { useSelector } from 'react-redux';
 import Invoice from './invoice';
 import html2canvas from 'html2canvas';
 import ReactDOM from 'react-dom';
+import { useRouter } from 'next/router';
 
 const SerialDetails = () => {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState(null)
+    const router = useRouter()
     const [formData, setFormData] = useState({
         searchTerm: '',
         errors: []
@@ -99,8 +101,18 @@ const SerialDetails = () => {
     };
 
 
-    const handelPayment = () => {
-        toast("payment method coming soon!")
+    const handelPayment = async () => {
+        try {
+            const res = await axios.post(`${config.backend_api}/pay-via-ajax`)
+            console.log(res)
+            router.push(res.data.data)
+
+        } catch (error) {
+            console.log(error)
+            errorHandler({ error, toast })
+        }
+        // router.push(`${config.backend_api}/payment`)
+        // toast("payment method coming soon!")
     }
 
     const convertTime = (time24) => {
