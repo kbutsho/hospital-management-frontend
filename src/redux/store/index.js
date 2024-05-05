@@ -54,6 +54,7 @@ import appointmentSlice from '../slice/administrator/appointmentSlice';
 import doctorAppointmentSlice from '../slice/doctor/appointmentSlice';
 import assistantAppointmentSlice from '../slice/assistant/appointmentSlice';
 import doctorPatientSlice from '../slice/doctor/patientSlice';
+import assistantPatientSlice from '../slice/assistant/patientSlice';
 import siteInfoSlice from '../slice/public/siteInfoSlice';
 
 const persistConfig = {
@@ -76,6 +77,7 @@ const rootReducer = combineReducers({
     doctor_patients: doctorPatientSlice,
     // assistant
     assistant_serials: assistantSerialSlice,
+    assistant_patients: assistantPatientSlice,
     assistant_appointments: assistantAppointmentSlice,
     // public info
     site_info: siteInfoSlice

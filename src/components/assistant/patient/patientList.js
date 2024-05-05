@@ -20,7 +20,7 @@ import {
     totalItemsCount,
     fetchedItemsCount,
     removePatient
-} from '@/redux/slice/doctor/patientSlice';
+} from '@/redux/slice/assistant/patientSlice';
 import { useRouter } from 'next/router';
 
 
@@ -55,7 +55,7 @@ const PatientList = () => {
                 sortOrder: sortOrder,
                 sortBy: sortBy
             }
-            const response = await axios.get(`${config.api}/doctor/patient/all`, {
+            const response = await axios.get(`${config.api}/assistant/patient/all`, {
                 params: data,
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -74,9 +74,9 @@ const PatientList = () => {
         fetchData()
     }, [currentPage, dataPerPage, sortOrder, sortBy])
 
-    const reduxStorePatient = useSelector(state => state.doctor_patients.data);
-    const totalItems = useSelector(state => state.doctor_patients.totalItems);
-    const fetchedItems = useSelector(state => state.doctor_patients.fetchedItems);
+    const reduxStorePatient = useSelector(state => state.assistant_patients.data);
+    const totalItems = useSelector(state => state.assistant_patients.totalItems);
+    const fetchedItems = useSelector(state => state.assistant_patients.fetchedItems);
 
     // sort order
     const handleSortOrderChange = (order, sortField) => {
@@ -106,7 +106,7 @@ const PatientList = () => {
     }
     const handelDelete = async () => {
         try {
-            await axios.delete(`${config.api}/doctor/patient/${deleteItem?.id}`, {
+            await axios.delete(`${config.api}/assistant/patient/${deleteItem?.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -130,7 +130,7 @@ const PatientList = () => {
             setSortOrder('desc')
             setDataPerPage(10)
             setCurrentPage(1)
-            const response = await axios.get(`${config.api}/doctor/patient/all`, {
+            const response = await axios.get(`${config.api}/assistant/patient/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -148,7 +148,7 @@ const PatientList = () => {
         setErrorMessage(null)
     }
     const handelDetails = (patientId) => {
-        router.push(`/doctor/patients/${patientId}`)
+        router.push(`/assistant/patients/${patientId}`)
     }
 
 
@@ -228,7 +228,7 @@ const PatientList = () => {
                 emergency_contact_relation: formData.emergency_contact_relation,
             }
             setAddLoading(true)
-            const res = await axios.post(`${config.api}/doctor/patient/update/${formData.id}`, data, {
+            const res = await axios.post(`${config.api}/assistant/patient/update/${formData.id}`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -372,14 +372,14 @@ const PatientList = () => {
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
                                                 </th>
-                                                <th className='text-center'>
+                                                {/* <th className='text-center'>
                                                     <SortingArrow
                                                         level={`ADDRESS`}
                                                         sortBy={`patients.address`}
                                                         sortOrder={sortOrder}
                                                         activeSortBy={activeSortBy}
                                                         handleSortOrderChange={handleSortOrderChange} />
-                                                </th>
+                                                </th> */}
                                                 <th className='text-center'>ACTION</th>
                                             </tr>
                                         </thead>
@@ -399,7 +399,7 @@ const PatientList = () => {
                                                             }
                                                             <td className='table-element text-center'>{data.gender ?? <span className='fw-bold'>--</span>}</td>
                                                             <td className='table-element text-center'>{data.blood_group ?? <span className='fw-bold'>--</span>}</td>
-                                                            <td className='table-element'>{data.address}</td>
+                                                            {/* <td className='table-element'>{data.address}</td> */}
                                                             <td>
                                                                 <div className='d-flex justify-content-center table-btn'>
                                                                     <button style={{ border: "0" }} onClick={() => toggleUpdateModal(data)} className='btn btn-success btn-sm mx-1'><AiFillEdit className='mb-1' /></button>

@@ -209,12 +209,12 @@ const Login = () => {
                     {
                         process.env.NEXT_PUBLIC_IS_LOGIN === "true" ?
                             <div>
-                                <table className={`${styles.demoUser} table table-bordered`}>
+                                <table className={`${styles.demoUser} table table-bordered mt-4`}>
                                     <tbody>
                                         <tr>
-                                            <td onClick={() => handleUserClick(demoUser.administrator)}>administrator</td>
-                                            <td onClick={() => handleUserClick(demoUser.doctor)}>doctor</td>
-                                            <td onClick={() => handleUserClick(demoUser.assistant)}>assistant</td>
+                                            <td className='text-uppercase fw-bold' onClick={() => handleUserClick(demoUser.administrator)}>admin</td>
+                                            <td className='text-uppercase fw-bold' onClick={() => handleUserClick(demoUser.doctor)}>doctor</td>
+                                            <td className='text-uppercase fw-bold' onClick={() => handleUserClick(demoUser.assistant)}>assistant</td>
                                         </tr>
                                     </tbody>
                                 </table>
