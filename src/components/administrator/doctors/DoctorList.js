@@ -297,7 +297,7 @@ const DoctorList = () => {
                             placeholder="search or select status"
                             styles={customStyles}
                         />
-                    </div>
+                    </div>  
                 </div>
                 <div className="col-md-3">
                     <div className={`${styles.customSelectFilter}`}>
@@ -306,7 +306,7 @@ const DoctorList = () => {
                             onChange={handelFilterByDepartment}
                             options={departmentOptions}
                             isSearchable
-                            placeholder="search or select department"
+                            placeholder="search or select dept."
                             styles={customStyles}
                         />
                     </div>
