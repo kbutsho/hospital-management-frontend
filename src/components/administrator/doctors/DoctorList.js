@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { SyncLoader } from 'react-spinners';
-import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
+import { AiFillDelete, AiFillEye } from 'react-icons/ai';
 import { Table } from 'react-bootstrap';
 import Pagination from '@/helpers/pagination';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -297,7 +297,7 @@ const DoctorList = () => {
                             placeholder="search or select status"
                             styles={customStyles}
                         />
-                    </div>  
+                    </div>
                 </div>
                 <div className="col-md-3">
                     <div className={`${styles.customSelectFilter}`}>

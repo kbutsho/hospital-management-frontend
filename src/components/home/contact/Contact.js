@@ -26,7 +26,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <div className="fw-bold">mail us at</div>
-                                    <div className="fw-bold">{info?.email}</div>
+                                    <div className="fw-bold">kbutsho@gmail.com</div>
                                 </div>
                             </div>
                             <div className="d-flex mt-3">
@@ -35,7 +35,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <div className="fw-bold">or call us</div>
-                                    <div className="fw-bold">{info?.phone}</div>
+                                    <div className="fw-bold">+8801621599321</div>
                                 </div>
                             </div>
                         </div>

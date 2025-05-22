@@ -32,7 +32,8 @@ const Footer = () => {
                     <div className="col-md-4 pb-3">
                         <h4 className='text-white fw-bold text-uppercase'>{info?.organization_name}</h4>
                         <p className='footer-details text-white'>
-                            {info?.footer_text}
+                            {/* {info?.footer_text} */}
+                            Welcome to our website. Our website is designed to provide patients and visitors with easy access to essential details.
                         </p>
                         <div>
                             <Link href={`${info?.facebook}`}><BsFacebook size="26px" color="white" /></Link>
@@ -61,20 +62,20 @@ const Footer = () => {
                         </div>
                     </div>
                     <div className="col-md-4">
-                        <h5 className='text-white fw-bold mb-3'>Address</h5>
+                        <h5 className='text-white fw-bold mb-3'>Contact</h5>
                         <div className='d-flex'>
                             <BiMap color='white' size="24px" />
                             <p className='ms-2 text-white'>
-                                {info?.address}
+                                Greams Lane, 21, Greams Rd, Thousand Lights, Chennai, Tamil Nadu 600006, India
                             </p>
                         </div>
                         <div className='d-flex'>
                             <AiOutlineMail color='white' size="22px" />
-                            <p className='ms-2 text-white' style={{ fontSize: "14px" }}> {info?.email}</p>
+                            <p className='ms-2 text-white' style={{ fontSize: "14px" }}> kbutsho@gmail.com</p>
                         </div>
                         <div className='d-flex'>
                             <FaPhoneAlt color='white' size="20px" />
-                            <p className='ms-2 text-white' style={{ fontSize: "14px" }}> {info?.phone}</p>
+                            <p className='ms-2 text-white' style={{ fontSize: "14px" }}> +8801621599321</p>
                         </div>
                     </div>
                 </div>

@@ -18,7 +18,7 @@ const About = () => {
                     <h3 className="fw-bold text-success text-uppercase">About {info?.organization_name}</h3>
                     <div style={{ minHeight: "300px" }}>
                         <p className="mt-4" style={{ width: "100%", textAlign: "justify", lineHeight: "1.5" }}>
-                            {info?.about}
+                            {/* {info?.about} */}
                         </p>
                     </div>
                     {/* <div className="d-flex mt-4">
